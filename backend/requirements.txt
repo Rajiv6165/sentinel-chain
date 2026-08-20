@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+python-multipart
+Levenshtein
+pytest
+httpx
+networkx
+tree-sitter
+tree-sitter-javascript
