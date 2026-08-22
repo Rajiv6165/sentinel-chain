@@ -1,17 +1,29 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 import json
 import os
+import uuid
 from typing import List
 
 from utils.parser import parse_dependencies
 from utils.scoring import score_dependencies
 from utils.reachability import analyze_reachability
+from utils.sandbox import run_sandbox_install
+from utils.behavior_scoring import analyze_behavior
 import tempfile
 import zipfile
 import shutil
 
 app = FastAPI(title="Sentinel-chain Typosquat Detector")
+
+# In-memory job store for sandbox scans
+sandbox_jobs = {}
+
+class SandboxScanRequest(BaseModel):
+    ecosystem: str
+    package_name: str
+    version: str = None
 
 # Allow CORS for frontend
 app.add_middleware(
@@ -119,4 +131,41 @@ async def reachability_scan(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         shutil.rmtree(temp_dir, ignore_errors=True)
+
+async def process_sandbox_scan(job_id: str, ecosystem: str, package_name: str, version: str):
+    try:
+        sandbox_jobs[job_id]["status"] = "running"
+        sandbox_result = await run_sandbox_install(ecosystem, package_name, version)
+        analysis = analyze_behavior(sandbox_result)
+        
+        sandbox_jobs[job_id]["status"] = "completed"
+        sandbox_jobs[job_id]["result"] = analysis
+        sandbox_jobs[job_id]["raw"] = sandbox_result
+    except Exception as e:
+        sandbox_jobs[job_id]["status"] = "failed"
+        sandbox_jobs[job_id]["error"] = str(e)
+
+@app.post("/api/sandbox-scan")
+async def start_sandbox_scan(req: SandboxScanRequest, background_tasks: BackgroundTasks):
+    if req.ecosystem not in ["npm", "pypi"]:
+        raise HTTPException(status_code=400, detail="ecosystem must be 'npm' or 'pypi'")
+        
+    job_id = str(uuid.uuid4())
+    sandbox_jobs[job_id] = {
+        "status": "pending",
+        "package": req.package_name,
+        "version": req.version,
+        "ecosystem": req.ecosystem
+    }
+    
+    background_tasks.add_task(process_sandbox_scan, job_id, req.ecosystem, req.package_name, req.version)
+    
+    return {"job_id": job_id, "status": "pending"}
+
+@app.get("/api/sandbox-scan/{job_id}")
+async def get_sandbox_scan_status(job_id: str):
+    if job_id not in sandbox_jobs:
+        raise HTTPException(status_code=404, detail="Job not found")
+        
+    return sandbox_jobs[job_id]
 

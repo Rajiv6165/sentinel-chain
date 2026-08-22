@@ -1,10 +1,17 @@
 import { useState } from 'react'
 import FileUpload from './components/FileUpload'
 import ScanResults from './components/ScanResults'
+import SandboxScan from './components/SandboxScan'
+import SandboxResults from './components/SandboxResults'
 
 function App() {
+  const [activeTab, setActiveTab] = useState('static');
+  
   const [scanResult, setScanResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  
+  const [sandboxResult, setSandboxResult] = useState(null);
+  const [sandboxLoading, setSandboxLoading] = useState(false);
 
   return (
     <div className="min-h-screen bg-dark-900 text-gray-100 p-8">
@@ -24,17 +31,61 @@ function App() {
         </header>
 
         <main>
-          <FileUpload onScanResult={setScanResult} setLoading={setLoading} />
-          
-          {loading && (
-            <div className="mt-12 text-center">
-              <div className="inline-block w-12 h-12 border-4 border-brand-500/30 border-t-brand-500 rounded-full animate-spin"></div>
-              <p className="mt-4 text-brand-400 animate-pulse">Analyzing dependencies...</p>
-            </div>
+          <div className="flex justify-center mb-8 border-b border-dark-700">
+            <button
+              onClick={() => setActiveTab('static')}
+              className={`px-6 py-3 font-medium transition-colors border-b-2 ${
+                activeTab === 'static'
+                  ? 'border-brand-500 text-brand-400'
+                  : 'border-transparent text-gray-500 hover:text-gray-300'
+              }`}
+            >
+              Dependency Scan
+            </button>
+            <button
+              onClick={() => setActiveTab('sandbox')}
+              className={`px-6 py-3 font-medium transition-colors border-b-2 ${
+                activeTab === 'sandbox'
+                  ? 'border-brand-500 text-brand-400'
+                  : 'border-transparent text-gray-500 hover:text-gray-300'
+              }`}
+            >
+              Sandbox Scan (Phase 3)
+            </button>
+          </div>
+
+          {activeTab === 'static' && (
+            <>
+              <FileUpload onScanResult={setScanResult} setLoading={setLoading} />
+              
+              {loading && (
+                <div className="mt-12 text-center">
+                  <div className="inline-block w-12 h-12 border-4 border-brand-500/30 border-t-brand-500 rounded-full animate-spin"></div>
+                  <p className="mt-4 text-brand-400 animate-pulse">Analyzing dependencies...</p>
+                </div>
+              )}
+
+              {!loading && scanResult && (
+                <ScanResults result={scanResult} />
+              )}
+            </>
           )}
 
-          {!loading && scanResult && (
-            <ScanResults result={scanResult} />
+          {activeTab === 'sandbox' && (
+            <>
+              <SandboxScan onScanResult={setSandboxResult} setLoading={setSandboxLoading} />
+              
+              {sandboxLoading && (
+                <div className="mt-12 text-center">
+                  <div className="inline-block w-12 h-12 border-4 border-brand-500/30 border-t-brand-500 rounded-full animate-spin"></div>
+                  <p className="mt-4 text-brand-400 animate-pulse">Running sandboxed installation...</p>
+                </div>
+              )}
+
+              {!sandboxLoading && sandboxResult && (
+                <SandboxResults result={sandboxResult} />
+              )}
+            </>
           )}
         </main>
       </div>

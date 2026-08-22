@@ -7,3 +7,4 @@ httpx
 networkx
 tree-sitter
 tree-sitter-javascript
+docker
