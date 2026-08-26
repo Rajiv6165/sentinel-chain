@@ -8,3 +8,5 @@ networkx
 tree-sitter
 tree-sitter-javascript
 docker
+anthropic
+pytest-asyncio

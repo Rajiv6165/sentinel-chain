@@ -11,6 +11,9 @@ from utils.scoring import score_dependencies
 from utils.reachability import analyze_reachability
 from utils.sandbox import run_sandbox_install
 from utils.behavior_scoring import analyze_behavior
+from utils.aggregator import aggregate_risk_scores
+from utils.llm_narrative import generate_narrative
+from utils.epss import get_epss_score
 import tempfile
 import zipfile
 import shutil
@@ -19,6 +22,7 @@ app = FastAPI(title="Sentinel-chain Typosquat Detector")
 
 # In-memory job store for sandbox scans
 sandbox_jobs = {}
+full_scan_jobs = {}
 
 class SandboxScanRequest(BaseModel):
     ecosystem: str
@@ -168,4 +172,117 @@ async def get_sandbox_scan_status(job_id: str):
         raise HTTPException(status_code=404, detail="Job not found")
         
     return sandbox_jobs[job_id]
+
+async def process_full_scan(job_id: str, extract_dir: str, manifest_path: str):
+    try:
+        full_scan_jobs[job_id]["status"] = "running"
+        ecosystem = "npm" if "package.json" in manifest_path else "pypi"
+        
+        with open(manifest_path, "r", encoding="utf-8") as f:
+            manifest_content = f.read()
+            
+        dependencies = parse_dependencies(os.path.basename(manifest_path), manifest_content)
+        
+        # 1. Typosquat (Phase 1)
+        phase1_findings = score_dependencies(dependencies, TOP_PACKAGES)
+        
+        # 2. Reachability & EPSS (Phase 2)
+        # Re-using the Phase 1 findings as the target list for Phase 2 as per current implementation
+        if phase1_findings:
+            phase2_findings = await analyze_reachability(extract_dir, phase1_findings)
+        else:
+            phase2_findings = []
+            
+        # 3. Sandbox (Phase 3)
+        # To avoid scanning 500 dependencies and timing out the demo, we'll only deep-scan the flagged ones
+        # In a real enterprise product, this would be distributed across a cluster.
+        aggregated_results = []
+        for f in phase2_findings:
+            pkg_name = f.get("package_name")
+            
+            # Fetch EPSS
+            epss_score = await get_epss_score(f.get("cve_id", ""))
+            f["epss_score"] = epss_score
+            
+            # Run Sandbox
+            try:
+                sandbox_raw = await run_sandbox_install(ecosystem, pkg_name, "latest")
+                sandbox_finding = analyze_behavior(sandbox_raw)
+            except Exception as se:
+                print(f"Sandbox scan failed for {pkg_name}: {se}")
+                sandbox_finding = {"score": 0, "risk_level": "low", "evidence": []}
+            
+            # Aggregate
+            unified = aggregate_risk_scores(pkg_name, f, [f], sandbox_finding)
+            
+            # Generate Narratives
+            if unified["typosquat"]:
+                unified["typosquat"]["narrative"] = await generate_narrative(pkg_name, "typosquat", unified["typosquat"])
+            if unified["cves"]:
+                for c in unified["cves"]:
+                    c["narrative"] = await generate_narrative(pkg_name, "reachability", c)
+            if unified["sandbox"]:
+                unified["sandbox"]["narrative"] = await generate_narrative(pkg_name, "sandbox", unified["sandbox"])
+                
+            aggregated_results.append(unified)
+            
+        full_scan_jobs[job_id]["status"] = "completed"
+        full_scan_jobs[job_id]["result"] = aggregated_results
+        
+    except Exception as e:
+        full_scan_jobs[job_id]["status"] = "failed"
+        full_scan_jobs[job_id]["error"] = str(e)
+    finally:
+        shutil.rmtree(extract_dir, ignore_errors=True)
+
+@app.post("/api/full-scan")
+async def start_full_scan(file: UploadFile = File(...), background_tasks: BackgroundTasks = BackgroundTasks()):
+    if not file.filename.endswith(".zip"):
+        raise HTTPException(status_code=400, detail="Only .zip files are supported for full scans")
+        
+    temp_dir = tempfile.mkdtemp()
+    zip_path = os.path.join(temp_dir, "repo.zip")
+    
+    try:
+        with open(zip_path, "wb") as f:
+            shutil.copyfileobj(file.file, f)
+            
+        extract_dir = os.path.join(temp_dir, "extracted")
+        os.makedirs(extract_dir)
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(extract_dir)
+            
+        manifest_path = None
+        for root, _, files in os.walk(extract_dir):
+            if "package.json" in files:
+                manifest_path = os.path.join(root, "package.json")
+                break
+            elif "requirements.txt" in files:
+                manifest_path = os.path.join(root, "requirements.txt")
+                break
+                
+        if not manifest_path:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+            return {"findings": [], "message": "No package.json or requirements.txt found in the repository."}
+            
+        job_id = str(uuid.uuid4())
+        full_scan_jobs[job_id] = {
+            "status": "pending"
+        }
+        
+        # Pass the extracted directory path to the background task
+        background_tasks.add_task(process_full_scan, job_id, temp_dir, manifest_path)
+        
+        return {"job_id": job_id, "status": "pending"}
+        
+    except Exception as e:
+        shutil.rmtree(temp_dir, ignore_errors=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/full-scan/{job_id}")
+async def get_full_scan_status(job_id: str):
+    if job_id not in full_scan_jobs:
+        raise HTTPException(status_code=404, detail="Job not found")
+    return full_scan_jobs[job_id]
+
 
