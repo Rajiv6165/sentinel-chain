@@ -5,7 +5,7 @@ import tempfile
 import asyncio
 import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utils.callgraph import build_call_graph, process_file, get_js_parser
+from utils.callgraph.javascript import JavascriptCallGraphBuilder
 from utils.reachability import analyze_reachability
 
 # A toy mock project with a vulnerable dependency call
@@ -45,7 +45,8 @@ def toy_project_dir():
         yield temp_dir
 
 def test_build_call_graph(toy_project_dir):
-    graph, entry_points = build_call_graph(toy_project_dir)
+    builder = JavascriptCallGraphBuilder()
+    graph, entry_points = builder.build(toy_project_dir)
     
     # Check if entry point is detected (app.get -> fetch_data)
     # The node id for route might be `index.js:route_get`

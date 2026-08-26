@@ -1,14 +1,44 @@
 import networkx as nx
-from .callgraph import build_call_graph
+import os
+from .callgraph.javascript import JavascriptCallGraphBuilder
+from .callgraph.python import PythonCallGraphBuilder
 from .vulnerability import get_vulnerable_functions
+
+def detect_languages(project_dir: str) -> list[str]:
+    langs = set()
+    for root, _, files in os.walk(project_dir):
+        if 'package.json' in files:
+            langs.add('javascript')
+        if 'requirements.txt' in files or 'pyproject.toml' in files or 'setup.py' in files:
+            langs.add('python')
+    return list(langs)
 
 async def analyze_reachability(project_dir: str, findings: list[dict]) -> list[dict]:
     """
     Given a project directory and a list of Phase 1 findings,
     adds reachability context to each finding.
     """
+    langs = detect_languages(project_dir)
+    if not langs:
+        # Default to JS if no manifest found, for backward compatibility with simple toy projects
+        langs = ['javascript']
+
+    graph = nx.DiGraph()
+    entry_points = []
+    
     try:
-        graph, entry_points = build_call_graph(project_dir)
+        if 'javascript' in langs:
+            builder = JavascriptCallGraphBuilder()
+            g, e = builder.build(project_dir)
+            graph = nx.compose(graph, g)
+            entry_points.extend(e)
+            
+        if 'python' in langs:
+            builder = PythonCallGraphBuilder()
+            g, e = builder.build(project_dir)
+            graph = nx.compose(graph, g)
+            entry_points.extend(e)
+            
     except Exception as e:
         print(f"Failed to build call graph: {e}")
         for finding in findings:

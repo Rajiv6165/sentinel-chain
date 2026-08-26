@@ -10,3 +10,4 @@ tree-sitter-javascript
 docker
 anthropic
 pytest-asyncio
+tree-sitter-python
