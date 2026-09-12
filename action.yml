@@ -1,0 +1,36 @@
+name: 'Sentinel-Chain Typosquat & Reachability Scanner'
+description: 'Scans PRs for typosquatted packages, vulnerable dependencies, and analyzes reachability'
+author: 'Sentinel-Chain'
+
+inputs:
+  fail-on-severity:
+    description: 'Fail the action if findings meet or exceed this severity (none, low, medium, high, critical)'
+    required: false
+    default: 'critical'
+  enable-sandbox:
+    description: 'Enable Phase 3 sandbox scanning (requires privileged Docker in runner, not recommended for standard CI)'
+    required: false
+    default: 'false'
+  anthropic-api-key:
+    description: 'Optional Anthropic API Key to generate LLM narratives'
+    required: false
+    default: ''
+  github-token:
+    description: 'GitHub Token to post comments on the PR'
+    required: false
+    default: ${{ github.token }}
+  scan-path:
+    description: 'Path in the repository to scan (defaults to root)'
+    required: false
+    default: '.'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile.action'
+  args:
+    - ${{ inputs.scan-path }}
+    - ${{ inputs.fail-on-severity }}
+    - ${{ inputs.enable-sandbox }}
+  env:
+    ANTHROPIC_API_KEY: ${{ inputs.anthropic-api-key }}
+    GITHUB_TOKEN: ${{ inputs.github-token }}

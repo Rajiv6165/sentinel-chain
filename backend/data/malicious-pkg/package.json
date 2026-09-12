@@ -8,5 +8,8 @@
     "postinstall": "touch /root/.aws/credentials || true"
   },
   "author": "Test",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "lodsh": "^4.17.21"
+  }
 }

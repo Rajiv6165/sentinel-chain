@@ -1,0 +1,18 @@
+FROM python:3.11-slim
+
+# Install git, curl and other utilities needed for scanning
+RUN apt-get update && apt-get install -y git curl && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /action
+
+COPY backend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install PyGithub to interact with GitHub API easily
+RUN pip install --no-cache-dir PyGithub
+
+COPY backend /action/backend
+COPY entrypoint.sh /action/entrypoint.sh
+RUN chmod +x /action/entrypoint.sh
+
+ENTRYPOINT ["/action/entrypoint.sh"]

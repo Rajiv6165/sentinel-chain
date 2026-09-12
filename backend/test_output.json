@@ -1,0 +1,32 @@
+{
+  "scanned_count": 1,
+  "findings": [
+    {
+      "package_name": "lodsh",
+      "overall_risk": "CRITICAL",
+      "typosquat": {
+        "package_name": "lodsh",
+        "suspected_target": "lodash",
+        "distance_score": 1,
+        "risk_level": "medium",
+        "reasoning": "Single character omission",
+        "reachability": "UNKNOWN",
+        "reachability_reason": "Package imported but no direct static calls found. May use dynamic dispatch.",
+        "epss_score": 0.0
+      },
+      "cves": [
+        {
+          "package_name": "lodsh",
+          "suspected_target": "lodash",
+          "distance_score": 1,
+          "risk_level": "medium",
+          "reasoning": "Single character omission",
+          "reachability": "UNKNOWN",
+          "reachability_reason": "Package imported but no direct static calls found. May use dynamic dispatch.",
+          "epss_score": 0.0
+        }
+      ],
+      "sandbox": {}
+    }
+  ]
+}
