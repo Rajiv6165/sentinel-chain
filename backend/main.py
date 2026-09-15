@@ -14,6 +14,8 @@ from utils.behavior_scoring import analyze_behavior
 from utils.aggregator import aggregate_risk_scores
 from utils.llm_narrative import generate_narrative
 from utils.epss import get_epss_score
+from utils.parser import parse_dependencies, parse_dependencies_with_versions
+from utils.sbom.generator import generate_cyclonedx, generate_spdx, generate_cyclonedx_vex
 import tempfile
 import zipfile
 import shutil
@@ -182,6 +184,9 @@ async def process_full_scan(job_id: str, extract_dir: str, manifest_path: str):
             manifest_content = f.read()
             
         dependencies = parse_dependencies(os.path.basename(manifest_path), manifest_content)
+        deps_with_versions = parse_dependencies_with_versions(os.path.basename(manifest_path), manifest_content)
+        full_scan_jobs[job_id]["dependencies"] = deps_with_versions
+        full_scan_jobs[job_id]["ecosystem"] = ecosystem
         
         # 1. Typosquat (Phase 1)
         phase1_findings = score_dependencies(dependencies, TOP_PACKAGES)
@@ -285,4 +290,24 @@ async def get_full_scan_status(job_id: str):
         raise HTTPException(status_code=404, detail="Job not found")
     return full_scan_jobs[job_id]
 
-
+@app.get("/api/sbom/{job_id}")
+async def get_sbom(job_id: str, format: str = "cyclonedx"):
+    if job_id not in full_scan_jobs:
+        raise HTTPException(status_code=404, detail="Job not found")
+        
+    job = full_scan_jobs[job_id]
+    if job.get("status") != "completed":
+        raise HTTPException(status_code=400, detail="Scan not completed yet")
+        
+    deps = job.get("dependencies", {})
+    ecosystem = job.get("ecosystem", "generic")
+    findings = job.get("result", [])
+    
+    if format == "cyclonedx":
+        return generate_cyclonedx(ecosystem, deps, findings)
+    elif format == "spdx":
+        return generate_spdx(ecosystem, deps, findings)
+    elif format == "vex":
+        return generate_cyclonedx_vex(ecosystem, deps, findings)
+    else:
+        raise HTTPException(status_code=400, detail="Invalid format. Supported formats: cyclonedx, spdx, vex")

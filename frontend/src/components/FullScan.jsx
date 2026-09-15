@@ -55,7 +55,7 @@ export default function FullScan({ onScanResult, setLoading }) {
           if (data.status === 'completed') {
             clearInterval(interval);
             setLoading(false);
-            onScanResult(data.result);
+            onScanResult({ results: data.result, jobId });
           } else if (data.status === 'failed') {
             clearInterval(interval);
             setLoading(false);

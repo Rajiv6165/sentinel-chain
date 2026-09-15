@@ -8,7 +8,8 @@ import os
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 
-from utils.parser import parse_dependencies
+from utils.parser import parse_dependencies, parse_dependencies_with_versions
+from utils.sbom.generator import generate_cyclonedx, generate_spdx, generate_cyclonedx_vex
 from utils.scoring import score_dependencies
 from utils.reachability import analyze_reachability
 from utils.sandbox import run_sandbox_install
@@ -24,6 +25,7 @@ async def run_cli():
     parser.add_argument("--output", help="Path to save JSON output")
     parser.add_argument("--fail-on-severity", default="critical", choices=["none", "low", "medium", "high", "critical"], help="Exit with non-zero code if findings meet or exceed this severity")
     parser.add_argument("--enable-sandbox", action="store_true", help="Enable Phase 3 sandbox scanning (requires Docker)")
+    parser.add_argument("--generate-sbom", action="store_true", help="Generate SBOMs (CycloneDX and SPDX) and VEX along with the scan results")
     
     args = parser.parse_args()
     
@@ -51,6 +53,7 @@ async def run_cli():
         manifest_content = f.read()
         
     dependencies = parse_dependencies(os.path.basename(manifest_path), manifest_content)
+    deps_with_versions = parse_dependencies_with_versions(os.path.basename(manifest_path), manifest_content)
     
     # Load Top Packages
     top_packages = []
@@ -111,6 +114,20 @@ async def run_cli():
     if args.output:
         with open(args.output, "w", encoding="utf-8") as f:
             json.dump({"scanned_count": len(dependencies), "findings": aggregated_results}, f, indent=2)
+
+    if args.generate_sbom:
+        cdx = generate_cyclonedx(ecosystem, deps_with_versions, aggregated_results)
+        spdx = generate_spdx(ecosystem, deps_with_versions, aggregated_results)
+        vex = generate_cyclonedx_vex(ecosystem, deps_with_versions, aggregated_results)
+        
+        with open("sbom.cyclonedx.json", "w", encoding="utf-8") as f:
+            json.dump(cdx, f, indent=2)
+        with open("sbom.spdx.json", "w", encoding="utf-8") as f:
+            json.dump(spdx, f, indent=2)
+        with open("vex.cyclonedx.json", "w", encoding="utf-8") as f:
+            json.dump(vex, f, indent=2)
+            
+        print("\n📄 Generated SBOM and VEX files in the current directory.")
             
     # Exit code logic
     risk_levels = {"none": -1, "safe": 0, "low": 1, "medium": 2, "high": 3, "critical": 4}

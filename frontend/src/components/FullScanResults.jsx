@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import html2pdf from 'html2pdf.js';
 
-export default function FullScanResults({ result }) {
+export default function FullScanResults({ result, jobId }) {
   const reportRef = useRef();
 
   const handleExportPDF = () => {
@@ -32,13 +32,40 @@ export default function FullScanResults({ result }) {
     <div className="mt-8">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Full Scan Report</h2>
-        <button 
-          onClick={handleExportPDF}
-          className="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white font-medium rounded-lg transition-colors flex items-center gap-2"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-          Export PDF
-        </button>
+        <div className="flex gap-2">
+          {jobId && (
+            <>
+              <a 
+                href={`http://localhost:8000/api/sbom/${jobId}?format=cyclonedx`}
+                target="_blank" rel="noopener noreferrer"
+                className="px-3 py-2 bg-dark-700 hover:bg-dark-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2 border border-dark-600"
+              >
+                CycloneDX SBOM
+              </a>
+              <a 
+                href={`http://localhost:8000/api/sbom/${jobId}?format=spdx`}
+                target="_blank" rel="noopener noreferrer"
+                className="px-3 py-2 bg-dark-700 hover:bg-dark-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2 border border-dark-600"
+              >
+                SPDX SBOM
+              </a>
+              <a 
+                href={`http://localhost:8000/api/sbom/${jobId}?format=vex`}
+                target="_blank" rel="noopener noreferrer"
+                className="px-3 py-2 bg-dark-700 hover:bg-dark-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2 border border-dark-600"
+              >
+                VEX Document
+              </a>
+            </>
+          )}
+          <button 
+            onClick={handleExportPDF}
+            className="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white font-medium rounded-lg transition-colors flex items-center gap-2 ml-2"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            Export PDF
+          </button>
+        </div>
       </div>
 
       <div ref={reportRef} className="bg-dark-800 p-8 rounded-2xl border border-dark-700 shadow-xl space-y-8 text-gray-200">

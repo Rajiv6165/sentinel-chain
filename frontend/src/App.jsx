@@ -115,7 +115,7 @@ function App() {
               )}
 
               {!fullScanLoading && fullScanResult && (
-                <FullScanResults result={fullScanResult} />
+                <FullScanResults result={fullScanResult.results} jobId={fullScanResult.jobId} />
               )}
             </>
           )}

@@ -1,0 +1,61 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "Sentinel-Chain-SBOM",
+  "documentNamespace": "http://spdx.org/spdxdocs/sentinel-chain-78c18aa5-7909-44c4-9dd5-b76eb297f563",
+  "creationInfo": {
+    "creators": [
+      "Tool: Sentinel-Chain-1.0.0"
+    ],
+    "created": "2026-09-15T19:54:17.580376Z"
+  },
+  "packages": [
+    {
+      "name": "requsts",
+      "SPDXID": "SPDXRef-Package-requsts-1.0.0",
+      "versionInfo": "1.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/requsts@1.0.0"
+        }
+      ]
+    },
+    {
+      "name": "lodsh",
+      "SPDXID": "SPDXRef-Package-lodsh-1.0.0",
+      "versionInfo": "1.0.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:npm/lodsh@1.0.0"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relatedSpdxElement": "SPDXRef-Package-requsts-1.0.0",
+      "relationshipType": "DESCRIBES"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relatedSpdxElement": "SPDXRef-Package-lodsh-1.0.0",
+      "relationshipType": "DESCRIBES"
+    }
+  ]
+}
