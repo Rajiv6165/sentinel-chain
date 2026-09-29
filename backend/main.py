@@ -16,6 +16,7 @@ from utils.llm_narrative import generate_narrative
 from utils.epss import get_epss_score
 from utils.parser import parse_dependencies, parse_dependencies_with_versions
 from utils.sbom.generator import generate_cyclonedx, generate_spdx, generate_cyclonedx_vex
+from utils.signing import generate_attestation, sign_data
 import tempfile
 import zipfile
 import shutil
@@ -311,3 +312,41 @@ async def get_sbom(job_id: str, format: str = "cyclonedx"):
         return generate_cyclonedx_vex(ecosystem, deps, findings)
     else:
         raise HTTPException(status_code=400, detail="Invalid format. Supported formats: cyclonedx, spdx, vex")
+
+@app.get("/api/sbom/{job_id}/attestation")
+async def get_attestation(job_id: str, sign: bool = False):
+    if job_id not in full_scan_jobs:
+        raise HTTPException(status_code=404, detail="Job not found")
+        
+    job = full_scan_jobs[job_id]
+    if job.get("status") != "completed":
+        raise HTTPException(status_code=400, detail="Scan not completed yet")
+        
+    deps = job.get("dependencies", {})
+    ecosystem = job.get("ecosystem", "generic")
+    findings = job.get("result", [])
+    
+    cdx_sbom = generate_cyclonedx(ecosystem, deps, findings)
+    report = {"scanned_count": len(deps), "findings": findings}
+    
+    # Generate attestation
+    attestation = generate_attestation(
+        repo_path="uploaded_archive.zip",
+        sbom_content=cdx_sbom,
+        report_content=report,
+        engines_run=["typosquat", "reachability", "sandbox"]
+    )
+    
+    response = {"attestation": attestation}
+    
+    if sign:
+        try:
+            # Try to sign the attestation
+            attestation_bytes = json.dumps(attestation, sort_keys=True).encode('utf-8')
+            # This might block if interactive auth is triggered
+            bundle = sign_data(attestation_bytes)
+            response["signature"] = json.loads(bundle.to_json())
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Signing failed: {str(e)}")
+            
+    return response

@@ -1,10 +1,10 @@
 # Sentinel-Chain
 
-A modern supply-chain security platform that proves exploitability rather than just flagging on package presence. Sentinel-Chain combines call-graph reachability analysis, sandboxed behavioral detection for malicious packages, typosquat detection, and AI-generated attack narratives into a single unified risk score per dependency.
+A modern supply-chain security platform that proves exploitability rather than just flagging on package presence. Sentinel-Chain combines call-graph reachability analysis, sandboxed behavioral detection for malicious packages, typosquat detection, AI-generated attack narratives, SBOM generation, and cryptographic attestation using Sigstore into a single unified risk score per dependency.
 
 ## Architecture & Phases
 
-Sentinel-Chain is built in four distinct analytical phases, culminating in a single unified dashboard.
+Sentinel-Chain is built in eight distinct analytical phases, culminating in a single unified dashboard and cryptographically verified reports.
 
 ```mermaid
 graph TD
@@ -31,6 +31,21 @@ Runs the package installation inside an isolated Docker container and monitors s
 
 ### Phase 4: Unified Risk Aggregator & LLM Narratives
 Combines the findings from all three engines into a single weighted risk score (Low, Medium, High, Critical). It queries the Anthropic API (Claude 3.5 Sonnet) to generate 2-4 sentence plain-English explanations grounding the risk in the actual technical evidence, making the reports highly readable for non-security stakeholders.
+
+### Phase 5: Language-Agnostic Call Graph Interface
+Extends the reachability engine using an abstracted, language-agnostic interface allowing unified analysis of multiple languages via Tree-sitter without duplicating core logic.
+
+### Phase 6: CLI & GitHub Action CI Gating
+Provides a standalone CLI for automated pipeline integration and a GitHub Action that generates PR comments. It allows CI/CD to break builds dynamically based on severity thresholds (e.g. `fail-on-severity="critical"`).
+
+### Phase 7: SBOM & VEX Generation
+Generates strict, schema-validated Software Bill of Materials (SBOMs) in both CycloneDX and SPDX formats, and exports standalone Vulnerability Exploitability eXchange (VEX) documents based on reachability data.
+
+### Phase 8: Cryptographic Attestation & Sigstore Signing
+To close the loop on trust, Phase 8 introduces **keyless signing** using [Sigstore](https://www.sigstore.dev/). It cryptographically signs the generated SBOMs and scan results, generating a standard in-toto/SLSA provenance attestation proving what was scanned, when, and by what.
+
+**What problem does this solve?**
+Without cryptographic signing, anyone could forge a report claiming "Sentinel-Chain scanned this and found no issues." By using Sigstore, Sentinel-Chain binds the scan results to an identity (like a GitHub Actions OIDC token in CI, or a developer's identity locally) and records it to a public, immutable transparency log (Rekor). Anyone can independently verify the artifact using our `sentinel-chain verify <report> <signature>` command or Sigstore's public tooling. This provides tamper-evident proof that the security claims are authentic.
 
 ## Tech Stack
 - **Backend:** Python, FastAPI, Uvicorn, Tree-sitter, NetworkX, Docker API, Anthropic SDK
@@ -76,3 +91,14 @@ npm run dev
 
 ## Dashboard & PDF Export
 Navigate to the **Unified Scan (Phase 4)** tab to upload a project `.zip` file. Sentinel-Chain will orchestrate all engines, build the unified risk view, and allow you to export the findings as a clean PDF report for stakeholders.
+You can also generate an SLSA provenance attestation directly from the UI and cryptographically sign your scan using a keyless Sigstore OIDC flow.
+
+## CLI Usage (Sigstore & CI)
+Run the scanner in CI/CD or locally via CLI. Use the `--sign` flag to auto-sign reports.
+```bash
+python -m backend.cli --path . --output report.json --generate-sbom --sign
+```
+To verify a signed artifact against the Rekor transparency log independently:
+```bash
+python -m backend.cli verify report.json report.json.sigstore.json
+```

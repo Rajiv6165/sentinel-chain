@@ -18,14 +18,31 @@ from utils.aggregator import aggregate_risk_scores
 from utils.llm_narrative import generate_narrative
 from utils.epss import get_epss_score
 from utils.markdown_formatter import format_markdown_summary
+from utils.signing import sign_file, verify_file, generate_attestation
 
 async def run_cli():
+    if len(sys.argv) >= 2 and sys.argv[1] == "verify":
+        parser = argparse.ArgumentParser(description="Verify a Sentinel-Chain scan signature")
+        parser.add_argument("artifact", help="Path to the artifact (e.g. report.json)")
+        parser.add_argument("signature", help="Path to the signature bundle (e.g. report.json.sigstore.json)")
+        args = parser.parse_args(sys.argv[2:])
+        
+        print(f"Verifying {args.artifact} against {args.signature}...")
+        success, message = verify_file(args.artifact, args.signature)
+        if success:
+            print(f"✅ {message}")
+            sys.exit(0)
+        else:
+            print(f"❌ Verification failed: {message}")
+            sys.exit(1)
+
     parser = argparse.ArgumentParser(description="Sentinel-Chain CLI Scanner")
     parser.add_argument("--path", required=True, help="Path to the repository to scan")
     parser.add_argument("--output", help="Path to save JSON output")
     parser.add_argument("--fail-on-severity", default="critical", choices=["none", "low", "medium", "high", "critical"], help="Exit with non-zero code if findings meet or exceed this severity")
     parser.add_argument("--enable-sandbox", action="store_true", help="Enable Phase 3 sandbox scanning (requires Docker)")
     parser.add_argument("--generate-sbom", action="store_true", help="Generate SBOMs (CycloneDX and SPDX) and VEX along with the scan results")
+    parser.add_argument("--sign", action="store_true", help="Sign the generated outputs (SBOM, report) using Sigstore and generate a SLSA attestation")
     
     args = parser.parse_args()
     
@@ -128,6 +145,40 @@ async def run_cli():
             json.dump(vex, f, indent=2)
             
         print("\n📄 Generated SBOM and VEX files in the current directory.")
+        
+    if args.sign:
+        engines = ["typosquat", "reachability"]
+        if args.enable_sandbox:
+            engines.append("sandbox")
+        
+        # Generate attestation
+        sbom_content = None
+        if args.generate_sbom and os.path.exists("sbom.cyclonedx.json"):
+            with open("sbom.cyclonedx.json", "r", encoding="utf-8") as f:
+                sbom_content = f.read()
+                
+        report_content = None
+        if args.output and os.path.exists(args.output):
+            with open(args.output, "r", encoding="utf-8") as f:
+                report_content = f.read()
+                
+        attestation = generate_attestation(repo_path, sbom_content, report_content, engines)
+        with open("attestation.json", "w", encoding="utf-8") as f:
+            json.dump(attestation, f, indent=2)
+        print("\n📄 Generated SLSA provenance attestation (attestation.json).")
+        
+        # Sign files
+        files_to_sign = ["attestation.json"]
+        if args.output:
+            files_to_sign.append(args.output)
+        if args.generate_sbom:
+            files_to_sign.extend(["sbom.cyclonedx.json", "sbom.spdx.json"])
+            
+        print("\n🔐 Signing files with Sigstore...")
+        for file in files_to_sign:
+            if os.path.exists(file):
+                sig_path = sign_file(file)
+                print(f"  Signed {file} -> {sig_path}")
             
     # Exit code logic
     risk_levels = {"none": -1, "safe": 0, "low": 1, "medium": 2, "high": 3, "critical": 4}

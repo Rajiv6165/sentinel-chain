@@ -1,8 +1,27 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import html2pdf from 'html2pdf.js';
 
 export default function FullScanResults({ result, jobId }) {
   const reportRef = useRef();
+  const [attestationData, setAttestationData] = useState(null);
+  const [isSigning, setIsSigning] = useState(false);
+  const [signError, setSignError] = useState('');
+
+  const handleSignProvenance = async () => {
+    if (!jobId) return;
+    setIsSigning(true);
+    setSignError('');
+    try {
+      const res = await fetch(`http://localhost:8000/api/sbom/${jobId}/attestation?sign=true`);
+      if (!res.ok) throw new Error('Failed to generate signed attestation');
+      const data = await res.json();
+      setAttestationData(data);
+    } catch (err) {
+      setSignError(err.message);
+    } finally {
+      setIsSigning(false);
+    }
+  };
 
   const handleExportPDF = () => {
     const element = reportRef.current;
@@ -56,11 +75,42 @@ export default function FullScanResults({ result, jobId }) {
               >
                 VEX Document
               </a>
+              {!attestationData ? (
+                <button 
+                  onClick={handleSignProvenance}
+                  disabled={isSigning}
+                  className="px-3 py-2 bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
+                >
+                  {isSigning ? 'Signing...' : 'Sign Provenance'}
+                </button>
+              ) : (
+                <div className="relative group flex items-center">
+                  <div className="px-3 py-2 bg-green-500/20 border border-green-500/50 text-green-400 text-sm font-medium rounded-lg flex items-center gap-2 cursor-pointer">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Verified
+                  </div>
+                  {attestationData.signature?.hashedrekord && (
+                    <div className="absolute right-0 top-full mt-2 w-72 bg-dark-800 border border-dark-700 rounded-lg p-4 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none group-hover:pointer-events-auto">
+                      <p className="text-xs text-gray-400 mb-2 font-mono break-all">
+                        Log Index: {attestationData.signature.hashedrekord.logIndex}
+                      </p>
+                      <a 
+                        href={`https://search.sigstore.dev/?logIndex=${attestationData.signature.hashedrekord.logIndex}`}
+                        target="_blank" rel="noopener noreferrer"
+                        className="text-brand-400 hover:text-brand-300 text-xs flex items-center gap-1"
+                      >
+                        View in Rekor Log
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                      </a>
+                    </div>
+                  )}
+                </div>
+              )}
             </>
           )}
           <button 
             onClick={handleExportPDF}
-            className="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white font-medium rounded-lg transition-colors flex items-center gap-2 ml-2"
+            className="px-4 py-2 bg-dark-700 hover:bg-dark-600 text-white font-medium rounded-lg transition-colors flex items-center gap-2 ml-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
             Export PDF
