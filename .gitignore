@@ -222,3 +222,12 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Scan output artifacts (generated, not source)
+*.sigstore.json
+attestation.json
+sbom.*.json
+vex.*.json
+test_report.json
+report.json
+backend/scratch_*.py
