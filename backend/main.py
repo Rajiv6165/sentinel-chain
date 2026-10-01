@@ -17,6 +17,8 @@ from utils.epss import get_epss_score
 from utils.parser import parse_dependencies, parse_dependencies_with_versions
 from utils.sbom.generator import generate_cyclonedx, generate_spdx, generate_cyclonedx_vex
 from utils.signing import generate_attestation, sign_data
+from utils.license import load_policy, normalize_license, categorize_license, evaluate_compliance
+from utils.license.fetcher import get_package_license
 import tempfile
 import zipfile
 import shutil
@@ -224,16 +226,54 @@ async def process_full_scan(job_id: str, extract_dir: str, manifest_path: str):
             # Generate Narratives
             if unified["typosquat"]:
                 unified["typosquat"]["narrative"] = await generate_narrative(pkg_name, "typosquat", unified["typosquat"])
-            if unified["cves"]:
+            if unified.get("cves"):
                 for c in unified["cves"]:
                     c["narrative"] = await generate_narrative(pkg_name, "reachability", c)
-            if unified["sandbox"]:
+            if unified.get("sandbox"):
                 unified["sandbox"]["narrative"] = await generate_narrative(pkg_name, "sandbox", unified["sandbox"])
                 
             aggregated_results.append(unified)
             
+        # 4. License Compliance (Phase 9)
+        policy = load_policy(extract_dir)
+        finding_map = {f["package_name"]: f for f in aggregated_results}
+        
+        for pkg_name, version in deps_with_versions.items():
+            if pkg_name not in finding_map:
+                finding_map[pkg_name] = {
+                    "package_name": pkg_name, 
+                    "risk_level": "low", 
+                    "overall_risk": "LOW",
+                    "typosquat": None,
+                    "cves": [],
+                    "sandbox": None
+                }
+                
+            raw_lic = await get_package_license(ecosystem, pkg_name, version)
+            spdx_id = normalize_license(raw_lic)
+            cat = categorize_license(spdx_id)
+            compliance = evaluate_compliance(spdx_id, cat, policy)
+            
+            finding_map[pkg_name]["license"] = {
+                "raw": raw_lic,
+                "spdx_id": spdx_id,
+                "category": cat,
+                "status": compliance["status"],
+                "reason": compliance["reason"]
+            }
+            
+            # Update overall risk based on license compliance
+            if compliance["status"] == "fail":
+                finding_map[pkg_name]["overall_risk"] = "CRITICAL"
+                finding_map[pkg_name]["risk_level"] = "critical"
+            elif compliance["status"] == "warn" and finding_map[pkg_name]["overall_risk"] == "LOW":
+                finding_map[pkg_name]["overall_risk"] = "MEDIUM"
+                finding_map[pkg_name]["risk_level"] = "medium"
+
+        final_results = list(finding_map.values())
+        
         full_scan_jobs[job_id]["status"] = "completed"
-        full_scan_jobs[job_id]["result"] = aggregated_results
+        full_scan_jobs[job_id]["result"] = final_results
         
     except Exception as e:
         full_scan_jobs[job_id]["status"] = "failed"

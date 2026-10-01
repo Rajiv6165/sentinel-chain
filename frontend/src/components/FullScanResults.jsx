@@ -47,6 +47,11 @@ export default function FullScanResults({ result, jobId }) {
     }
   };
 
+  const permissiveCount = result.filter(p => p.license?.category === 'Permissive').length;
+  const copyleftCount = result.filter(p => ['Weak Copyleft', 'Strong Copyleft'].includes(p.license?.category)).length;
+  const unknownLicenseCount = result.filter(p => ['Unknown', 'Unknown/Proprietary'].includes(p.license?.category)).length;
+  const hasLicenseData = result.some(p => p.license);
+
   return (
     <div className="mt-8">
       <div className="flex justify-between items-center mb-6">
@@ -124,6 +129,23 @@ export default function FullScanResults({ result, jobId }) {
           <p className="text-gray-400">Automated Supply Chain Security Analysis</p>
         </div>
 
+        {hasLicenseData && (
+          <div className="bg-dark-900 rounded-xl p-6 border border-dark-700 mb-8 flex justify-around">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-green-400">{permissiveCount}</div>
+              <div className="text-sm text-gray-400 uppercase tracking-wide">Permissive</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-orange-400">{copyleftCount}</div>
+              <div className="text-sm text-gray-400 uppercase tracking-wide">Copyleft</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-yellow-400">{unknownLicenseCount}</div>
+              <div className="text-sm text-gray-400 uppercase tracking-wide">Unknown</div>
+            </div>
+          </div>
+        )}
+
         {result.length === 0 ? (
           <div className="text-center p-8 bg-dark-900 rounded-xl">
             <p className="text-xl text-gray-400">No risks detected across any scanned dependencies.</p>
@@ -153,6 +175,25 @@ export default function FullScanResults({ result, jobId }) {
                     {pkg.typosquat.narrative && (
                       <div className="mt-3 p-3 bg-brand-900/20 border border-brand-500/30 rounded text-brand-200 text-sm italic">
                         <strong>AI Analysis:</strong> {pkg.typosquat.narrative}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* License Section */}
+                {pkg.license && (
+                  <div className="bg-dark-800/50 p-4 rounded-lg border border-dark-700">
+                    <h4 className="font-semibold text-lg mb-2 text-white flex items-center gap-2">
+                      <span className={`w-2 h-2 rounded-full ${pkg.license.status === 'fail' ? 'bg-red-500' : pkg.license.status === 'warn' ? 'bg-yellow-500' : 'bg-green-500'}`}></span> License Compliance
+                    </h4>
+                    <p className="text-sm text-gray-400 mb-2">
+                      SPDX ID: <span className="font-mono text-gray-300">{pkg.license.spdx_id}</span> ({pkg.license.category})
+                      <br/>
+                      Policy Status: <span className={`font-bold ${pkg.license.status === 'fail' ? 'text-red-400' : pkg.license.status === 'warn' ? 'text-yellow-400' : 'text-green-400'}`}>{pkg.license.status.toUpperCase()}</span>
+                    </p>
+                    {pkg.license.status !== 'pass' && (
+                      <div className="mt-2 p-2 bg-dark-900 rounded font-mono text-xs text-gray-400">
+                        {pkg.license.reason}
                       </div>
                     )}
                   </div>

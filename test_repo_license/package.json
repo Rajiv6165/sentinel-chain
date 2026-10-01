@@ -1,0 +1,9 @@
+{
+  "name": "test-license-compliance",
+  "version": "1.0.0",
+  "dependencies": {
+    "lodash": "4.17.21",
+    "gpl-test-package": "1.0.0",
+    "unknown-test-package": "1.0.0"
+  }
+}

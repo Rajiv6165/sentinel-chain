@@ -46,6 +46,8 @@ def format_markdown_summary(results: list, scanned_count: int) -> str:
             issues.append(f"{len(r['cves'])} CVE(s)")
         if r.get("sandbox") and r["sandbox"].get("score", 0) > 0:
             issues.append("Suspicious Behavior")
+        if r.get("license") and r["license"].get("status") in ["warn", "fail"]:
+            issues.append(f"License ({r['license'].get('status')})")
             
         issue_str = ", ".join(issues) if issues else "None"
         
@@ -60,6 +62,29 @@ def format_markdown_summary(results: list, scanned_count: int) -> str:
         "</details>",
         ""
     ])
+    
+    # License Summary
+    license_results = [r for r in results if "license" in r]
+    if license_results:
+        permissive = sum(1 for r in license_results if r["license"].get("category") == "Permissive")
+        copyleft = sum(1 for r in license_results if r["license"].get("category") in ["Weak Copyleft", "Strong Copyleft"])
+        unknown = sum(1 for r in license_results if r["license"].get("category") in ["Unknown", "Unknown/Proprietary"])
+        
+        md.extend([
+            "### ⚖️ License Compliance Summary",
+            f"- **Permissive:** {permissive}",
+            f"- **Copyleft:** {copyleft}",
+            f"- **Unknown/Proprietary:** {unknown}",
+            ""
+        ])
+        
+        violating = [r for r in license_results if r["license"].get("status") in ["fail", "warn"]]
+        if violating:
+            md.append("**Violations / Warnings:**")
+            for v in violating:
+                status = "🔴 FAIL" if v["license"].get("status") == "fail" else "🟡 WARN"
+                md.append(f"- `{v['package_name']}` ({v['license'].get('spdx_id')}): {status} - {v['license'].get('reason')}")
+            md.append("")
     
     # Add LLM narratives if present
     narratives = []

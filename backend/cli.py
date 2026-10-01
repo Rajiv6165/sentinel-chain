@@ -123,6 +123,46 @@ async def run_cli():
                 
         aggregated_results.append(unified)
         
+    # Phase 9: License Compliance
+    from utils.license import load_policy, normalize_license, categorize_license, evaluate_compliance
+    from utils.license.fetcher import get_package_license
+    
+    policy = load_policy(repo_path)
+    finding_map = {f["package_name"]: f for f in aggregated_results}
+    
+    for pkg_name, version in deps_with_versions.items():
+        if pkg_name not in finding_map:
+            finding_map[pkg_name] = {
+                "package_name": pkg_name, 
+                "risk_level": "low", 
+                "overall_risk": "LOW",
+                "typosquat": None,
+                "cves": [],
+                "sandbox": None
+            }
+            
+        raw_lic = await get_package_license(ecosystem, pkg_name, version)
+        spdx_id = normalize_license(raw_lic)
+        cat = categorize_license(spdx_id)
+        compliance = evaluate_compliance(spdx_id, cat, policy)
+        
+        finding_map[pkg_name]["license"] = {
+            "raw": raw_lic,
+            "spdx_id": spdx_id,
+            "category": cat,
+            "status": compliance["status"],
+            "reason": compliance["reason"]
+        }
+        
+        if compliance["status"] == "fail":
+            finding_map[pkg_name]["overall_risk"] = "CRITICAL"
+            finding_map[pkg_name]["risk_level"] = "critical"
+        elif compliance["status"] == "warn" and finding_map[pkg_name]["overall_risk"] == "LOW":
+            finding_map[pkg_name]["overall_risk"] = "MEDIUM"
+            finding_map[pkg_name]["risk_level"] = "medium"
+            
+    aggregated_results = list(finding_map.values())
+        
     # Generate Output
     md_summary = format_markdown_summary(aggregated_results, len(dependencies))
     

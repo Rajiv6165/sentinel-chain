@@ -16,6 +16,8 @@ graph TD
     C --> E
     D --> E
     
+    H[Phase 9: License Compliance Engine] --> E
+    
     E --> F[LLM Narrative Generator]
     F --> G[Unified Dashboard & PDF Export]
 ```
@@ -43,6 +45,10 @@ Generates strict, schema-validated Software Bill of Materials (SBOMs) in both Cy
 
 ### Phase 8: Cryptographic Attestation & Sigstore Signing
 To close the loop on trust, Phase 8 introduces **keyless signing** using [Sigstore](https://www.sigstore.dev/). It cryptographically signs the generated SBOMs and scan results, generating a standard in-toto/SLSA provenance attestation proving what was scanned, when, and by what.
+
+### Phase 9: License Compliance Analysis
+Adds license compliance as a distinct risk category. The engine automatically normalizes messy real-world package licenses into proper SPDX identifiers, categorizes them by risk (Permissive, Weak/Strong Copyleft), and evaluates them against a customizable policy-as-code file (`.sentinel-chain/license-policy.yml`). This engine flags high-risk license combinations (like GPL pulled into proprietary projects) and integrates directly into the unified risk score and CI gating.
+*Disclaimer: The automated license analysis is a compliance AID, not a legal guarantee. Real legal risk decisions should involve an actual lawyer for anything serious.*
 
 **What problem does this solve?**
 Without cryptographic signing, anyone could forge a report claiming "Sentinel-Chain scanned this and found no issues." By using Sigstore, Sentinel-Chain binds the scan results to an identity (like a GitHub Actions OIDC token in CI, or a developer's identity locally) and records it to a public, immutable transparency log (Rekor). Anyone can independently verify the artifact using our `sentinel-chain verify <report> <signature>` command or Sigstore's public tooling. This provides tamper-evident proof that the security claims are authentic.

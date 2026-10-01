@@ -44,6 +44,12 @@ def generate_cyclonedx(ecosystem: str, deps: dict[str, str], findings: list[dict
             if finding.get("sandbox"):
                 risk = finding["sandbox"].get("risk_level", "low")
                 properties.append({"name": "sentinel-chain:sandbox_risk", "value": risk})
+                
+            # License
+            if "license" in finding:
+                lic_info = finding["license"]
+                properties.append({"name": "sentinel-chain:license_status", "value": lic_info["status"]})
+                properties.append({"name": "sentinel-chain:license_category", "value": lic_info["category"]})
 
         component = {
             "type": "library",
@@ -51,6 +57,13 @@ def generate_cyclonedx(ecosystem: str, deps: dict[str, str], findings: list[dict
             "version": version,
             "purl": _get_purl(ecosystem, pkg_name, version),
         }
+        
+        if finding and "license" in finding:
+            lic_info = finding["license"]
+            if lic_info["spdx_id"] != "UNKNOWN":
+                component["licenses"] = [{"license": {"id": lic_info["spdx_id"]}}]
+            else:
+                component["licenses"] = [{"license": {"name": "UNKNOWN"}}]
         
         if properties:
             component["properties"] = properties
@@ -84,7 +97,11 @@ def generate_spdx(ecosystem: str, deps: dict[str, str], findings: list[dict]) ->
     Generates an SPDX 2.3 JSON SBOM.
     """
     packages = []
+    
+    findings_map = {f.get("package_name"): f for f in findings}
+    
     for pkg_name, version in deps.items():
+        finding = findings_map.get(pkg_name)
         spdx_id = f"SPDXRef-Package-{pkg_name.replace('@', '').replace('/', '-')}-{version}"
         package = {
             "name": pkg_name,
@@ -92,8 +109,8 @@ def generate_spdx(ecosystem: str, deps: dict[str, str], findings: list[dict]) ->
             "versionInfo": version,
             "downloadLocation": "NOASSERTION",
             "filesAnalyzed": False,
-            "licenseConcluded": "NOASSERTION",
-            "licenseDeclared": "NOASSERTION",
+            "licenseConcluded": finding.get("license", {}).get("spdx_id", "NOASSERTION") if finding else "NOASSERTION",
+            "licenseDeclared": finding.get("license", {}).get("spdx_id", "NOASSERTION") if finding else "NOASSERTION",
             "copyrightText": "NOASSERTION",
             "externalRefs": [
                 {
