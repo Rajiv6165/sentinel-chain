@@ -23,6 +23,10 @@ inputs:
     description: 'Path in the repository to scan (defaults to root)'
     required: false
     default: '.'
+  project-name:
+    description: 'Optional project name for persistent scan history and trend tracking'
+    required: false
+    default: ''
 
 runs:
   using: 'docker'
@@ -31,6 +35,7 @@ runs:
     - ${{ inputs.scan-path }}
     - ${{ inputs.fail-on-severity }}
     - ${{ inputs.enable-sandbox }}
+    - ${{ inputs.project-name }}
   env:
     ANTHROPIC_API_KEY: ${{ inputs.anthropic-api-key }}
     GITHUB_TOKEN: ${{ inputs.github-token }}

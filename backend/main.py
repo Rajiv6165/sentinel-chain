@@ -1,12 +1,12 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks
+from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks, Form
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import json
 import os
 import uuid
-from typing import List
+from typing import List, Optional
 
-from utils.parser import parse_dependencies
+from utils.parser import parse_dependencies, parse_dependencies_with_versions
 from utils.scoring import score_dependencies
 from utils.reachability import analyze_reachability
 from utils.sandbox import run_sandbox_install
@@ -14,30 +14,33 @@ from utils.behavior_scoring import analyze_behavior
 from utils.aggregator import aggregate_risk_scores
 from utils.llm_narrative import generate_narrative
 from utils.epss import get_epss_score
-from utils.parser import parse_dependencies, parse_dependencies_with_versions
 from utils.sbom.generator import generate_cyclonedx, generate_spdx, generate_cyclonedx_vex
 from utils.signing import generate_attestation, sign_data
 from utils.license import load_policy, normalize_license, categorize_license, evaluate_compliance
 from utils.license.fetcher import get_package_license
+from utils.diff import diff_scans
+from db.session import is_db_enabled
+from db.migrations import run_migrations
+from db.job_store import job_store
 import tempfile
 import zipfile
 import shutil
 
-app = FastAPI(title="Sentinel-chain Typosquat Detector")
-
-# In-memory job store for sandbox scans
-sandbox_jobs = {}
-full_scan_jobs = {}
+app = FastAPI(title="Sentinel-chain Supply Chain Security Platform")
 
 class SandboxScanRequest(BaseModel):
     ecosystem: str
     package_name: str
     version: str = None
 
+class ProjectCreateRequest(BaseModel):
+    name: str
+    description: Optional[str] = None
+
 # Allow CORS for frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify the actual frontend URL
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -48,7 +51,7 @@ TOP_PACKAGES = []
 TOP_PACKAGES_PATH = os.path.join(os.path.dirname(__file__), "data", "top_packages.json")
 
 @app.on_event("startup")
-async def load_data():
+async def startup_event():
     global TOP_PACKAGES
     if os.path.exists(TOP_PACKAGES_PATH):
         try:
@@ -60,9 +63,22 @@ async def load_data():
     else:
         print(f"Top packages file not found at {TOP_PACKAGES_PATH}")
 
+    if is_db_enabled():
+        try:
+            run_migrations()
+            print("✅ Database persistence enabled and migrations applied.")
+        except Exception as e:
+            print(f"⚠️ Warning: Failed to run migrations on startup: {e}")
+    else:
+        print("ℹ️ Persistence disabled (DATABASE_URL not set). Using in-memory job store.")
+
 @app.get("/api/health")
 async def health_check():
-    return {"status": "ok", "loaded_packages": len(TOP_PACKAGES)}
+    return {
+        "status": "ok",
+        "loaded_packages": len(TOP_PACKAGES),
+        "db_enabled": is_db_enabled()
+    }
 
 @app.post("/api/scan")
 async def scan_dependencies(file: UploadFile = File(...)):
@@ -106,7 +122,7 @@ async def reachability_scan(file: UploadFile = File(...)):
         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
             zip_ref.extractall(extract_dir)
             
-        # 1. Find package.json or requirements.txt
+        # Find package.json or requirements.txt
         manifest_path = None
         manifest_content = ""
         for root, _, files in os.walk(extract_dir):
@@ -125,10 +141,8 @@ async def reachability_scan(file: UploadFile = File(...)):
             
         dependencies = parse_dependencies(os.path.basename(manifest_path), manifest_content)
         
-        # 2. Get Phase 1 findings
         findings = score_dependencies(dependencies, TOP_PACKAGES)
         
-        # 3. Add Phase 2 reachability analysis
         if findings:
             findings = await analyze_reachability(extract_dir, findings)
             
@@ -141,18 +155,17 @@ async def reachability_scan(file: UploadFile = File(...)):
     finally:
         shutil.rmtree(temp_dir, ignore_errors=True)
 
+# ==========================
+# Sandbox Scan Endpoints
+# ==========================
 async def process_sandbox_scan(job_id: str, ecosystem: str, package_name: str, version: str):
     try:
-        sandbox_jobs[job_id]["status"] = "running"
+        job_store.update_sandbox_job_running(job_id)
         sandbox_result = await run_sandbox_install(ecosystem, package_name, version)
         analysis = analyze_behavior(sandbox_result)
-        
-        sandbox_jobs[job_id]["status"] = "completed"
-        sandbox_jobs[job_id]["result"] = analysis
-        sandbox_jobs[job_id]["raw"] = sandbox_result
+        job_store.complete_sandbox_job(job_id, analysis, sandbox_result)
     except Exception as e:
-        sandbox_jobs[job_id]["status"] = "failed"
-        sandbox_jobs[job_id]["error"] = str(e)
+        job_store.fail_sandbox_job(job_id, str(e))
 
 @app.post("/api/sandbox-scan")
 async def start_sandbox_scan(req: SandboxScanRequest, background_tasks: BackgroundTasks):
@@ -160,12 +173,7 @@ async def start_sandbox_scan(req: SandboxScanRequest, background_tasks: Backgrou
         raise HTTPException(status_code=400, detail="ecosystem must be 'npm' or 'pypi'")
         
     job_id = str(uuid.uuid4())
-    sandbox_jobs[job_id] = {
-        "status": "pending",
-        "package": req.package_name,
-        "version": req.version,
-        "ecosystem": req.ecosystem
-    }
+    job_store.create_sandbox_job(job_id, req.ecosystem, req.package_name, req.version)
     
     background_tasks.add_task(process_sandbox_scan, job_id, req.ecosystem, req.package_name, req.version)
     
@@ -173,14 +181,16 @@ async def start_sandbox_scan(req: SandboxScanRequest, background_tasks: Backgrou
 
 @app.get("/api/sandbox-scan/{job_id}")
 async def get_sandbox_scan_status(job_id: str):
-    if job_id not in sandbox_jobs:
+    job = job_store.get_sandbox_job(job_id)
+    if not job:
         raise HTTPException(status_code=404, detail="Job not found")
-        
-    return sandbox_jobs[job_id]
+    return job
 
+# ==========================
+# Full Scan Endpoints
+# ==========================
 async def process_full_scan(job_id: str, extract_dir: str, manifest_path: str):
     try:
-        full_scan_jobs[job_id]["status"] = "running"
         ecosystem = "npm" if "package.json" in manifest_path else "pypi"
         
         with open(manifest_path, "r", encoding="utf-8") as f:
@@ -188,22 +198,19 @@ async def process_full_scan(job_id: str, extract_dir: str, manifest_path: str):
             
         dependencies = parse_dependencies(os.path.basename(manifest_path), manifest_content)
         deps_with_versions = parse_dependencies_with_versions(os.path.basename(manifest_path), manifest_content)
-        full_scan_jobs[job_id]["dependencies"] = deps_with_versions
-        full_scan_jobs[job_id]["ecosystem"] = ecosystem
+        
+        job_store.update_full_scan_job_running(job_id, deps_with_versions, ecosystem)
         
         # 1. Typosquat (Phase 1)
         phase1_findings = score_dependencies(dependencies, TOP_PACKAGES)
         
         # 2. Reachability & EPSS (Phase 2)
-        # Re-using the Phase 1 findings as the target list for Phase 2 as per current implementation
         if phase1_findings:
             phase2_findings = await analyze_reachability(extract_dir, phase1_findings)
         else:
             phase2_findings = []
             
         # 3. Sandbox (Phase 3)
-        # To avoid scanning 500 dependencies and timing out the demo, we'll only deep-scan the flagged ones
-        # In a real enterprise product, this would be distributed across a cluster.
         aggregated_results = []
         for f in phase2_findings:
             pkg_name = f.get("package_name")
@@ -224,7 +231,7 @@ async def process_full_scan(job_id: str, extract_dir: str, manifest_path: str):
             unified = aggregate_risk_scores(pkg_name, f, [f], sandbox_finding)
             
             # Generate Narratives
-            if unified["typosquat"]:
+            if unified.get("typosquat"):
                 unified["typosquat"]["narrative"] = await generate_narrative(pkg_name, "typosquat", unified["typosquat"])
             if unified.get("cves"):
                 for c in unified["cves"]:
@@ -262,7 +269,6 @@ async def process_full_scan(job_id: str, extract_dir: str, manifest_path: str):
                 "reason": compliance["reason"]
             }
             
-            # Update overall risk based on license compliance
             if compliance["status"] == "fail":
                 finding_map[pkg_name]["overall_risk"] = "CRITICAL"
                 finding_map[pkg_name]["risk_level"] = "critical"
@@ -272,17 +278,19 @@ async def process_full_scan(job_id: str, extract_dir: str, manifest_path: str):
 
         final_results = list(finding_map.values())
         
-        full_scan_jobs[job_id]["status"] = "completed"
-        full_scan_jobs[job_id]["result"] = final_results
+        job_store.complete_full_scan_job(job_id, final_results, deps_with_versions, ecosystem)
         
     except Exception as e:
-        full_scan_jobs[job_id]["status"] = "failed"
-        full_scan_jobs[job_id]["error"] = str(e)
+        job_store.fail_full_scan_job(job_id, str(e))
     finally:
         shutil.rmtree(extract_dir, ignore_errors=True)
 
 @app.post("/api/full-scan")
-async def start_full_scan(file: UploadFile = File(...), background_tasks: BackgroundTasks = BackgroundTasks()):
+async def start_full_scan(
+    file: UploadFile = File(...),
+    project_name: Optional[str] = Form(None),
+    background_tasks: BackgroundTasks = BackgroundTasks()
+):
     if not file.filename.endswith(".zip"):
         raise HTTPException(status_code=400, detail="Only .zip files are supported for full scans")
         
@@ -312,11 +320,8 @@ async def start_full_scan(file: UploadFile = File(...), background_tasks: Backgr
             return {"findings": [], "message": "No package.json or requirements.txt found in the repository."}
             
         job_id = str(uuid.uuid4())
-        full_scan_jobs[job_id] = {
-            "status": "pending"
-        }
+        job_store.create_full_scan_job(job_id, project_name=project_name)
         
-        # Pass the extracted directory path to the background task
         background_tasks.add_task(process_full_scan, job_id, temp_dir, manifest_path)
         
         return {"job_id": job_id, "status": "pending"}
@@ -327,49 +332,63 @@ async def start_full_scan(file: UploadFile = File(...), background_tasks: Backgr
 
 @app.get("/api/full-scan/{job_id}")
 async def get_full_scan_status(job_id: str):
-    if job_id not in full_scan_jobs:
+    job = job_store.get_full_scan_job(job_id)
+    if not job:
         raise HTTPException(status_code=404, detail="Job not found")
-    return full_scan_jobs[job_id]
+    return job
 
+# ==========================
+# SBOM & Attestation Endpoints
+# ==========================
 @app.get("/api/sbom/{job_id}")
 async def get_sbom(job_id: str, format: str = "cyclonedx"):
-    if job_id not in full_scan_jobs:
+    job = job_store.get_full_scan_job(job_id)
+    if not job:
         raise HTTPException(status_code=404, detail="Job not found")
         
-    job = full_scan_jobs[job_id]
     if job.get("status") != "completed":
         raise HTTPException(status_code=400, detail="Scan not completed yet")
         
+    cached = job_store.get_artifact(job_id, format)
+    if cached:
+        return cached
+
     deps = job.get("dependencies", {})
     ecosystem = job.get("ecosystem", "generic")
     findings = job.get("result", [])
     
     if format == "cyclonedx":
-        return generate_cyclonedx(ecosystem, deps, findings)
+        doc = generate_cyclonedx(ecosystem, deps, findings)
     elif format == "spdx":
-        return generate_spdx(ecosystem, deps, findings)
+        doc = generate_spdx(ecosystem, deps, findings)
     elif format == "vex":
-        return generate_cyclonedx_vex(ecosystem, deps, findings)
+        doc = generate_cyclonedx_vex(ecosystem, deps, findings)
     else:
         raise HTTPException(status_code=400, detail="Invalid format. Supported formats: cyclonedx, spdx, vex")
+        
+    job_store.save_artifact(job_id, format, doc)
+    return doc
 
 @app.get("/api/sbom/{job_id}/attestation")
 async def get_attestation(job_id: str, sign: bool = False):
-    if job_id not in full_scan_jobs:
+    job = job_store.get_full_scan_job(job_id)
+    if not job:
         raise HTTPException(status_code=404, detail="Job not found")
         
-    job = full_scan_jobs[job_id]
     if job.get("status") != "completed":
         raise HTTPException(status_code=400, detail="Scan not completed yet")
         
+    existing_att = job_store.get_attestation_artifact(job_id)
+    if existing_att and (not sign or existing_att.get("signature")):
+        return existing_att
+
     deps = job.get("dependencies", {})
     ecosystem = job.get("ecosystem", "generic")
     findings = job.get("result", [])
     
-    cdx_sbom = generate_cyclonedx(ecosystem, deps, findings)
+    cdx_sbom = job_store.get_artifact(job_id, "cyclonedx") or generate_cyclonedx(ecosystem, deps, findings)
     report = {"scanned_count": len(deps), "findings": findings}
     
-    # Generate attestation
     attestation = generate_attestation(
         repo_path="uploaded_archive.zip",
         sbom_content=cdx_sbom,
@@ -377,16 +396,61 @@ async def get_attestation(job_id: str, sign: bool = False):
         engines_run=["typosquat", "reachability", "sandbox"]
     )
     
-    response = {"attestation": attestation}
-    
+    signature = None
     if sign:
         try:
-            # Try to sign the attestation
             attestation_bytes = json.dumps(attestation, sort_keys=True).encode('utf-8')
-            # This might block if interactive auth is triggered
             bundle = sign_data(attestation_bytes)
-            response["signature"] = json.loads(bundle.to_json())
+            signature = json.loads(bundle.to_json())
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Signing failed: {str(e)}")
             
+    job_store.save_artifact(job_id, "attestation", attestation, signature=signature)
+    
+    response = {"attestation": attestation}
+    if signature:
+        response["signature"] = signature
     return response
+
+# ==========================
+# History & Trend API
+# ==========================
+@app.get("/api/projects")
+async def get_projects():
+    """List all projects with scan count and latest scan summary."""
+    return job_store.list_projects()
+
+@app.post("/api/projects")
+async def create_project(req: ProjectCreateRequest):
+    """Create or retrieve a project by name."""
+    proj = job_store.get_or_create_project(req.name, req.description)
+    return proj
+
+@app.get("/api/projects/{project_id}/scans")
+async def get_project_scans(project_id: str):
+    """List all historical scans for a project."""
+    return job_store.list_project_scans(project_id)
+
+@app.get("/api/scans/{scan_id}/diff")
+async def get_scan_diff(scan_id: str, against: Optional[str] = None):
+    """
+    Diffs scan_id against another scan.
+    If 'against' is omitted, diffs against the previous completed scan for the project.
+    Returns findings that are new, resolved, or unchanged.
+    """
+    current_scan = job_store.get_full_scan_job(scan_id)
+    if not current_scan:
+        raise HTTPException(status_code=404, detail="Current scan not found")
+        
+    against_scan = None
+    if against:
+        against_scan = job_store.get_full_scan_job(against)
+        if not against_scan:
+            raise HTTPException(status_code=404, detail=f"Comparison scan '{against}' not found")
+    else:
+        proj_ref = current_scan.get("project_id") or current_scan.get("project_name")
+        if proj_ref:
+            against_scan = job_store.get_latest_project_scan(proj_ref, exclude_scan_id=scan_id)
+            
+    diff = diff_scans(current=current_scan, previous=against_scan or [])
+    return diff

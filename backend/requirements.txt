@@ -11,3 +11,6 @@ docker
 anthropic
 pytest-asyncio
 tree-sitter-python
+sqlalchemy
+alembic
+psycopg2-binary

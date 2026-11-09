@@ -50,11 +50,18 @@ To close the loop on trust, Phase 8 introduces **keyless signing** using [Sigsto
 Adds license compliance as a distinct risk category. The engine automatically normalizes messy real-world package licenses into proper SPDX identifiers, categorizes them by risk (Permissive, Weak/Strong Copyleft), and evaluates them against a customizable policy-as-code file (`.sentinel-chain/license-policy.yml`). This engine flags high-risk license combinations (like GPL pulled into proprietary projects) and integrates directly into the unified risk score and CI gating.
 *Disclaimer: The automated license analysis is a compliance AID, not a legal guarantee. Real legal risk decisions should involve an actual lawyer for anything serious.*
 
+### Phase 10: Persistent Scan History & Trend Tracking
+Survives restarts and tracks security posture improvements over time:
+- **PostgreSQL Persistence & Alembic Migrations:** Stores `projects`, `scans`, `findings` (typosquat, reachability, sandbox, license), and `artifacts` (CycloneDX, SPDX, VEX, attestations). Gracefully degrades to in-memory mode when `DATABASE_URL` is not set.
+- **History & Diff API:** `GET /api/projects`, `GET /api/projects/{id}/scans`, and `GET /api/scans/{id}/diff?against=<prev_id>` returning findings categorized as `new`, `resolved`, or `unchanged`.
+- **Trend Dashboard:** Displays risk-score-over-time SVG line charts, historical scan timelines, and an interactive "New Since Last Scan" regression viewer in the Full Report.
+- **CI / Action History Gating:** CLI and GitHub Action support `--project-name` and automatically post PR comments highlighting `"N new findings vs. main branch scan"`.
+
 **What problem does this solve?**
 Without cryptographic signing, anyone could forge a report claiming "Sentinel-Chain scanned this and found no issues." By using Sigstore, Sentinel-Chain binds the scan results to an identity (like a GitHub Actions OIDC token in CI, or a developer's identity locally) and records it to a public, immutable transparency log (Rekor). Anyone can independently verify the artifact using our `sentinel-chain verify <report> <signature>` command or Sigstore's public tooling. This provides tamper-evident proof that the security claims are authentic.
 
 ## Tech Stack
-- **Backend:** Python, FastAPI, Uvicorn, Tree-sitter, NetworkX, Docker API, Anthropic SDK
+- **Backend:** Python, FastAPI, Uvicorn, SQLAlchemy, Alembic, PostgreSQL, Tree-sitter, NetworkX, Docker API, Anthropic SDK
 - **Frontend:** React, Vite, Tailwind CSS, html2pdf.js
 
 ## Running the Application

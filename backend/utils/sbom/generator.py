@@ -46,10 +46,10 @@ def generate_cyclonedx(ecosystem: str, deps: dict[str, str], findings: list[dict
                 properties.append({"name": "sentinel-chain:sandbox_risk", "value": risk})
                 
             # License
-            if "license" in finding:
+            if "license" in finding and isinstance(finding["license"], dict):
                 lic_info = finding["license"]
-                properties.append({"name": "sentinel-chain:license_status", "value": lic_info["status"]})
-                properties.append({"name": "sentinel-chain:license_category", "value": lic_info["category"]})
+                properties.append({"name": "sentinel-chain:license_status", "value": lic_info.get("status", "pass")})
+                properties.append({"name": "sentinel-chain:license_category", "value": lic_info.get("category", "Unknown")})
 
         component = {
             "type": "library",
@@ -76,7 +76,7 @@ def generate_cyclonedx(ecosystem: str, deps: dict[str, str], findings: list[dict
         "serialNumber": f"urn:uuid:{uuid.uuid4()}",
         "version": 1,
         "metadata": {
-            "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
+            "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
             "tools": {
                 "components": [
                     {
@@ -134,7 +134,7 @@ def generate_spdx(ecosystem: str, deps: dict[str, str], findings: list[dict]) ->
             "creators": [
                 "Tool: Sentinel-Chain-1.0.0"
             ],
-            "created": datetime.datetime.utcnow().isoformat() + "Z"
+            "created": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         },
         "packages": packages,
         "relationships": [
@@ -195,7 +195,7 @@ def generate_cyclonedx_vex(ecosystem: str, deps: dict[str, str], findings: list[
         "serialNumber": f"urn:uuid:{uuid.uuid4()}",
         "version": 1,
         "metadata": {
-            "timestamp": datetime.datetime.utcnow().isoformat() + "Z"
+            "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat()
         },
         "vulnerabilities": vulnerabilities
     }

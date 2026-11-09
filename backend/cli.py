@@ -19,6 +19,9 @@ from utils.llm_narrative import generate_narrative
 from utils.epss import get_epss_score
 from utils.markdown_formatter import format_markdown_summary
 from utils.signing import sign_file, verify_file, generate_attestation
+from utils.diff import diff_scans
+from db.job_store import job_store
+import uuid
 
 async def run_cli():
     if len(sys.argv) >= 2 and sys.argv[1] == "verify":
@@ -43,6 +46,7 @@ async def run_cli():
     parser.add_argument("--enable-sandbox", action="store_true", help="Enable Phase 3 sandbox scanning (requires Docker)")
     parser.add_argument("--generate-sbom", action="store_true", help="Generate SBOMs (CycloneDX and SPDX) and VEX along with the scan results")
     parser.add_argument("--sign", action="store_true", help="Sign the generated outputs (SBOM, report) using Sigstore and generate a SLSA attestation")
+    parser.add_argument("--project-name", default=None, help="Project name for persistent scan history and trend tracking")
     
     args = parser.parse_args()
     
@@ -163,14 +167,40 @@ async def run_cli():
             
     aggregated_results = list(finding_map.values())
         
+    # Phase 10: Persistent History & Trend Diff
+    diff_info = None
+    scan_id = str(uuid.uuid4())
+    if args.project_name:
+        prev_scan = job_store.get_latest_project_scan(args.project_name)
+        diff_info = diff_scans(current=aggregated_results, previous=prev_scan or [])
+        # Record scan in job store
+        job_store.create_full_scan_job(scan_id, project_name=args.project_name)
+        job_store.update_full_scan_job_running(scan_id, deps_with_versions, ecosystem)
+        job_store.complete_full_scan_job(scan_id, aggregated_results, deps_with_versions, ecosystem)
+
     # Generate Output
-    md_summary = format_markdown_summary(aggregated_results, len(dependencies))
+    md_summary = format_markdown_summary(aggregated_results, len(dependencies), diff_info=diff_info, project_name=args.project_name)
     
     print(md_summary)
     
+    if args.project_name and diff_info:
+        summary = diff_info.get("summary", {})
+        if diff_info.get("against_scan_id") or summary.get("total_previous", 0) > 0:
+            print(f"\n📈 History: {summary.get('new_count', 0)} new findings vs. main branch scan ({summary.get('resolved_count', 0)} resolved, {summary.get('unchanged_count', 0)} unchanged)")
+        else:
+            print(f"\n📈 History: Recorded baseline scan for project '{args.project_name}'.")
+
     if args.output:
+        out_payload = {
+            "scan_id": scan_id,
+            "project_name": args.project_name,
+            "scanned_count": len(dependencies),
+            "findings": aggregated_results
+        }
+        if diff_info:
+            out_payload["diff"] = diff_info
         with open(args.output, "w", encoding="utf-8") as f:
-            json.dump({"scanned_count": len(dependencies), "findings": aggregated_results}, f, indent=2)
+            json.dump(out_payload, f, indent=2)
 
     if args.generate_sbom:
         cdx = generate_cyclonedx(ecosystem, deps_with_versions, aggregated_results)

@@ -1,6 +1,23 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: sentinel
+      POSTGRES_PASSWORD: sentinel_password
+      POSTGRES_DB: sentinel_chain
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sentinel -d sentinel_chain"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   backend:
     build:
       context: ./backend
@@ -11,6 +28,10 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - PYTHONUNBUFFERED=1
+      - DATABASE_URL=postgresql://sentinel:sentinel_password@postgres:5432/sentinel_chain
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   frontend:
     build:
@@ -24,3 +45,6 @@ services:
       - CHOKIDAR_USEPOLLING=true
     depends_on:
       - backend
+
+volumes:
+  pgdata:

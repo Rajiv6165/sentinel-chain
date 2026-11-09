@@ -1,11 +1,10 @@
-import { useState, useRef, useEffect } from 'react';
-import html2pdf from 'html2pdf.js';
+import { useState, useEffect } from 'react';
 
 export default function FullScan({ onScanResult, setLoading }) {
   const [file, setFile] = useState(null);
+  const [projectName, setProjectName] = useState('');
   const [error, setError] = useState('');
   const [jobId, setJobId] = useState(null);
-  const [pollInterval, setPollInterval] = useState(null);
   
   const handleFileChange = (e) => {
     const selected = e.target.files[0];
@@ -25,6 +24,9 @@ export default function FullScan({ onScanResult, setLoading }) {
     
     const formData = new FormData();
     formData.append('file', file);
+    if (projectName.trim()) {
+      formData.append('project_name', projectName.trim());
+    }
 
     try {
       const response = await fetch('http://localhost:8000/api/full-scan', {
@@ -55,19 +57,18 @@ export default function FullScan({ onScanResult, setLoading }) {
           if (data.status === 'completed') {
             clearInterval(interval);
             setLoading(false);
-            onScanResult({ results: data.result, jobId });
+            onScanResult({ results: data.result, jobId, projectName: projectName.trim() });
           } else if (data.status === 'failed') {
             clearInterval(interval);
             setLoading(false);
             setError(data.error || 'Scan failed');
           }
-        } catch (err) {
+        } catch (_err) {
           clearInterval(interval);
           setLoading(false);
           setError('Failed to poll status');
         }
       }, 2000);
-      setPollInterval(interval);
       
       return () => clearInterval(interval);
     }
@@ -75,10 +76,23 @@ export default function FullScan({ onScanResult, setLoading }) {
 
   return (
     <div className="bg-dark-800 p-8 rounded-2xl border border-dark-700 shadow-2xl">
-      <h2 className="text-2xl font-bold mb-4 text-white">Full Unified Scan (Phase 4)</h2>
+      <h2 className="text-2xl font-bold mb-4 text-white">Full Unified Scan (Phases 1-10)</h2>
       <p className="text-gray-400 mb-6">
-        Upload a repository .zip file. We will parse dependencies, run Typosquat detection (Phase 1), Reachability analysis with EPSS (Phase 2), and Sandboxed Behavior analysis (Phase 3).
+        Upload a repository .zip file. We will parse dependencies, run Typosquat detection (Phase 1), Reachability analysis with EPSS (Phase 2), Sandboxed Behavior analysis (Phase 3), License compliance (Phase 9), and track historical trends (Phase 10).
       </p>
+
+      <div className="mb-6">
+        <label className="block text-sm font-medium text-gray-300 mb-2">
+          Project Name <span className="text-gray-500 font-normal">(optional, enables persistent history & regression diff)</span>
+        </label>
+        <input 
+          type="text"
+          value={projectName}
+          onChange={(e) => setProjectName(e.target.value)}
+          placeholder="e.g. sentinel-core or payments-service"
+          className="w-full px-4 py-3 bg-dark-900 border border-dark-600 rounded-xl text-gray-100 placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors"
+        />
+      </div>
       
       <div className="border-2 border-dashed border-dark-600 rounded-xl p-10 text-center hover:border-brand-500 transition-colors bg-dark-900/50">
         <input 

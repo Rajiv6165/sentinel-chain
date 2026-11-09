@@ -5,6 +5,7 @@ import SandboxScan from './components/SandboxScan'
 import SandboxResults from './components/SandboxResults'
 import FullScan from './components/FullScan'
 import FullScanResults from './components/FullScanResults'
+import TrendDashboard from './components/TrendDashboard'
 
 function App() {
   const [activeTab, setActiveTab] = useState('static');
@@ -31,7 +32,7 @@ function App() {
             Sentinel-chain
           </h1>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Supply-chain security platform. Upload your dependency file to detect typosquatting attacks against top npm and PyPI packages.
+            Supply-chain security platform. Detect typosquatting, reachability, sandbox evasion, license violations, and track project risk history over time.
           </p>
         </header>
 
@@ -65,7 +66,17 @@ function App() {
                   : 'border-transparent text-gray-500 hover:text-gray-300'
               }`}
             >
-              Unified Scan (Phase 4)
+              Unified Scan (Phases 4-9)
+            </button>
+            <button
+              onClick={() => setActiveTab('trends')}
+              className={`px-6 py-3 font-medium transition-colors border-b-2 ${
+                activeTab === 'trends'
+                  ? 'border-brand-500 text-brand-400'
+                  : 'border-transparent text-gray-500 hover:text-gray-300'
+              }`}
+            >
+              Trend Dashboard (Phase 10)
             </button>
           </div>
 
@@ -115,9 +126,17 @@ function App() {
               )}
 
               {!fullScanLoading && fullScanResult && (
-                <FullScanResults result={fullScanResult.results} jobId={fullScanResult.jobId} />
+                <FullScanResults
+                  result={fullScanResult.results}
+                  jobId={fullScanResult.jobId}
+                  projectName={fullScanResult.projectName}
+                />
               )}
             </>
+          )}
+
+          {activeTab === 'trends' && (
+            <TrendDashboard />
           )}
         </main>
       </div>

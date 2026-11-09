@@ -1,9 +1,13 @@
-def format_markdown_summary(results: list, scanned_count: int) -> str:
+def format_markdown_summary(results: list, scanned_count: int, diff_info: dict = None, project_name: str = None) -> str:
     """
     Format the aggregated results into a Markdown summary for GitHub PR comments.
     """
     if not results:
-        return f"## 🛡️ Sentinel-Chain Scan Results\n\n✅ Scanned {scanned_count} dependencies. No risks found!"
+        base_md = f"## 🛡️ Sentinel-Chain Scan Results\n\n✅ Scanned {scanned_count} dependencies. No risks found!"
+        if diff_info and (diff_info.get("against_scan_id") or diff_info.get("summary", {}).get("total_previous", 0) > 0):
+            res_cnt = diff_info.get("summary", {}).get("resolved_count", 0)
+            return base_md + f"\n\n### 📈 Scan History & Trends\n- **History Comparison:** **0 new findings vs. main branch scan** ({res_cnt} resolved)"
+        return base_md
         
     critical_count = sum(1 for r in results if r.get("overall_risk") == "CRITICAL")
     high_count = sum(1 for r in results if r.get("overall_risk") == "HIGH")
@@ -20,13 +24,39 @@ def format_markdown_summary(results: list, scanned_count: int) -> str:
         f"- 🔴 **HIGH**: {high_count}",
         f"- 🟡 **MEDIUM**: {medium_count}",
         f"- 🟢 **LOW/SAFE**: {low_count}",
-        "",
+        ""
+    ]
+
+    if diff_info:
+        summary = diff_info.get("summary", {})
+        new_cnt = summary.get("new_count", len(diff_info.get("new", [])))
+        res_cnt = summary.get("resolved_count", len(diff_info.get("resolved", [])))
+        unchanged_cnt = summary.get("unchanged_count", len(diff_info.get("unchanged", [])))
+        has_baseline = diff_info.get("against_scan_id") is not None or summary.get("total_previous", 0) > 0
+
+        md.extend([
+            "### 📈 Scan History & Trends",
+            ""
+        ])
+        if has_baseline:
+            md.append(f"- **History Comparison:** **{new_cnt} new findings vs. main branch scan** ({res_cnt} resolved, {unchanged_cnt} unchanged)")
+            if new_cnt > 0:
+                new_items = diff_info.get("new", [])
+                md.append(f"  - ⚠️ **New Issues:** " + ", ".join(f"`{f.get('package_name')}`" for f in new_items[:5]))
+            else:
+                md.append("  - ✅ No new security or compliance risks introduced!")
+        else:
+            proj_str = f" for `{project_name}`" if project_name else ""
+            md.append(f"- **Baseline scan recorded**{proj_str} ({new_cnt} initial findings).")
+        md.append("")
+
+    md.extend([
         "<details open>" if len(results) <= 10 else "<details>",
         "<summary><strong>Detailed Findings</strong></summary>",
         "",
         "| Package | Overall Risk | Issues Found | Reachability |",
         "|---|---|---|---|"
-    ]
+    ])
     
     for r in sorted(results, key=lambda x: {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3, "SAFE": 4}.get(x.get("overall_risk", "SAFE"), 5)):
         pkg_name = r.get("package_name", "Unknown")

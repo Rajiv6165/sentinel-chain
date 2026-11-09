@@ -13,8 +13,11 @@ def main():
     parser.add_argument("--path", required=True, help="Path to the repository to scan")
     parser.add_argument("--fail-on-severity", default="critical", help="Exit with non-zero code if findings meet or exceed this severity")
     parser.add_argument("--enable-sandbox", default="false", help="Enable Phase 3 sandbox scanning")
+    parser.add_argument("--project-name", default=None, help="Project name for persistent history and trend tracking")
     
     args = parser.parse_args()
+
+    project_name = args.project_name or os.environ.get("SENTINEL_PROJECT_NAME") or os.environ.get("GITHUB_REPOSITORY")
     
     # Run the CLI
     output_json = "sentinel_results.json"
@@ -27,6 +30,8 @@ def main():
     ]
     if args.enable_sandbox.lower() == "true":
         cli_cmd.append("--enable-sandbox")
+    if project_name:
+        cli_cmd.extend(["--project-name", project_name])
         
     print(f"Running Sentinel-Chain CLI: {' '.join(cli_cmd)}")
     
@@ -43,7 +48,14 @@ def main():
     with open(output_json, "r", encoding="utf-8") as f:
         results_data = json.load(f)
         
-    md_summary = format_markdown_summary(results_data.get("findings", []), results_data.get("scanned_count", 0))
+    diff_info = results_data.get("diff")
+    reported_project = results_data.get("project_name") or project_name
+    md_summary = format_markdown_summary(
+        results_data.get("findings", []),
+        results_data.get("scanned_count", 0),
+        diff_info=diff_info,
+        project_name=reported_project
+    )
     
     # Post PR Comment
     post_pr_comment(md_summary)
