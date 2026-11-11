@@ -1,0 +1,36 @@
+{
+  "requests:CVE-2018-18074": [
+    "rebuild_auth",
+    "resolve_redirects"
+  ],
+  "urllib3:CVE-2021-33503": [
+    "parse_url",
+    "PoolManager"
+  ],
+  "lodash:CVE-2021-23337": [
+    "template"
+  ],
+  "axios:CVE-2020-28168": [
+    "request",
+    "post"
+  ],
+  "fastify:CVE-2020-7764": [
+    "route"
+  ],
+  "CVE-2018-18074": [
+    "rebuild_auth",
+    "resolve_redirects"
+  ],
+  "CVE-2021-33503": [
+    "parse_url",
+    "PoolManager"
+  ],
+  "CVE-2021-23337": [
+    "template"
+  ],
+  "CVE-2020-28168": [
+    "request",
+    "post"
+  ]
+}
+

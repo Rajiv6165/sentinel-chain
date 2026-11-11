@@ -1,0 +1,3074 @@
+[
+  {
+    "package_name": "qs",
+    "ecosystem": "npm",
+    "category": "short_name",
+    "description": "Short utility package: qs"
+  },
+  {
+    "package_name": "ws",
+    "ecosystem": "npm",
+    "category": "short_name",
+    "description": "Short utility package: ws"
+  },
+  {
+    "package_name": "ms",
+    "ecosystem": "npm",
+    "category": "short_name",
+    "description": "Short utility package: ms"
+  },
+  {
+    "package_name": "co",
+    "ecosystem": "npm",
+    "category": "short_name",
+    "description": "Short utility package: co"
+  },
+  {
+    "package_name": "is",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: is"
+  },
+  {
+    "package_name": "ip",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: ip"
+  },
+  {
+    "package_name": "du",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: du"
+  },
+  {
+    "package_name": "cp",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: cp"
+  },
+  {
+    "package_name": "rm",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: rm"
+  },
+  {
+    "package_name": "mv",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: mv"
+  },
+  {
+    "package_name": "pi",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: pi"
+  },
+  {
+    "package_name": "re",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: re"
+  },
+  {
+    "package_name": "os",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: os"
+  },
+  {
+    "package_name": "io",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: io"
+  },
+  {
+    "package_name": "got",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: got"
+  },
+  {
+    "package_name": "del",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: del"
+  },
+  {
+    "package_name": "ora",
+    "ecosystem": "npm",
+    "category": "short_name",
+    "description": "Short utility package: ora"
+  },
+  {
+    "package_name": "koa",
+    "ecosystem": "npm",
+    "category": "short_name",
+    "description": "Short utility package: koa"
+  },
+  {
+    "package_name": "ky",
+    "ecosystem": "npm",
+    "category": "short_name",
+    "description": "Short utility package: ky"
+  },
+  {
+    "package_name": "ava",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: ava"
+  },
+  {
+    "package_name": "tap",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: tap"
+  },
+  {
+    "package_name": "tar",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: tar"
+  },
+  {
+    "package_name": "zip",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: zip"
+  },
+  {
+    "package_name": "xml",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: xml"
+  },
+  {
+    "package_name": "csv",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: csv"
+  },
+  {
+    "package_name": "yaml",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: yaml"
+  },
+  {
+    "package_name": "ejs",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: ejs"
+  },
+  {
+    "package_name": "pug",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: pug"
+  },
+  {
+    "package_name": "less",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: less"
+  },
+  {
+    "package_name": "sass",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: sass"
+  },
+  {
+    "package_name": "vite",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: vite"
+  },
+  {
+    "package_name": "yarn",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: yarn"
+  },
+  {
+    "package_name": "pnpm",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: pnpm"
+  },
+  {
+    "package_name": "npm",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: npm"
+  },
+  {
+    "package_name": "pip",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: pip"
+  },
+  {
+    "package_name": "git",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: git"
+  },
+  {
+    "package_name": "ssh",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: ssh"
+  },
+  {
+    "package_name": "tls",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: tls"
+  },
+  {
+    "package_name": "net",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: net"
+  },
+  {
+    "package_name": "http",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: http"
+  },
+  {
+    "package_name": "url",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: url"
+  },
+  {
+    "package_name": "path",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: path"
+  },
+  {
+    "package_name": "fs",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: fs"
+  },
+  {
+    "package_name": "util",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: util"
+  },
+  {
+    "package_name": "vm",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: vm"
+  },
+  {
+    "package_name": "zlib",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: zlib"
+  },
+  {
+    "package_name": "crypto",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: crypto"
+  },
+  {
+    "package_name": "events",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: events"
+  },
+  {
+    "package_name": "buffer",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: buffer"
+  },
+  {
+    "package_name": "stream",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: stream"
+  },
+  {
+    "package_name": "he",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: he"
+  },
+  {
+    "package_name": "depd",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: depd"
+  },
+  {
+    "package_name": "once",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: once"
+  },
+  {
+    "package_name": "vary",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: vary"
+  },
+  {
+    "package_name": "etag",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: etag"
+  },
+  {
+    "package_name": "send",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: send"
+  },
+  {
+    "package_name": "pump",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: pump"
+  },
+  {
+    "package_name": "from2",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: from2"
+  },
+  {
+    "package_name": "split2",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: split2"
+  },
+  {
+    "package_name": "yauzl",
+    "ecosystem": "generic",
+    "category": "short_name",
+    "description": "Short utility package: yauzl"
+  },
+  {
+    "package_name": "@types/node",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @types/node"
+  },
+  {
+    "package_name": "@types/react",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @types/react"
+  },
+  {
+    "package_name": "@types/react-dom",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @types/react-dom"
+  },
+  {
+    "package_name": "@types/express",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @types/express"
+  },
+  {
+    "package_name": "@types/lodash",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @types/lodash"
+  },
+  {
+    "package_name": "@types/jest",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @types/jest"
+  },
+  {
+    "package_name": "@types/mocha",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @types/mocha"
+  },
+  {
+    "package_name": "@types/chai",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @types/chai"
+  },
+  {
+    "package_name": "@types/supertest",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @types/supertest"
+  },
+  {
+    "package_name": "@types/cors",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @types/cors"
+  },
+  {
+    "package_name": "@types/multer",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @types/multer"
+  },
+  {
+    "package_name": "@types/uuid",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @types/uuid"
+  },
+  {
+    "package_name": "@types/validator",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @types/validator"
+  },
+  {
+    "package_name": "@types/glob",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @types/glob"
+  },
+  {
+    "package_name": "@types/ws",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @types/ws"
+  },
+  {
+    "package_name": "@types/qs",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @types/qs"
+  },
+  {
+    "package_name": "@types/debug",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @types/debug"
+  },
+  {
+    "package_name": "@types/mime",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @types/mime"
+  },
+  {
+    "package_name": "@types/semver",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @types/semver"
+  },
+  {
+    "package_name": "@types/yargs",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @types/yargs"
+  },
+  {
+    "package_name": "@babel/core",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @babel/core"
+  },
+  {
+    "package_name": "@babel/preset-env",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @babel/preset-env"
+  },
+  {
+    "package_name": "@babel/preset-react",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @babel/preset-react"
+  },
+  {
+    "package_name": "@babel/preset-typescript",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @babel/preset-typescript"
+  },
+  {
+    "package_name": "@babel/parser",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @babel/parser"
+  },
+  {
+    "package_name": "@babel/traverse",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @babel/traverse"
+  },
+  {
+    "package_name": "@babel/types",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @babel/types"
+  },
+  {
+    "package_name": "@babel/generator",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @babel/generator"
+  },
+  {
+    "package_name": "@babel/template",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @babel/template"
+  },
+  {
+    "package_name": "@angular/core",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @angular/core"
+  },
+  {
+    "package_name": "@angular/common",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @angular/common"
+  },
+  {
+    "package_name": "@angular/compiler",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @angular/compiler"
+  },
+  {
+    "package_name": "@angular/platform-browser",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @angular/platform-browser"
+  },
+  {
+    "package_name": "@nestjs/core",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @nestjs/core"
+  },
+  {
+    "package_name": "@nestjs/common",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @nestjs/common"
+  },
+  {
+    "package_name": "@nestjs/platform-express",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @nestjs/platform-express"
+  },
+  {
+    "package_name": "@nestjs/testing",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @nestjs/testing"
+  },
+  {
+    "package_name": "@aws-sdk/client-s3",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @aws-sdk/client-s3"
+  },
+  {
+    "package_name": "@aws-sdk/client-dynamodb",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @aws-sdk/client-dynamodb"
+  },
+  {
+    "package_name": "@aws-sdk/client-sqs",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @aws-sdk/client-sqs"
+  },
+  {
+    "package_name": "@aws-sdk/client-sns",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @aws-sdk/client-sns"
+  },
+  {
+    "package_name": "@testing-library/react",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @testing-library/react"
+  },
+  {
+    "package_name": "@testing-library/jest-dom",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @testing-library/jest-dom"
+  },
+  {
+    "package_name": "@testing-library/user-event",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @testing-library/user-event"
+  },
+  {
+    "package_name": "@vitejs/plugin-react",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @vitejs/plugin-react"
+  },
+  {
+    "package_name": "@rollup/plugin-node-resolve",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @rollup/plugin-node-resolve"
+  },
+  {
+    "package_name": "@rollup/plugin-commonjs",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @rollup/plugin-commonjs"
+  },
+  {
+    "package_name": "@typescript-eslint/parser",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @typescript-eslint/parser"
+  },
+  {
+    "package_name": "@typescript-eslint/eslint-plugin",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @typescript-eslint/eslint-plugin"
+  },
+  {
+    "package_name": "@swc/core",
+    "ecosystem": "npm",
+    "category": "scoped_package",
+    "description": "Scoped official/community package: @swc/core"
+  },
+  {
+    "package_name": "color",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Legitimate color string parser vs ANSI color formatter"
+  },
+  {
+    "package_name": "colors",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Legitimate color string parser vs ANSI color formatter"
+  },
+  {
+    "package_name": "request",
+    "ecosystem": "npm/pypi",
+    "category": "similar_legit_pair",
+    "description": "Deprecated npm request client vs Python requests library"
+  },
+  {
+    "package_name": "requests",
+    "ecosystem": "npm/pypi",
+    "category": "similar_legit_pair",
+    "description": "Deprecated npm request client vs Python requests library"
+  },
+  {
+    "package_name": "cookie",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Cookie serializer vs HTTP cookie parser"
+  },
+  {
+    "package_name": "cookies",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Cookie serializer vs HTTP cookie parser"
+  },
+  {
+    "package_name": "marked",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Fast markdown compiler vs alternative markdown library"
+  },
+  {
+    "package_name": "markdown",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Fast markdown compiler vs alternative markdown library"
+  },
+  {
+    "package_name": "minimist",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Argument parser vs glob pattern matcher"
+  },
+  {
+    "package_name": "minimatch",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Argument parser vs glob pattern matcher"
+  },
+  {
+    "package_name": "glob",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Standard glob vs user-friendly glob with promises"
+  },
+  {
+    "package_name": "globby",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Standard glob vs user-friendly glob with promises"
+  },
+  {
+    "package_name": "strip-ansi",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Strip ANSI codes vs detect ANSI codes"
+  },
+  {
+    "package_name": "has-ansi",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Strip ANSI codes vs detect ANSI codes"
+  },
+  {
+    "package_name": "through",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Stream transform helper vs stream2 transform wrapper"
+  },
+  {
+    "package_name": "through2",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Stream transform helper vs stream2 transform wrapper"
+  },
+  {
+    "package_name": "find-up",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Find file up the directory tree vs find package.json specifically"
+  },
+  {
+    "package_name": "pkg-up",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Find file up the directory tree vs find package.json specifically"
+  },
+  {
+    "package_name": "dotenv",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Env loader vs variable expansion addon"
+  },
+  {
+    "package_name": "dotenv-expand",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Env loader vs variable expansion addon"
+  },
+  {
+    "package_name": "chalk",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Terminal styling vs string-based chalk pipeline"
+  },
+  {
+    "package_name": "chalk-pipe",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Terminal styling vs string-based chalk pipeline"
+  },
+  {
+    "package_name": "micromatch",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Fast globbing engine vs tiny glob matcher"
+  },
+  {
+    "package_name": "picomatch",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Fast globbing engine vs tiny glob matcher"
+  },
+  {
+    "package_name": "uuid",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "RFC UUID generator vs tiny unique ID generator"
+  },
+  {
+    "package_name": "nanoid",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "RFC UUID generator vs tiny unique ID generator"
+  },
+  {
+    "package_name": "superagent",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "HTTP request client vs HTTP assertion library"
+  },
+  {
+    "package_name": "supertest",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "HTTP request client vs HTTP assertion library"
+  },
+  {
+    "package_name": "cheerio",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Fast HTML parser vs full DOM implementation"
+  },
+  {
+    "package_name": "jsdom",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Fast HTML parser vs full DOM implementation"
+  },
+  {
+    "package_name": "mocha",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Test runner framework vs assertion library"
+  },
+  {
+    "package_name": "chai",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Test runner framework vs assertion library"
+  },
+  {
+    "package_name": "winston",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Multi-transport logger vs JSON-first logger"
+  },
+  {
+    "package_name": "bunyan",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Multi-transport logger vs JSON-first logger"
+  },
+  {
+    "package_name": "pino",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Extremely fast JSON logger vs traditional log4j port"
+  },
+  {
+    "package_name": "log4js",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Extremely fast JSON logger vs traditional log4j port"
+  },
+  {
+    "package_name": "yargs",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Feature-rich CLI parser vs lightweight option parser"
+  },
+  {
+    "package_name": "commander",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Feature-rich CLI parser vs lightweight option parser"
+  },
+  {
+    "package_name": "inquirer",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Interactive CLI prompts vs lightweight prompts"
+  },
+  {
+    "package_name": "prompts",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Interactive CLI prompts vs lightweight prompts"
+  },
+  {
+    "package_name": "rimraf",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Node rm -rf utility vs modern deletion library"
+  },
+  {
+    "package_name": "mkdirp",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Classic mkdir -p vs promise-based directory creator"
+  },
+  {
+    "package_name": "make-dir",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Classic mkdir -p vs promise-based directory creator"
+  },
+  {
+    "package_name": "cross-spawn",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Cross-platform spawn vs process execution wrapper"
+  },
+  {
+    "package_name": "execa",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Cross-platform spawn vs process execution wrapper"
+  },
+  {
+    "package_name": "fast-glob",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "High-performance glob vs standard glob library"
+  },
+  {
+    "package_name": "dayjs",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Moment-compatible micro library vs modular date toolset"
+  },
+  {
+    "package_name": "date-fns",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Moment-compatible micro library vs modular date toolset"
+  },
+  {
+    "package_name": "zod",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "TypeScript-first schema validator vs object schema validator"
+  },
+  {
+    "package_name": "yup",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "TypeScript-first schema validator vs object schema validator"
+  },
+  {
+    "package_name": "prisma",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Next-generation ORM vs traditional ActiveRecord/DataMapper ORM"
+  },
+  {
+    "package_name": "typeorm",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Next-generation ORM vs traditional ActiveRecord/DataMapper ORM"
+  },
+  {
+    "package_name": "bcrypt",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Password hashing with bcrypt vs modern argon2 hashing"
+  },
+  {
+    "package_name": "argon2",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Password hashing with bcrypt vs modern argon2 hashing"
+  },
+  {
+    "package_name": "cors",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "CORS middleware vs security headers middleware"
+  },
+  {
+    "package_name": "helmet",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "CORS middleware vs security headers middleware"
+  },
+  {
+    "package_name": "js-yaml",
+    "ecosystem": "npm",
+    "category": "similar_legit_pair",
+    "description": "Modern YAML parser vs classic JS-YAML library"
+  },
+  {
+    "package_name": "semver",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: semver"
+  },
+  {
+    "package_name": "debug",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: debug"
+  },
+  {
+    "package_name": "ajv",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: ajv"
+  },
+  {
+    "package_name": "source-map",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: source-map"
+  },
+  {
+    "package_name": "tslib",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: tslib"
+  },
+  {
+    "package_name": "chokidar",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: chokidar"
+  },
+  {
+    "package_name": "bullmq",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: bullmq"
+  },
+  {
+    "package_name": "ioredis",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: ioredis"
+  },
+  {
+    "package_name": "knex",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: knex"
+  },
+  {
+    "package_name": "sharp",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: sharp"
+  },
+  {
+    "package_name": "morgan",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: morgan"
+  },
+  {
+    "package_name": "puppeteer",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: puppeteer"
+  },
+  {
+    "package_name": "playwright",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: playwright"
+  },
+  {
+    "package_name": "esbuild",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: esbuild"
+  },
+  {
+    "package_name": "rollup",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: rollup"
+  },
+  {
+    "package_name": "tsup",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: tsup"
+  },
+  {
+    "package_name": "turbo",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: turbo"
+  },
+  {
+    "package_name": "lerna",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: lerna"
+  },
+  {
+    "package_name": "prettier-plugin-tailwindcss",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: prettier-plugin-tailwindcss"
+  },
+  {
+    "package_name": "postcss",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: postcss"
+  },
+  {
+    "package_name": "autoprefixer",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: autoprefixer"
+  },
+  {
+    "package_name": "cssnano",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: cssnano"
+  },
+  {
+    "package_name": "sass-loader",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: sass-loader"
+  },
+  {
+    "package_name": "babel-loader",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: babel-loader"
+  },
+  {
+    "package_name": "file-loader",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: file-loader"
+  },
+  {
+    "package_name": "style-loader",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: style-loader"
+  },
+  {
+    "package_name": "html-webpack-plugin",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: html-webpack-plugin"
+  },
+  {
+    "package_name": "mini-css-extract-plugin",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: mini-css-extract-plugin"
+  },
+  {
+    "package_name": "dotenv-safe",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: dotenv-safe"
+  },
+  {
+    "package_name": "envalid",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: envalid"
+  },
+  {
+    "package_name": "joi",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: joi"
+  },
+  {
+    "package_name": "superjson",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: superjson"
+  },
+  {
+    "package_name": "class-validator",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: class-validator"
+  },
+  {
+    "package_name": "class-transformer",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: class-transformer"
+  },
+  {
+    "package_name": "reflect-metadata",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: reflect-metadata"
+  },
+  {
+    "package_name": "form-data",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: form-data"
+  },
+  {
+    "package_name": "multer",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: multer"
+  },
+  {
+    "package_name": "busboy",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: busboy"
+  },
+  {
+    "package_name": "compression",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: compression"
+  },
+  {
+    "package_name": "cookie-parser",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: cookie-parser"
+  },
+  {
+    "package_name": "express-rate-limit",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: express-rate-limit"
+  },
+  {
+    "package_name": "jsonwebtoken",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: jsonwebtoken"
+  },
+  {
+    "package_name": "passport",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: passport"
+  },
+  {
+    "package_name": "crypto-js",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: crypto-js"
+  },
+  {
+    "package_name": "validator",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: validator"
+  },
+  {
+    "package_name": "sanitize-html",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: sanitize-html"
+  },
+  {
+    "package_name": "dompurify",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: dompurify"
+  },
+  {
+    "package_name": "escape-html",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: escape-html"
+  },
+  {
+    "package_name": "mime-types",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: mime-types"
+  },
+  {
+    "package_name": "content-type",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: content-type"
+  },
+  {
+    "package_name": "accepts",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: accepts"
+  },
+  {
+    "package_name": "statuses",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: statuses"
+  },
+  {
+    "package_name": "http-errors",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: http-errors"
+  },
+  {
+    "package_name": "raw-body",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: raw-body"
+  },
+  {
+    "package_name": "bytes",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: bytes"
+  },
+  {
+    "package_name": "negotiator",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: negotiator"
+  },
+  {
+    "package_name": "unpipe",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: unpipe"
+  },
+  {
+    "package_name": "fresh",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: fresh"
+  },
+  {
+    "package_name": "parseurl",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: parseurl"
+  },
+  {
+    "package_name": "utils-merge",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: utils-merge"
+  },
+  {
+    "package_name": "merge-descriptors",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: merge-descriptors"
+  },
+  {
+    "package_name": "array-flatten",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: array-flatten"
+  },
+  {
+    "package_name": "path-to-regexp",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: path-to-regexp"
+  },
+  {
+    "package_name": "methods",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: methods"
+  },
+  {
+    "package_name": "serve-static",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: serve-static"
+  },
+  {
+    "package_name": "serve-index",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: serve-index"
+  },
+  {
+    "package_name": "finalhandler",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: finalhandler"
+  },
+  {
+    "package_name": "destroy",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: destroy"
+  },
+  {
+    "package_name": "on-finished",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: on-finished"
+  },
+  {
+    "package_name": "ee-first",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: ee-first"
+  },
+  {
+    "package_name": "proxy-addr",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: proxy-addr"
+  },
+  {
+    "package_name": "ipaddr.js",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: ipaddr.js"
+  },
+  {
+    "package_name": "forwarded",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: forwarded"
+  },
+  {
+    "package_name": "type-is",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: type-is"
+  },
+  {
+    "package_name": "media-typer",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: media-typer"
+  },
+  {
+    "package_name": "concat-stream",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: concat-stream"
+  },
+  {
+    "package_name": "readable-stream",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: readable-stream"
+  },
+  {
+    "package_name": "string_decoder",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: string_decoder"
+  },
+  {
+    "package_name": "inherits",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: inherits"
+  },
+  {
+    "package_name": "util-deprecate",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: util-deprecate"
+  },
+  {
+    "package_name": "safe-buffer",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: safe-buffer"
+  },
+  {
+    "package_name": "buffer-crc32",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: buffer-crc32"
+  },
+  {
+    "package_name": "end-of-stream",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: end-of-stream"
+  },
+  {
+    "package_name": "wrappy",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: wrappy"
+  },
+  {
+    "package_name": "duplexify",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: duplexify"
+  },
+  {
+    "package_name": "to-regex-range",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: to-regex-range"
+  },
+  {
+    "package_name": "fill-range",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: fill-range"
+  },
+  {
+    "package_name": "is-number",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: is-number"
+  },
+  {
+    "package_name": "repeat-string",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: repeat-string"
+  },
+  {
+    "package_name": "kind-of",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: kind-of"
+  },
+  {
+    "package_name": "is-extendable",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: is-extendable"
+  },
+  {
+    "package_name": "extend-shallow",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: extend-shallow"
+  },
+  {
+    "package_name": "assign-symbols",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: assign-symbols"
+  },
+  {
+    "package_name": "split-string",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: split-string"
+  },
+  {
+    "package_name": "arr-diff",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: arr-diff"
+  },
+  {
+    "package_name": "array-unique",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: array-unique"
+  },
+  {
+    "package_name": "array-union",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: array-union"
+  },
+  {
+    "package_name": "arr-flatten",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: arr-flatten"
+  },
+  {
+    "package_name": "object.pick",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: object.pick"
+  },
+  {
+    "package_name": "object.omit",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: object.omit"
+  },
+  {
+    "package_name": "is-plain-object",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: is-plain-object"
+  },
+  {
+    "package_name": "is-primitive",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: is-primitive"
+  },
+  {
+    "package_name": "is-buffer",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: is-buffer"
+  },
+  {
+    "package_name": "isobject",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: isobject"
+  },
+  {
+    "package_name": "has-values",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: has-values"
+  },
+  {
+    "package_name": "has-value",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: has-value"
+  },
+  {
+    "package_name": "unset-value",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: unset-value"
+  },
+  {
+    "package_name": "get-value",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: get-value"
+  },
+  {
+    "package_name": "set-value",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: set-value"
+  },
+  {
+    "package_name": "union-value",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: union-value"
+  },
+  {
+    "package_name": "use",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: use"
+  },
+  {
+    "package_name": "mixin-deep",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: mixin-deep"
+  },
+  {
+    "package_name": "for-in",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: for-in"
+  },
+  {
+    "package_name": "for-own",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: for-own"
+  },
+  {
+    "package_name": "base64-js",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: base64-js"
+  },
+  {
+    "package_name": "ieee754",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: ieee754"
+  },
+  {
+    "package_name": "buffer-from",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: buffer-from"
+  },
+  {
+    "package_name": "buffer-alloc",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: buffer-alloc"
+  },
+  {
+    "package_name": "buffer-alloc-unsafe",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: buffer-alloc-unsafe"
+  },
+  {
+    "package_name": "buffer-fill",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: buffer-fill"
+  },
+  {
+    "package_name": "safer-buffer",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: safer-buffer"
+  },
+  {
+    "package_name": "elliptic",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: elliptic"
+  },
+  {
+    "package_name": "bn.js",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: bn.js"
+  },
+  {
+    "package_name": "brorand",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: brorand"
+  },
+  {
+    "package_name": "hash.js",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: hash.js"
+  },
+  {
+    "package_name": "hmac-drbg",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: hmac-drbg"
+  },
+  {
+    "package_name": "minimalistic-assert",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: minimalistic-assert"
+  },
+  {
+    "package_name": "minimalistic-crypto-utils",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: minimalistic-crypto-utils"
+  },
+  {
+    "package_name": "asn1.js",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: asn1.js"
+  },
+  {
+    "package_name": "browserify-rsa",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: browserify-rsa"
+  },
+  {
+    "package_name": "create-hash",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: create-hash"
+  },
+  {
+    "package_name": "create-hmac",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: create-hmac"
+  },
+  {
+    "package_name": "crypto-browserify",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: crypto-browserify"
+  },
+  {
+    "package_name": "diffie-hellman",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: diffie-hellman"
+  },
+  {
+    "package_name": "pbkdf2",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: pbkdf2"
+  },
+  {
+    "package_name": "public-encrypt",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: public-encrypt"
+  },
+  {
+    "package_name": "randombytes",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: randombytes"
+  },
+  {
+    "package_name": "randomfill",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: randomfill"
+  },
+  {
+    "package_name": "ripemd160",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: ripemd160"
+  },
+  {
+    "package_name": "sha.js",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: sha.js"
+  },
+  {
+    "package_name": "des.js",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: des.js"
+  },
+  {
+    "package_name": "browserify-cipher",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: browserify-cipher"
+  },
+  {
+    "package_name": "browserify-sign",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: browserify-sign"
+  },
+  {
+    "package_name": "parse-asn1",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: parse-asn1"
+  },
+  {
+    "package_name": "browserify-des",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: browserify-des"
+  },
+  {
+    "package_name": "miller-rabin",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: miller-rabin"
+  },
+  {
+    "package_name": "browserify-aes",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: browserify-aes"
+  },
+  {
+    "package_name": "cipher-base",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: cipher-base"
+  },
+  {
+    "package_name": "evp_bytestokey",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: evp_bytestokey"
+  },
+  {
+    "package_name": "md5.js",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: md5.js"
+  },
+  {
+    "package_name": "fast-deep-equal",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: fast-deep-equal"
+  },
+  {
+    "package_name": "fast-json-stable-stringify",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: fast-json-stable-stringify"
+  },
+  {
+    "package_name": "json-schema-traverse",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: json-schema-traverse"
+  },
+  {
+    "package_name": "uri-js",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: uri-js"
+  },
+  {
+    "package_name": "punycode",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: punycode"
+  },
+  {
+    "package_name": "ip-regex",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: ip-regex"
+  },
+  {
+    "package_name": "signal-exit",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: signal-exit"
+  },
+  {
+    "package_name": "shebang-regex",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: shebang-regex"
+  },
+  {
+    "package_name": "shebang-command",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: shebang-command"
+  },
+  {
+    "package_name": "which",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: which"
+  },
+  {
+    "package_name": "isexe",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: isexe"
+  },
+  {
+    "package_name": "strip-final-newline",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: strip-final-newline"
+  },
+  {
+    "package_name": "npm-run-path",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: npm-run-path"
+  },
+  {
+    "package_name": "path-key",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: path-key"
+  },
+  {
+    "package_name": "human-signals",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: human-signals"
+  },
+  {
+    "package_name": "is-stream",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: is-stream"
+  },
+  {
+    "package_name": "merge-stream",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: merge-stream"
+  },
+  {
+    "package_name": "get-stream",
+    "ecosystem": "npm",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate npm package: get-stream"
+  },
+  {
+    "package_name": "attrs",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: attrs"
+  },
+  {
+    "package_name": "click",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: click"
+  },
+  {
+    "package_name": "rich",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: rich"
+  },
+  {
+    "package_name": "pytest-cov",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: pytest-cov"
+  },
+  {
+    "package_name": "tqdm",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: tqdm"
+  },
+  {
+    "package_name": "scipy",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: scipy"
+  },
+  {
+    "package_name": "scikit-learn",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: scikit-learn"
+  },
+  {
+    "package_name": "matplotlib",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: matplotlib"
+  },
+  {
+    "package_name": "seaborn",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: seaborn"
+  },
+  {
+    "package_name": "pytest-asyncio",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: pytest-asyncio"
+  },
+  {
+    "package_name": "psycopg2",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: psycopg2"
+  },
+  {
+    "package_name": "redis",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: redis"
+  },
+  {
+    "package_name": "cryptography",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: cryptography"
+  },
+  {
+    "package_name": "pillow",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: pillow"
+  },
+  {
+    "package_name": "jinja2",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: jinja2"
+  },
+  {
+    "package_name": "werkzeug",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: werkzeug"
+  },
+  {
+    "package_name": "fastapi-utils",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: fastapi-utils"
+  },
+  {
+    "package_name": "httpx",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: httpx"
+  },
+  {
+    "package_name": "anyio",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: anyio"
+  },
+  {
+    "package_name": "starlette",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: starlette"
+  },
+  {
+    "package_name": "uvicorn",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: uvicorn"
+  },
+  {
+    "package_name": "greenlet",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: greenlet"
+  },
+  {
+    "package_name": "marshmallow",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: marshmallow"
+  },
+  {
+    "package_name": "alembic",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: alembic"
+  },
+  {
+    "package_name": "gevent",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: gevent"
+  },
+  {
+    "package_name": "twisted",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: twisted"
+  },
+  {
+    "package_name": "tornado",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: tornado"
+  },
+  {
+    "package_name": "aiohttp",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: aiohttp"
+  },
+  {
+    "package_name": "async-timeout",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: async-timeout"
+  },
+  {
+    "package_name": "yarl",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: yarl"
+  },
+  {
+    "package_name": "multidict",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: multidict"
+  },
+  {
+    "package_name": "frozenlist",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: frozenlist"
+  },
+  {
+    "package_name": "aiosignal",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: aiosignal"
+  },
+  {
+    "package_name": "protobuf",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: protobuf"
+  },
+  {
+    "package_name": "grpcio",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: grpcio"
+  },
+  {
+    "package_name": "googleapis-common-protos",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: googleapis-common-protos"
+  },
+  {
+    "package_name": "google-api-core",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: google-api-core"
+  },
+  {
+    "package_name": "google-auth",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: google-auth"
+  },
+  {
+    "package_name": "cachetools",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: cachetools"
+  },
+  {
+    "package_name": "pyasn1",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: pyasn1"
+  },
+  {
+    "package_name": "rsa",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: rsa"
+  },
+  {
+    "package_name": "pyparsing",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: pyparsing"
+  },
+  {
+    "package_name": "packaging",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: packaging"
+  },
+  {
+    "package_name": "setuptools-scm",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: setuptools-scm"
+  },
+  {
+    "package_name": "wheel",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: wheel"
+  },
+  {
+    "package_name": "flit",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: flit"
+  },
+  {
+    "package_name": "poetry",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: poetry"
+  },
+  {
+    "package_name": "pipenv",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: pipenv"
+  },
+  {
+    "package_name": "virtualenv",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: virtualenv"
+  },
+  {
+    "package_name": "tox",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: tox"
+  },
+  {
+    "package_name": "nox",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: nox"
+  },
+  {
+    "package_name": "flake8",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: flake8"
+  },
+  {
+    "package_name": "mypy",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: mypy"
+  },
+  {
+    "package_name": "black",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: black"
+  },
+  {
+    "package_name": "isort",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: isort"
+  },
+  {
+    "package_name": "pylint",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: pylint"
+  },
+  {
+    "package_name": "ruff",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: ruff"
+  },
+  {
+    "package_name": "bandit",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: bandit"
+  },
+  {
+    "package_name": "coverage",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: coverage"
+  },
+  {
+    "package_name": "hypothesis",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: hypothesis"
+  },
+  {
+    "package_name": "pluggy",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: pluggy"
+  },
+  {
+    "package_name": "iniconfig",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: iniconfig"
+  },
+  {
+    "package_name": "pygments",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: pygments"
+  },
+  {
+    "package_name": "prompt-toolkit",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: prompt-toolkit"
+  },
+  {
+    "package_name": "wcwidth",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: wcwidth"
+  },
+  {
+    "package_name": "tabulate",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: tabulate"
+  },
+  {
+    "package_name": "termcolor",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: termcolor"
+  },
+  {
+    "package_name": "coloredlogs",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: coloredlogs"
+  },
+  {
+    "package_name": "loguru",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: loguru"
+  },
+  {
+    "package_name": "structlog",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: structlog"
+  },
+  {
+    "package_name": "pydantic-settings",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: pydantic-settings"
+  },
+  {
+    "package_name": "pydantic-core",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: pydantic-core"
+  },
+  {
+    "package_name": "sqlmodel",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: sqlmodel"
+  },
+  {
+    "package_name": "tortoise-orm",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: tortoise-orm"
+  },
+  {
+    "package_name": "peewee",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: peewee"
+  },
+  {
+    "package_name": "databases",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: databases"
+  },
+  {
+    "package_name": "orm",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: orm"
+  },
+  {
+    "package_name": "motor",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: motor"
+  },
+  {
+    "package_name": "pymongo",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: pymongo"
+  },
+  {
+    "package_name": "asyncpg",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: asyncpg"
+  },
+  {
+    "package_name": "aiomysql",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: aiomysql"
+  },
+  {
+    "package_name": "aiosqlite",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: aiosqlite"
+  },
+  {
+    "package_name": "cx-oracle",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: cx-oracle"
+  },
+  {
+    "package_name": "pyodbc",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: pyodbc"
+  },
+  {
+    "package_name": "influxdb",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: influxdb"
+  },
+  {
+    "package_name": "elasticsearch",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: elasticsearch"
+  },
+  {
+    "package_name": "opensearch-py",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: opensearch-py"
+  },
+  {
+    "package_name": "boto",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: boto"
+  },
+  {
+    "package_name": "s3transfer",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: s3transfer"
+  },
+  {
+    "package_name": "jmespath",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: jmespath"
+  },
+  {
+    "package_name": "azure-storage-blob",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: azure-storage-blob"
+  },
+  {
+    "package_name": "azure-core",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: azure-core"
+  },
+  {
+    "package_name": "google-cloud-storage",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: google-cloud-storage"
+  },
+  {
+    "package_name": "fabric",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: fabric"
+  },
+  {
+    "package_name": "paramiko",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: paramiko"
+  },
+  {
+    "package_name": "passlib",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: passlib"
+  },
+  {
+    "package_name": "pyjwt",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: pyjwt"
+  },
+  {
+    "package_name": "authlib",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: authlib"
+  },
+  {
+    "package_name": "oauthlib",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: oauthlib"
+  },
+  {
+    "package_name": "httplib2",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: httplib2"
+  },
+  {
+    "package_name": "requests-oauthlib",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: requests-oauthlib"
+  },
+  {
+    "package_name": "responses",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: responses"
+  },
+  {
+    "package_name": "httpretty",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: httpretty"
+  },
+  {
+    "package_name": "vcrpy",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: vcrpy"
+  },
+  {
+    "package_name": "betamax",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: betamax"
+  },
+  {
+    "package_name": "pytest-mock",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: pytest-mock"
+  },
+  {
+    "package_name": "faker",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: faker"
+  },
+  {
+    "package_name": "factory-boy",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: factory-boy"
+  },
+  {
+    "package_name": "freezegun",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: freezegun"
+  },
+  {
+    "package_name": "time-machine",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: time-machine"
+  },
+  {
+    "package_name": "tenacity",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: tenacity"
+  },
+  {
+    "package_name": "retrying",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: retrying"
+  },
+  {
+    "package_name": "decorator",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: decorator"
+  },
+  {
+    "package_name": "wrapt",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: wrapt"
+  },
+  {
+    "package_name": "boltons",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: boltons"
+  },
+  {
+    "package_name": "toolz",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: toolz"
+  },
+  {
+    "package_name": "cytoolz",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: cytoolz"
+  },
+  {
+    "package_name": "funcy",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: funcy"
+  },
+  {
+    "package_name": "more-itertools",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: more-itertools"
+  },
+  {
+    "package_name": "cached-property",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: cached-property"
+  },
+  {
+    "package_name": "furl",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: furl"
+  },
+  {
+    "package_name": "humanize",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: humanize"
+  },
+  {
+    "package_name": "arrow",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: arrow"
+  },
+  {
+    "package_name": "pendulum",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: pendulum"
+  },
+  {
+    "package_name": "dateparser",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: dateparser"
+  },
+  {
+    "package_name": "python-dotenv",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: python-dotenv"
+  },
+  {
+    "package_name": "environs",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: environs"
+  },
+  {
+    "package_name": "dynaconf",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: dynaconf"
+  },
+  {
+    "package_name": "hydra-core",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: hydra-core"
+  },
+  {
+    "package_name": "omegaconf",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: omegaconf"
+  },
+  {
+    "package_name": "click-completion",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: click-completion"
+  },
+  {
+    "package_name": "typer",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: typer"
+  },
+  {
+    "package_name": "fire",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: fire"
+  },
+  {
+    "package_name": "docopt",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: docopt"
+  },
+  {
+    "package_name": "invoke",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: invoke"
+  },
+  {
+    "package_name": "celery-progress",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: celery-progress"
+  },
+  {
+    "package_name": "kombu",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: kombu"
+  },
+  {
+    "package_name": "amqp",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: amqp"
+  },
+  {
+    "package_name": "vine",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: vine"
+  },
+  {
+    "package_name": "billiard",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: billiard"
+  },
+  {
+    "package_name": "rq",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: rq"
+  },
+  {
+    "package_name": "dramatiq",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: dramatiq"
+  },
+  {
+    "package_name": "huey",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: huey"
+  },
+  {
+    "package_name": "apscheduler",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: apscheduler"
+  },
+  {
+    "package_name": "schedule",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: schedule"
+  },
+  {
+    "package_name": "croniter",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: croniter"
+  },
+  {
+    "package_name": "joblib",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: joblib"
+  },
+  {
+    "package_name": "diskcache",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: diskcache"
+  },
+  {
+    "package_name": "dogpile.cache",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: dogpile.cache"
+  },
+  {
+    "package_name": "redis-py-cluster",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: redis-py-cluster"
+  },
+  {
+    "package_name": "walrus",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: walrus"
+  },
+  {
+    "package_name": "pika",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: pika"
+  },
+  {
+    "package_name": "confluent-kafka",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: confluent-kafka"
+  },
+  {
+    "package_name": "kafka-python",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: kafka-python"
+  },
+  {
+    "package_name": "faust",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: faust"
+  },
+  {
+    "package_name": "pulsar-client",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: pulsar-client"
+  },
+  {
+    "package_name": "websockets",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: websockets"
+  },
+  {
+    "package_name": "eventlet",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: eventlet"
+  },
+  {
+    "package_name": "simplejson",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: simplejson"
+  },
+  {
+    "package_name": "ujson",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: ujson"
+  },
+  {
+    "package_name": "orjson",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: orjson"
+  },
+  {
+    "package_name": "msgpack",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: msgpack"
+  },
+  {
+    "package_name": "cbor2",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: cbor2"
+  },
+  {
+    "package_name": "pyyaml",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: pyyaml"
+  },
+  {
+    "package_name": "toml",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: toml"
+  },
+  {
+    "package_name": "tomli",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: tomli"
+  },
+  {
+    "package_name": "tomli-w",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: tomli-w"
+  },
+  {
+    "package_name": "h11",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: h11"
+  },
+  {
+    "package_name": "httpcore",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: httpcore"
+  },
+  {
+    "package_name": "rfc3986",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: rfc3986"
+  },
+  {
+    "package_name": "sniffio",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: sniffio"
+  },
+  {
+    "package_name": "blinker",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: blinker"
+  },
+  {
+    "package_name": "itsdangerous",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: itsdangerous"
+  },
+  {
+    "package_name": "flask-login",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: flask-login"
+  },
+  {
+    "package_name": "flask-cors",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: flask-cors"
+  },
+  {
+    "package_name": "flask-migrate",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: flask-migrate"
+  },
+  {
+    "package_name": "flask-sqlalchemy",
+    "ecosystem": "pypi",
+    "category": "popular_legitimate",
+    "description": "Popular legitimate PyPI package: flask-sqlalchemy"
+  }
+]

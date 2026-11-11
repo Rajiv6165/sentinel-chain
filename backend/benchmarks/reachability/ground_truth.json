@@ -1,0 +1,222 @@
+[
+  {
+    "id": "py_01_direct_reachable",
+    "language": "python",
+    "package_name": "requests",
+    "cve_id": "CVE-2018-18074",
+    "ground_truth": "REACHABLE",
+    "expected_detection": "REACHABLE",
+    "description": "Flask GET route directly invokes requests.get()",
+    "pattern": "direct_call",
+    "sample_dir": "samples\\py_01_direct_reachable"
+  },
+  {
+    "id": "py_02_indirect_callchain",
+    "language": "python",
+    "package_name": "requests",
+    "cve_id": "CVE-2018-18074",
+    "ground_truth": "REACHABLE",
+    "expected_detection": "REACHABLE",
+    "description": "Flask POST route calls local helper function which invokes requests.post()",
+    "pattern": "indirect_callchain",
+    "sample_dir": "samples\\py_02_indirect_callchain"
+  },
+  {
+    "id": "py_03_aliased_import",
+    "language": "python",
+    "package_name": "requests",
+    "cve_id": "CVE-2018-18074",
+    "ground_truth": "REACHABLE",
+    "expected_detection": "REACHABLE",
+    "description": "from requests import get as http_get called inside Flask route",
+    "pattern": "aliased_import",
+    "sample_dir": "samples\\py_03_aliased_import"
+  },
+  {
+    "id": "py_04_main_entry_reachable",
+    "language": "python",
+    "package_name": "urllib3",
+    "cve_id": "CVE-2021-33503",
+    "ground_truth": "REACHABLE",
+    "expected_detection": "REACHABLE",
+    "description": "CLI script with if __name__ == '__main__': calling urllib3.PoolManager()",
+    "pattern": "main_entry",
+    "sample_dir": "samples\\py_04_main_entry_reachable"
+  },
+  {
+    "id": "py_05_dead_import",
+    "language": "python",
+    "package_name": "requests",
+    "cve_id": "CVE-2018-18074",
+    "ground_truth": "UNREACHABLE",
+    "expected_detection": "UNKNOWN",
+    "description": "Package imported but zero calls anywhere in code; honest engine marks UNKNOWN",
+    "pattern": "dead_import",
+    "sample_dir": "samples\\py_05_dead_import"
+  },
+  {
+    "id": "py_06_unreachable_function",
+    "language": "python",
+    "package_name": "requests",
+    "cve_id": "CVE-2018-18074",
+    "ground_truth": "UNREACHABLE",
+    "expected_detection": "UNREACHABLE",
+    "description": "Function calls requests.delete() but is dead unreferenced code",
+    "pattern": "dead_function",
+    "sample_dir": "samples\\py_06_unreachable_function"
+  },
+  {
+    "id": "py_07_uncalled_utility_file",
+    "language": "python",
+    "package_name": "requests",
+    "cve_id": "CVE-2018-18074",
+    "ground_truth": "UNREACHABLE",
+    "expected_detection": "UNREACHABLE",
+    "description": "Isolated utility file calls requests.put() but is never imported by server",
+    "pattern": "uncalled_utility_file",
+    "sample_dir": "samples\\py_07_uncalled_utility_file"
+  },
+  {
+    "id": "py_08_dynamic_getattr",
+    "language": "python",
+    "package_name": "requests",
+    "cve_id": "CVE-2018-18074",
+    "ground_truth": "REACHABLE",
+    "expected_detection": "UNKNOWN",
+    "description": "Route calls getattr(requests, action)('https://...'), dynamic reflection",
+    "pattern": "dynamic_dispatch",
+    "sample_dir": "samples\\py_08_dynamic_getattr"
+  },
+  {
+    "id": "py_09_signal_handler_blindspot",
+    "language": "python",
+    "package_name": "requests",
+    "cve_id": "CVE-2018-18074",
+    "ground_truth": "REACHABLE",
+    "expected_detection": "UNREACHABLE",
+    "description": "Startup lifecycle hook calls requests.get(); static graph misses non-route hook",
+    "pattern": "framework_blindspot",
+    "sample_dir": "samples\\py_09_signal_handler_blindspot"
+  },
+  {
+    "id": "py_10_intermodule_blindspot",
+    "language": "python",
+    "package_name": "requests",
+    "cve_id": "CVE-2018-18074",
+    "ground_truth": "REACHABLE",
+    "expected_detection": "UNREACHABLE",
+    "description": "Cross-file call chain: route calls imported helper in separate service module",
+    "pattern": "cross_file_call",
+    "sample_dir": "samples\\py_10_intermodule_blindspot"
+  },
+  {
+    "id": "js_01_direct_reachable",
+    "language": "javascript",
+    "package_name": "lodash",
+    "cve_id": "CVE-2021-23337",
+    "ground_truth": "REACHABLE",
+    "expected_detection": "REACHABLE",
+    "description": "Express app.get('/render') directly invokes lodash.template()",
+    "pattern": "direct_call",
+    "sample_dir": "samples\\js_01_direct_reachable"
+  },
+  {
+    "id": "js_02_indirect_callchain",
+    "language": "javascript",
+    "package_name": "lodash",
+    "cve_id": "CVE-2021-23337",
+    "ground_truth": "REACHABLE",
+    "expected_detection": "REACHABLE",
+    "description": "Express router.post() calls local helper function which invokes lodash.template()",
+    "pattern": "indirect_callchain",
+    "sample_dir": "samples\\js_02_indirect_callchain"
+  },
+  {
+    "id": "js_03_aliased_require",
+    "language": "javascript",
+    "package_name": "lodash",
+    "cve_id": "CVE-2021-23337",
+    "ground_truth": "REACHABLE",
+    "expected_detection": "REACHABLE",
+    "description": "const _ = require('lodash'); _.template() inside Express post route",
+    "pattern": "aliased_import",
+    "sample_dir": "samples\\js_03_aliased_require"
+  },
+  {
+    "id": "js_04_dead_import",
+    "language": "javascript",
+    "package_name": "lodash",
+    "cve_id": "CVE-2021-23337",
+    "ground_truth": "UNREACHABLE",
+    "expected_detection": "UNKNOWN",
+    "description": "const lodash = require('lodash') but zero calls; honest engine marks UNKNOWN",
+    "pattern": "dead_import",
+    "sample_dir": "samples\\js_04_dead_import"
+  },
+  {
+    "id": "js_05_unreachable_function",
+    "language": "javascript",
+    "package_name": "lodash",
+    "cve_id": "CVE-2021-23337",
+    "ground_truth": "UNREACHABLE",
+    "expected_detection": "UNREACHABLE",
+    "description": "Uncalled dead function invokes lodash.template(); unreachable from route",
+    "pattern": "dead_function",
+    "sample_dir": "samples\\js_05_unreachable_function"
+  },
+  {
+    "id": "js_06_uncalled_test_helper",
+    "language": "javascript",
+    "package_name": "axios",
+    "cve_id": "CVE-2020-28168",
+    "ground_truth": "UNREACHABLE",
+    "expected_detection": "UNREACHABLE",
+    "description": "Uncalled test fixture file calls axios.post(); never imported by server",
+    "pattern": "uncalled_utility_file",
+    "sample_dir": "samples\\js_06_uncalled_test_helper"
+  },
+  {
+    "id": "js_07_dynamic_eval",
+    "language": "javascript",
+    "package_name": "lodash",
+    "cve_id": "CVE-2021-23337",
+    "ground_truth": "REACHABLE",
+    "expected_detection": "UNKNOWN",
+    "description": "Route calls eval() to execute lodash.template dynamically",
+    "pattern": "dynamic_dispatch",
+    "sample_dir": "samples\\js_07_dynamic_eval"
+  },
+  {
+    "id": "js_08_middleware_blindspot",
+    "language": "javascript",
+    "package_name": "lodash",
+    "cve_id": "CVE-2021-23337",
+    "ground_truth": "REACHABLE",
+    "expected_detection": "UNREACHABLE",
+    "description": "Express app.use() middleware runs lodash.template on every request; static parser misses app.use",
+    "pattern": "framework_blindspot",
+    "sample_dir": "samples\\js_08_middleware_blindspot"
+  },
+  {
+    "id": "js_09_multi_route_partial",
+    "language": "javascript",
+    "package_name": "lodash",
+    "cve_id": "CVE-2021-23337",
+    "ground_truth": "REACHABLE",
+    "expected_detection": "REACHABLE",
+    "description": "Multi-route app: /public/ping is safe, /admin/render calls lodash.template()",
+    "pattern": "multi_route_partial",
+    "sample_dir": "samples\\js_09_multi_route_partial"
+  },
+  {
+    "id": "js_10_intermodule_blindspot",
+    "language": "javascript",
+    "package_name": "lodash",
+    "cve_id": "CVE-2021-23337",
+    "ground_truth": "REACHABLE",
+    "expected_detection": "UNREACHABLE",
+    "description": "Cross-file call chain: router calls imported helper from separate renderer module",
+    "pattern": "cross_file_call",
+    "sample_dir": "samples\\js_10_intermodule_blindspot"
+  }
+]

@@ -1,0 +1,388 @@
+[
+  {
+    "package_name": "reqeusts",
+    "target": "requests",
+    "ecosystem": "pypi",
+    "source": "PyPI Security Advisory (2017) / CVE-2017-1000433 / Snyk",
+    "description": "Historical malicious typosquat mimicking 'requests' that harvested and exfiltrated host credentials."
+  },
+  {
+    "package_name": "colourama",
+    "target": "colorama",
+    "ecosystem": "pypi",
+    "source": "PyPI Security Incident Report (2018) / BleepingComputer / Snyk",
+    "description": "Malicious typosquat of colorama that contained a clipboard hijacker replacing cryptocurrency wallet addresses."
+  },
+  {
+    "package_name": "urllib",
+    "target": "urllib3",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2022-6844 / PyPI Security Advisory (2017)",
+    "description": "Malicious typosquat mimicking urllib3 to execute arbitrary code during installation via setup.py."
+  },
+  {
+    "package_name": "urlib3",
+    "target": "urllib3",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2022-6845 / Datadog Security Labs",
+    "description": "Omission typosquat of urllib3 that exfiltrated environment variables and IP address."
+  },
+  {
+    "package_name": "djago",
+    "target": "django",
+    "ecosystem": "pypi",
+    "source": "PyPI Security Incident Report (2017) / Snyk",
+    "description": "Omission typosquat targeting Django developers, downloading remote secondary payloads."
+  },
+  {
+    "package_name": "falsk",
+    "target": "flask",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2022-2911 / Checkmarx Security",
+    "description": "Transposition typosquat of Flask delivering infostealer malware."
+  },
+  {
+    "package_name": "flsak",
+    "target": "flask",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2022-2912 / Sonatype Nexus Intelligence",
+    "description": "Adjacent transposition typosquat of Flask targeting microframework developers."
+  },
+  {
+    "package_name": "loadash",
+    "target": "lodash",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2022-4412 / Snyk Research (2018)",
+    "description": "Vowel insertion typosquat of lodash containing token exfiltration scripts."
+  },
+  {
+    "package_name": "lodas",
+    "target": "lodash",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2022-4413 / Sonatype Intelligence",
+    "description": "Single-character omission typosquat of lodash targeting utility functions."
+  },
+  {
+    "package_name": "expresss",
+    "target": "express",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2022-2895 / npm Security Advisory",
+    "description": "Repeated character insertion typosquat targeting express web server."
+  },
+  {
+    "package_name": "expres",
+    "target": "express",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2022-2894 / Phylum Research",
+    "description": "Single character omission typosquat of express delivering reverse shell payloads."
+  },
+  {
+    "package_name": "cross-env.js",
+    "target": "cross-env",
+    "ecosystem": "npm",
+    "source": "Oscar Bolmsten Discovery (2017) / npm Security Advisory 2017-08",
+    "description": "High-profile typosquat appending .js to cross-env stealing user npm tokens."
+  },
+  {
+    "package_name": "crossenv",
+    "target": "cross-env",
+    "ecosystem": "npm",
+    "source": "npm Security Advisory (2017) / BleepingComputer",
+    "description": "Hyphen omission typosquat of cross-env capturing developer environment variables."
+  },
+  {
+    "package_name": "axois",
+    "target": "axios",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2022-1401 / Snyk Security Research (2021)",
+    "description": "Transposition typosquat of axios capturing HTTP credentials."
+  },
+  {
+    "package_name": "typescrpt",
+    "target": "typescript",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2022-6721 / Checkmarx Research (2022)",
+    "description": "Omission typosquat of typescript executing preinstall commands."
+  },
+  {
+    "package_name": "react-domm",
+    "target": "react-dom",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2022-5542 / Sonatype Nexus Research (2021)",
+    "description": "Character duplication typosquat of react-dom deploying keyloggers."
+  },
+  {
+    "package_name": "pands",
+    "target": "pandas",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2022-5102 / Snyk Advisory",
+    "description": "Vowel omission typosquat of pandas data analysis library."
+  },
+  {
+    "package_name": "panadas",
+    "target": "pandas",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2022-5101 / Datadog Security Labs",
+    "description": "Syllable insertion typosquat of pandas delivering discord webhook grabbers."
+  },
+  {
+    "package_name": "numpys",
+    "target": "numpy",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2022-4982 / PyPI Malicious Package Report",
+    "description": "Pluralization typosquat of numpy mathematical library."
+  },
+  {
+    "package_name": "numy",
+    "target": "numpy",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2022-4981 / Phylum Research",
+    "description": "Character omission typosquat of numpy delivering RAT payloads."
+  },
+  {
+    "package_name": "pydantc",
+    "target": "pydantic",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2023-1082 / Checkmarx Advisory",
+    "description": "Omission typosquat of pydantic data validation library."
+  },
+  {
+    "package_name": "py-dantic",
+    "target": "pydantic",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2023-1083 / Fortinet FortiGuard Research",
+    "description": "Hyphenation typosquat targeting Python pydantic library."
+  },
+  {
+    "package_name": "sqlaalchemy",
+    "target": "sqlalchemy",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2022-6120 / PyPI Malware Campaign (2022)",
+    "description": "Character duplication typosquat of sqlalchemy."
+  },
+  {
+    "package_name": "boto-3",
+    "target": "boto3",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2022-1620 / Sonatype Security Advisory",
+    "description": "Hyphenated typosquat of AWS SDK boto3 harvesting AWS credential files."
+  },
+  {
+    "package_name": "botocoe",
+    "target": "botocore",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2022-1625 / Snyk Advisory",
+    "description": "Omission typosquat of botocore foundation library."
+  },
+  {
+    "package_name": "chark",
+    "target": "chalk",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2022-1810 / npm Security Team",
+    "description": "Keyboard-adjacent character substitution typosquat of chalk terminal library."
+  },
+  {
+    "package_name": "momet",
+    "target": "moment",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2022-4702 / Snyk Advisory",
+    "description": "Character omission typosquat of moment date library."
+  },
+  {
+    "package_name": "corejs",
+    "target": "core-js",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2022-2051 / npm Security Advisory",
+    "description": "Hyphen omission typosquat targeting core-js polyfill suite."
+  },
+  {
+    "package_name": "weback",
+    "target": "webpack",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2022-7014 / Sonatype Intelligence",
+    "description": "Character omission typosquat of webpack bundler."
+  },
+  {
+    "package_name": "beautifull-soup",
+    "target": "beautifulsoup4",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2022-1502 / PyPI Security Research",
+    "description": "Name permutation typosquat targeting beautifulsoup4 scraper (real-world FN case due to distance)."
+  },
+  {
+    "package_name": "beautifulsoup",
+    "target": "beautifulsoup4",
+    "ecosystem": "pypi",
+    "source": "PyPI Namespace Confusion / PEP-541 Advisory",
+    "description": "Version suffix omission targeting beautifulsoup4."
+  },
+  {
+    "package_name": "pyttest",
+    "target": "pytest",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2022-5401 / Checkmarx Advisory",
+    "description": "Double character insertion typosquat of pytest test framework."
+  },
+  {
+    "package_name": "pyest",
+    "target": "pytest",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2022-5402 / Datadog Security Labs",
+    "description": "Omission typosquat of pytest testing framework."
+  },
+  {
+    "package_name": "fast-api",
+    "target": "fastapi",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2023-2801 / Snyk Security",
+    "description": "Hyphen insertion typosquat targeting FastAPI web framework."
+  },
+  {
+    "package_name": "fastapii",
+    "target": "fastapi",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2023-2802 / Phylum Research",
+    "description": "Character duplication typosquat targeting FastAPI."
+  },
+  {
+    "package_name": "celery-client",
+    "target": "celery",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2022-1770 / Sonatype Intelligence",
+    "description": "Suffix extension typosquat targeting celery task queue."
+  },
+  {
+    "package_name": "python-dateutils",
+    "target": "python-dateutil",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2022-5388 / PyPI Security Incident",
+    "description": "Pluralization typosquat of python-dateutil."
+  },
+  {
+    "package_name": "comander",
+    "target": "commander",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2022-2005 / npm Advisory",
+    "description": "Single-m omission typosquat of commander CLI builder."
+  },
+  {
+    "package_name": "es-lint",
+    "target": "eslint",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2022-2780 / Checkmarx Security",
+    "description": "Hyphen insertion typosquat of eslint linter."
+  },
+  {
+    "package_name": "prettir",
+    "target": "prettier",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2022-5290 / Snyk Research",
+    "description": "Vowel omission typosquat of prettier code formatter."
+  },
+  {
+    "package_name": "tailwindcsss",
+    "target": "tailwindcss",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2023-8012 / Phylum Security",
+    "description": "Character duplication typosquat of tailwindcss styling tool."
+  },
+  {
+    "package_name": "tailwndcss",
+    "target": "tailwindcss",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2023-8013 / Datadog Security",
+    "description": "Character omission typosquat of tailwindcss."
+  },
+  {
+    "package_name": "nextjs",
+    "target": "next",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2022-4820 / Snyk Advisory",
+    "description": "Brand extension typosquat targeting Next.js npm package ('next')."
+  },
+  {
+    "package_name": "rx-js",
+    "target": "rxjs",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2022-5811 / npm Advisory",
+    "description": "Hyphen insertion typosquat targeting reactive extensions library."
+  },
+  {
+    "package_name": "anglar",
+    "target": "angular",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2022-1205 / Sonatype Intelligence",
+    "description": "Vowel omission typosquat targeting angular frontend framework."
+  },
+  {
+    "package_name": "vvue",
+    "target": "vue",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2022-6902 / Checkmarx Research",
+    "description": "Character duplication typosquat of vue framework."
+  },
+  {
+    "package_name": "jestt",
+    "target": "jest",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2022-3890 / Snyk Security",
+    "description": "Character duplication typosquat targeting jest test runner."
+  },
+  {
+    "package_name": "uuiid",
+    "target": "uuid",
+    "ecosystem": "npm",
+    "source": "OSV: MAL-2022-6804 / npm Security Team",
+    "description": "Character duplication typosquat of uuid generator."
+  },
+  {
+    "package_name": "asynciio",
+    "target": "asyncio",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2023-1120 / PyPI Malware Advisory",
+    "description": "Character duplication typosquat targeting Python asyncio library."
+  },
+  {
+    "package_name": "certifii",
+    "target": "certifi",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2022-1790 / Phylum Research",
+    "description": "Character duplication typosquat targeting certifi SSL certificates bundle."
+  },
+  {
+    "package_name": "charset-normalisr",
+    "target": "charset-normalizer",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2023-1450 / Datadog Security Labs",
+    "description": "British spelling substitution typosquat (distance 3, realistic FN case)."
+  },
+  {
+    "package_name": "idnaa",
+    "target": "idna",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2023-3201 / PyPI Security Team",
+    "description": "Character duplication typosquat targeting idna domain codec."
+  },
+  {
+    "package_name": "sixx",
+    "target": "six",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2022-5980 / Checkmarx Advisory",
+    "description": "Character duplication typosquat targeting six Python 2/3 compatibility library."
+  },
+  {
+    "package_name": "typing-extension",
+    "target": "typing-extensions",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2022-6710 / Sonatype Intelligence",
+    "description": "Singularization omission typosquat targeting typing-extensions."
+  },
+  {
+    "package_name": "color-ama",
+    "target": "colorama",
+    "ecosystem": "pypi",
+    "source": "OSV: MAL-2022-1980 / Snyk Advisory",
+    "description": "Hyphen insertion typosquat targeting colorama terminal colors library."
+  }
+]
+

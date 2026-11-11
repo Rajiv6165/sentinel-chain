@@ -1,0 +1,6 @@
+{
+  "name": "js_05",
+  "dependencies": {
+    "lodash": "4.17.20"
+  }
+}

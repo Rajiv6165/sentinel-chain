@@ -19,7 +19,7 @@ def is_keyboard_adjacent(char1: str, char2: str) -> bool:
     
     return abs(r1 - r2) <= 1 and abs(c1 - c2) <= 1
 
-def analyze_typosquat(target: str, reference: str) -> dict:
+def analyze_typosquat(target: str, reference: str, max_distance: int = 2) -> dict:
     """
     Analyzes the relationship between a target package name and a reference known-good name.
     Returns a dict with distance score, risk level, and reasoning if a typo is suspected, else None.
@@ -32,7 +32,7 @@ def analyze_typosquat(target: str, reference: str) -> dict:
     dist = Levenshtein.distance(target, reference)
     
     # Fast paths for non-typos
-    if dist > 2:
+    if dist > max_distance:
         return None
         
     reasoning = ""
@@ -80,6 +80,12 @@ def analyze_typosquat(target: str, reference: str) -> dict:
         else:
             reasoning = "Double character insertion/omission/substitution"
             risk_level = "low"
+    elif dist == 3:
+        reasoning = "Three character distance variation"
+        risk_level = "low"
+    else:
+        reasoning = f"Distance {dist} variation"
+        risk_level = "low"
 
     return {
         "target": target,
@@ -89,7 +95,7 @@ def analyze_typosquat(target: str, reference: str) -> dict:
         "reasoning": reasoning
     }
 
-def score_dependencies(dependencies: list[str], top_packages: list[str]) -> list[dict]:
+def score_dependencies(dependencies: list[str], top_packages: list[str], max_distance: int = 2) -> list[dict]:
     """
     Scores a list of dependencies against a list of known top packages.
     """
@@ -105,7 +111,7 @@ def score_dependencies(dependencies: list[str], top_packages: list[str]) -> list
             continue
             
         for ref in top_packages:
-            result = analyze_typosquat(dep, ref)
+            result = analyze_typosquat(dep, ref, max_distance=max_distance)
             if result:
                 # Prioritize 'high' risk and lowest distance
                 if result['distance_score'] < lowest_dist or (result['distance_score'] == lowest_dist and result['risk_level'] == 'high'):
