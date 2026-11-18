@@ -71,7 +71,11 @@ def format_markdown_summary(results: list, scanned_count: int, diff_info: dict =
         # Gather issues
         issues = []
         if r.get("typosquat"):
-            issues.append("Typo-squatting")
+            ts = r["typosquat"]
+            if ts.get("confidence") == "low" or (ts.get("distance_score") or 0) >= 2:
+                issues.append("Typo-squatting (low confidence / review)")
+            else:
+                issues.append("Typo-squatting")
         if r.get("cves"):
             issues.append(f"{len(r['cves'])} CVE(s)")
         if r.get("sandbox") and r["sandbox"].get("score", 0) > 0:
@@ -83,7 +87,13 @@ def format_markdown_summary(results: list, scanned_count: int, diff_info: dict =
         
         # Gather reachability
         reachable_cves = [cve for cve in r.get("cves", []) if cve.get("reachability") == "REACHABLE"]
-        reachability_str = f"Yes ({len(reachable_cves)})" if reachable_cves else "No"
+        unknown_cves = [cve for cve in r.get("cves", []) if cve.get("reachability") == "UNKNOWN"]
+        if reachable_cves:
+            reachability_str = f"Yes ({len(reachable_cves)})"
+        elif unknown_cves:
+            reachability_str = f"Unknown ({len(unknown_cves)})"
+        else:
+            reachability_str = "No"
         
         md.append(f"| `{pkg_name}` | {risk_emoji} {risk} | {issue_str} | {reachability_str} |")
         

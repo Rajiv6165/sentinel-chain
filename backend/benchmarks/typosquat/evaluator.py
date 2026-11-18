@@ -1,7 +1,7 @@
 import json
 import os
 from typing import Dict, List, Any
-from utils.scoring import score_dependencies
+from utils.scoring import score_dependencies, DEFAULT_MAX_DISTANCE
 from .dataset import load_positive_samples, load_negative_samples
 
 def evaluate_threshold(
@@ -51,7 +51,7 @@ class TyposquatEvaluator:
         with open(top_pkg_path, "r", encoding="utf-8") as f:
             self.top_packages = json.load(f)
 
-    def evaluate(self, max_distance: int = 2) -> Dict[str, Any]:
+    def evaluate(self, max_distance: int = DEFAULT_MAX_DISTANCE) -> Dict[str, Any]:
         res = evaluate_threshold(self.positive_samples, self.negative_samples, self.top_packages, max_distance)
         fps = []
         for s in self.negative_samples:
@@ -64,6 +64,8 @@ class TyposquatEvaluator:
                     "matched_target": finding["suspected_target"],
                     "distance": finding["distance_score"],
                     "risk_level": finding["risk_level"],
+                    "confidence": finding.get("confidence", "high"),
+                    "confidence_label": finding.get("confidence_label", "high confidence"),
                     "description": s.get("description", "")
                 })
         fns = []
