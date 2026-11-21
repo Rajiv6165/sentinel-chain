@@ -70,6 +70,12 @@ def generate_attestation(repo_path, sbom_content=None, report_content=None, engi
     return attestation
 
 def sign_data(data: bytes, identity_token=None):
+    """
+    Signs data using Sigstore.
+    On a server deployment, interactive browser OIDC flows are disabled.
+    Signing is supported only via ambient credentials (e.g. GitHub Actions OIDC in CI)
+    or explicitly supplied identity tokens.
+    """
     trust_config = ClientTrustConfig.production()
     
     if not identity_token:
@@ -77,9 +83,12 @@ def sign_data(data: bytes, identity_token=None):
         if raw_token:
             identity_token = IdentityToken(raw_token)
         else:
-            print("Notice: Opening browser for Sigstore OIDC interactive authentication...")
-            issuer = Issuer(trust_config.signing_config.get_oidc_url())
-            identity_token = issuer.identity_token()
+            # Interactive browser flow cannot work on a headless server or public demo
+            raise RuntimeError(
+                "Interactive Sigstore browser OIDC authentication is disabled on the server. "
+                "Signing requires ambient CI credentials (e.g. GitHub Actions OIDC) or an explicit identity token. "
+                "Verification remains fully supported."
+            )
             
     context = SigningContext.from_trust_config(trust_config)
     with context.signer(identity_token, cache=True) as signer:
@@ -98,20 +107,23 @@ def sign_file(filepath, identity_token=None):
     return out_path
 
 def verify_file(filepath, bundle_path, expected_identity=None, expected_issuer=None):
+    artifact_path = Path(filepath)
+    bundle_file = Path(bundle_path)
+    
+    bundle = Bundle.from_json(bundle_file.read_text(encoding="utf-8"))
+    verifier = Verifier.production()
+    
+    if expected_identity and expected_issuer:
+        policy = Identity(identity=expected_identity, issuer=expected_issuer)
+    else:
+        policy = UnsafeNoOp()
+        
     try:
-        input_bytes = Path(filepath).read_bytes()
-        bundle_bytes = Path(bundle_path).read_bytes()
-        bundle = Bundle.from_json(bundle_bytes)
-        
-        verifier = Verifier.production()
-        
-        if expected_identity and expected_issuer:
-            policy = Identity(identity=expected_identity, issuer=expected_issuer)
-        else:
-            # If no identity is enforced by the caller, use UnsafeNoOp to at least verify the Rekor signature validity
-            policy = UnsafeNoOp()
-            
-        verifier.verify_artifact(input_bytes, bundle, policy)
-        return True, "Verification successful against Sigstore transparency log."
+        verifier.verify_artifact(
+            input_=artifact_path.read_bytes(),
+            bundle=bundle,
+            policy=policy
+        )
+        return True, "Signature verification successful"
     except Exception as e:
-        return False, str(e)
+        return False, f"Verification failed: {str(e)}"

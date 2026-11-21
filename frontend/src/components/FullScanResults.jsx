@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import html2pdf from 'html2pdf.js';
+import { API_BASE_URL } from '../config';
 
 export default function FullScanResults({ result, jobId, projectName }) {
   const reportRef = useRef();
@@ -10,7 +11,7 @@ export default function FullScanResults({ result, jobId, projectName }) {
 
   useEffect(() => {
     if (!jobId) return;
-    fetch(`http://localhost:8000/api/scans/${jobId}/diff`)
+    fetch(`${API_BASE_URL}/api/scans/${jobId}/diff`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data) setDiffData(data);
@@ -23,7 +24,7 @@ export default function FullScanResults({ result, jobId, projectName }) {
     setIsSigning(true);
     setSignError('');
     try {
-      const res = await fetch(`http://localhost:8000/api/sbom/${jobId}/attestation?sign=true`);
+      const res = await fetch(`${API_BASE_URL}/api/sbom/${jobId}/attestation?sign=true`);
       if (!res.ok) throw new Error('Failed to generate signed attestation');
       const data = await res.json();
       setAttestationData(data);
@@ -78,21 +79,21 @@ export default function FullScanResults({ result, jobId, projectName }) {
           {jobId && (
             <>
               <a 
-                href={`http://localhost:8000/api/sbom/${jobId}?format=cyclonedx`}
+                href={`${API_BASE_URL}/api/sbom/${jobId}?format=cyclonedx`}
                 target="_blank" rel="noopener noreferrer"
                 className="px-3 py-2 bg-dark-700 hover:bg-dark-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2 border border-dark-600"
               >
                 CycloneDX SBOM
               </a>
               <a 
-                href={`http://localhost:8000/api/sbom/${jobId}?format=spdx`}
+                href={`${API_BASE_URL}/api/sbom/${jobId}?format=spdx`}
                 target="_blank" rel="noopener noreferrer"
                 className="px-3 py-2 bg-dark-700 hover:bg-dark-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2 border border-dark-600"
               >
                 SPDX SBOM
               </a>
               <a 
-                href={`http://localhost:8000/api/sbom/${jobId}?format=vex`}
+                href={`${API_BASE_URL}/api/sbom/${jobId}?format=vex`}
                 target="_blank" rel="noopener noreferrer"
                 className="px-3 py-2 bg-dark-700 hover:bg-dark-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2 border border-dark-600"
               >

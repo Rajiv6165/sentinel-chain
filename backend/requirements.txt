@@ -14,3 +14,10 @@ tree-sitter-python
 sqlalchemy
 alembic
 psycopg2-binary
+psycopg[binary]
+slowapi
+sigstore
+pyyaml
+aiohttp
+requests
+jsonschema

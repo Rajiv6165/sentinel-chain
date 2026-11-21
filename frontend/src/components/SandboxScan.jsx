@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config';
 
 export default function SandboxScan({ onScanResult, setLoading }) {
   const [ecosystem, setEcosystem] = useState('npm');
@@ -12,7 +13,7 @@ export default function SandboxScan({ onScanResult, setLoading }) {
     if (jobId) {
       interval = setInterval(async () => {
         try {
-          const res = await fetch(`http://localhost:8000/api/sandbox-scan/${jobId}`);
+          const res = await fetch(`${API_BASE_URL}/api/sandbox-scan/${jobId}`);
           if (res.ok) {
             const data = await res.json();
             setStatus(`Status: ${data.status}`);
@@ -43,7 +44,7 @@ export default function SandboxScan({ onScanResult, setLoading }) {
     onScanResult(null);
 
     try {
-      const res = await fetch('http://localhost:8000/api/sandbox-scan', {
+      const res = await fetch(`${API_BASE_URL}/api/sandbox-scan`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

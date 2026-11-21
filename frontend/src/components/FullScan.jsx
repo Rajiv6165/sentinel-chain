@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config';
 
 export default function FullScan({ onScanResult, setLoading }) {
   const [file, setFile] = useState(null);
@@ -29,7 +30,7 @@ export default function FullScan({ onScanResult, setLoading }) {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/api/full-scan', {
+      const response = await fetch(`${API_BASE_URL}/api/full-scan`, {
         method: 'POST',
         body: formData,
       });
@@ -51,7 +52,7 @@ export default function FullScan({ onScanResult, setLoading }) {
     if (jobId) {
       const interval = setInterval(async () => {
         try {
-          const res = await fetch(`http://localhost:8000/api/full-scan/${jobId}`);
+          const res = await fetch(`${API_BASE_URL}/api/full-scan/${jobId}`);
           const data = await res.json();
           
           if (data.status === 'completed') {

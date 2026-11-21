@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { API_BASE_URL } from '../config';
 
 export default function FileUpload({ onScanResult, setLoading }) {
   const [isDragging, setIsDragging] = useState(false);
@@ -47,8 +48,7 @@ export default function FileUpload({ onScanResult, setLoading }) {
     formData.append('file', file);
 
     try {
-      // Assuming backend is running on localhost:8000
-      const endpoint = scanMode === 'zip' ? 'http://localhost:8000/api/reachability-scan' : 'http://localhost:8000/api/scan';
+      const endpoint = scanMode === 'zip' ? `${API_BASE_URL}/api/reachability-scan` : `${API_BASE_URL}/api/scan`;
       const res = await fetch(endpoint, {
         method: 'POST',
         body: formData,

@@ -6,9 +6,11 @@ from sqlalchemy.orm import declarative_base, sessionmaker, Session
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
 
-# Normalize postgres:// to postgresql:// for SQLAlchemy
+# Normalize postgres:// to postgresql+psycopg2:// for SQLAlchemy
 if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+psycopg2://", 1)
+elif DATABASE_URL.startswith("postgresql://") and not DATABASE_URL.startswith("postgresql+"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://", 1)
 
 engine = None
 SessionLocal = None

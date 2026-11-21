@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:15-alpine
@@ -23,12 +21,12 @@ services:
       context: ./backend
     ports:
       - "8000:8000"
-    volumes:
-      - ./backend:/app
-      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - PYTHONUNBUFFERED=1
+      - ENABLE_SANDBOX=false
       - DATABASE_URL=postgresql://sentinel:sentinel_password@postgres:5432/sentinel_chain
+      - CORS_ORIGINS=http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173
+      - LLM_DAILY_CAP=50
     depends_on:
       postgres:
         condition: service_healthy
@@ -38,11 +36,8 @@ services:
       context: ./frontend
     ports:
       - "5173:5173"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
     environment:
-      - CHOKIDAR_USEPOLLING=true
+      - VITE_API_URL=http://localhost:8000
     depends_on:
       - backend
 

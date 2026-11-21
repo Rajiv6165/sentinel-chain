@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config';
 
 export default function TrendDashboard() {
   const [projects, setProjects] = useState([]);
@@ -16,7 +17,7 @@ export default function TrendDashboard() {
   const fetchProjects = async () => {
     setLoadingProjects(true);
     try {
-      const res = await fetch('http://localhost:8000/api/projects');
+      const res = await fetch(`${API_BASE_URL}/api/projects`);
       if (res.ok) {
         const data = await res.json();
         setProjects(data);
@@ -45,7 +46,7 @@ export default function TrendDashboard() {
     const fetchScans = async () => {
       setLoadingScans(true);
       try {
-        const res = await fetch(`http://localhost:8000/api/projects/${selectedProjectId}/scans`);
+        const res = await fetch(`${API_BASE_URL}/api/projects/${selectedProjectId}/scans`);
         if (res.ok) {
           const data = await res.json();
           // Filter completed scans and reverse for chronological order (oldest -> newest for graph)
@@ -67,7 +68,7 @@ export default function TrendDashboard() {
     if (!newProjectName.trim()) return;
 
     try {
-      const res = await fetch('http://localhost:8000/api/projects', {
+      const res = await fetch(`${API_BASE_URL}/api/projects`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: json.dumps ? JSON.stringify({ name: newProjectName.trim() }) : JSON.stringify({ name: newProjectName.trim() }),
@@ -90,7 +91,7 @@ export default function TrendDashboard() {
     setLoadingDiff(true);
     setDiffData(null);
     try {
-      const res = await fetch(`http://localhost:8000/api/scans/${scanId}/diff`);
+      const res = await fetch(`${API_BASE_URL}/api/scans/${scanId}/diff`);
       if (res.ok) {
         const data = await res.json();
         setDiffData(data);
