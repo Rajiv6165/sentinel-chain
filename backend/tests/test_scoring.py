@@ -82,3 +82,41 @@ def test_score_dependencies():
     assert review_suspects["reqeusts"]["confidence_label"] == "low confidence / review"
     assert review_suspects["lodahs"]["risk_level"] == "low"
     assert review_suspects["lodahs"]["confidence"] == "low"
+
+
+def test_registry_metadata_parasite_detected():
+    """Popular-looking malicious package 'loadash' must NOT be cleared."""
+    top_packages = ["lodash"]
+    findings = score_dependencies(["loadash"], top_packages, max_distance=1)
+    assert len(findings) == 1
+    f = findings[0]
+    assert f["package_name"] == "loadash"
+    assert f["suspected_target"] == "lodash"
+    assert f["risk_level"] == "high"
+    assert f["confidence"] == "high"
+    assert "flagged parasite" in f["reasoning"].lower()
+
+
+def test_registry_metadata_high_adoption_cleared():
+    """Legitimate community packages with high adoption like 'safer-buffer' must be cleared."""
+    top_packages = ["safe-buffer"]
+    findings = score_dependencies(["safer-buffer"], top_packages, max_distance=1)
+    assert len(findings) == 0
+
+
+def test_registry_metadata_precedence_cleared():
+    """Packages published before the target (e.g. 'net' vs 'next') cannot be typosquats and must be cleared."""
+    top_packages = ["next"]
+    findings = score_dependencies(["net"], top_packages, max_distance=1)
+    assert len(findings) == 0
+
+
+def test_registry_cache_offline_loading():
+    """Verify registry cache loads offline without network access."""
+    from utils.registry import load_registry_cache, get_package_registry_metadata
+    cache = load_registry_cache()
+    assert len(cache) >= 500
+    meta = get_package_registry_metadata("loadash")
+    assert meta["exists"] is True
+    assert meta["weekly_downloads"] > 10000
+

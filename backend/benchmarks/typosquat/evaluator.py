@@ -8,17 +8,23 @@ def evaluate_threshold(
     positive_samples: List[Dict[str, Any]],
     negative_samples: List[Dict[str, Any]],
     top_packages: List[str],
-    max_distance: int
+    max_distance: int,
+    use_registry: bool = True
 ) -> Dict[str, Any]:
     pos_names = [s["package_name"] for s in positive_samples]
     neg_names = [s["package_name"] for s in negative_samples]
 
     # Run detection
-    pos_findings = score_dependencies(pos_names, top_packages, max_distance=max_distance)
-    neg_findings = score_dependencies(neg_names, top_packages, max_distance=max_distance)
+    pos_findings = score_dependencies(pos_names, top_packages, max_distance=max_distance, use_registry=use_registry)
+    neg_findings = score_dependencies(neg_names, top_packages, max_distance=max_distance, use_registry=use_registry)
 
-    flagged_pos = {f["package_name"]: f for f in pos_findings}
-    flagged_neg = {f["package_name"]: f for f in neg_findings}
+    # For default threshold (distance 1), evaluate high-confidence detections
+    if max_distance == 1:
+        flagged_pos = {f["package_name"]: f for f in pos_findings if f.get("confidence") == "high"}
+        flagged_neg = {f["package_name"]: f for f in neg_findings if f.get("confidence") == "high"}
+    else:
+        flagged_pos = {f["package_name"]: f for f in pos_findings}
+        flagged_neg = {f["package_name"]: f for f in neg_findings}
 
     tp = len(flagged_pos)
     fn = len(pos_names) - tp
@@ -39,7 +45,9 @@ def evaluate_threshold(
         "recall": round(recall, 4),
         "f1": round(f1, 4),
         "flagged_pos": flagged_pos,
-        "flagged_neg": flagged_neg
+        "flagged_neg": flagged_neg,
+        "all_pos_findings": pos_findings,
+        "all_neg_findings": neg_findings
     }
 
 class TyposquatEvaluator:
@@ -67,6 +75,7 @@ class TyposquatEvaluator:
                     "risk_level": finding["risk_level"],
                     "confidence": finding.get("confidence", "high"),
                     "confidence_label": finding.get("confidence_label", "high confidence"),
+                    "reasoning": finding.get("reasoning", ""),
                     "description": s.get("description", "")
                 })
         fns = []
