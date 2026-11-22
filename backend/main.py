@@ -196,7 +196,8 @@ async def scan_dependencies(request: Request, file: UploadFile = File(...)):
     if not dependencies:
         return {"findings": [], "message": "No dependencies found in file."}
 
-    findings = score_dependencies(dependencies, TOP_PACKAGES)
+    eco = "npm" if file.filename.endswith(".json") else "pypi"
+    findings = score_dependencies(dependencies, TOP_PACKAGES, ecosystem=eco)
     return {
         "scanned_count": len(dependencies),
         "findings": findings
@@ -236,7 +237,8 @@ async def reachability_scan(request: Request, file: UploadFile = File(...)):
             manifest_content = f.read()
 
         dependencies = parse_dependencies(os.path.basename(manifest_path), manifest_content)
-        findings = score_dependencies(dependencies, TOP_PACKAGES)
+        eco = "npm" if manifest_path.endswith("package.json") else "pypi"
+        findings = score_dependencies(dependencies, TOP_PACKAGES, ecosystem=eco)
 
         if findings:
             # Enforce timeout on static reachability analysis

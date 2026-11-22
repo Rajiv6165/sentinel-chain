@@ -121,31 +121,53 @@ def evaluate_registry_signals(
     distance: int,
     current_risk: str,
     current_confidence: str,
-    current_confidence_label: str
+    current_confidence_label: str,
+    ecosystem: Optional[str] = None
 ) -> Optional[Dict[str, Any]]:
     """
     Evaluates registry metadata (npm & PyPI weekly downloads, publication dates)
-    for suspect and target packages to reduce false positives without tuning
-    thresholds to positive benchmark samples.
+    for suspect and target packages strictly within the same ecosystem to reduce false
+    positives without tuning thresholds to positive benchmark samples.
 
     General Reasoning Rules:
-    1. Precedence (Temporal Causality): If suspect was published before target,
-       it cannot mathematically be a typosquat of that target -> CLEAR.
-    2. High Adoption Community Package: If suspect has >= 10,000 weekly downloads
-       and is >= 730 days old (2 years):
+    1. Missing Data Fallback: When metadata is missing (cache miss, network error,
+       rate limit, timeout), never clear or downgrade a match. Fall back to distance-only
+       behavior and mark the finding 'registry data unavailable'.
+    2. Quarantined / Unpublished: If suspect does not exist on the target registry (404),
+       retain the match with full threat severity.
+    3. Precedence (Temporal Causality): If suspect was published before target in the
+       same ecosystem, it cannot mathematically be a typosquat of that target -> CLEAR.
+    4. High Adoption Community Package: If suspect has >= 10,000 weekly downloads
+       and is >= 730 days old (2 years) in that ecosystem:
        - Anti-Parasite Check: If target has >= 100,000 weekly downloads and suspect
          has < 50,000 downloads and suspect download ratio is < 0.5% (0.005) of target
          and suspect was published AFTER target, suspect is a parasitic squatter
          riding on target's typo traffic (e.g. 'loadash' vs 'lodash') -> RETAIN.
        - Otherwise: -> CLEAR (legitimate independent package).
-    3. Moderate Adoption / Longevity: If suspect has >= 1,000 weekly downloads or
+    5. Moderate Adoption / Longevity: If suspect has >= 1,000 weekly downloads or
        is >= 365 days old (and not a parasite) -> DOWNGRADE to low confidence / review.
-    4. New & Low Adoption: If suspect is new (< 180 days or unrecorded) and has < 1,000
-       weekly downloads, or does not exist / was unpublished / quarantined by registry ->
-       RETAIN high risk if distance 1, or ESCALATE to high risk if distance 2.
+    6. New & Low Adoption: If suspect is new (< 180 days or unrecorded) and has < 1,000
+       weekly downloads -> retain tier with high-risk warning.
     """
-    suspect_meta = get_package_registry_metadata(suspect)
-    target_meta = get_package_registry_metadata(target)
+    eco = (ecosystem or "npm").lower()
+    suspect_meta = get_package_registry_metadata(suspect, ecosystem=eco)
+    target_meta = get_package_registry_metadata(target, ecosystem=eco)
+
+    # 1. Missing metadata check (cache miss, network error, rate limit, timeout):
+    # Never clear or downgrade a match when data is missing; fall back to distance-only behavior.
+    if (
+        suspect_meta.get("unavailable")
+        or target_meta.get("unavailable")
+        or suspect_meta.get("exists") is None
+        or target_meta.get("exists") is None
+    ):
+        return {
+            "action": "keep",
+            "risk_level": current_risk,
+            "confidence": current_confidence,
+            "confidence_label": current_confidence_label,
+            "note": "registry data unavailable"
+        }
 
     suspect_exists = suspect_meta.get("exists", False)
     suspect_dl = suspect_meta.get("weekly_downloads", 0) or 0
@@ -157,7 +179,7 @@ def evaluate_registry_signals(
     target_age = target_meta.get("age_days")
     target_created = target_meta.get("created_at")
 
-    # If suspect does not exist on registry (404 / unpublished / security takedown) -> Keep tier
+    # 2. If suspect does not exist on registry (404 / unpublished / security takedown) -> Keep tier
     if not suspect_exists:
         return {
             "action": "keep",
@@ -167,7 +189,7 @@ def evaluate_registry_signals(
             "note": "Registry: unpublished or quarantined package"
         }
 
-    # Rule 1: Temporal Precedence (Causality)
+    # 3. Rule: Temporal Precedence (Causality within same ecosystem)
     # A package published before the target cannot be a typosquat of that target
     if suspect_created and target_created and suspect_created < target_created:
         return None
@@ -186,21 +208,21 @@ def evaluate_registry_signals(
             ):
                 is_parasite = True
 
-    # Rule 2: High Adoption Community Package (Non-Parasitic)
+    # 4. Rule: High Adoption Community Package (Non-Parasitic)
     if not is_parasite and suspect_dl >= 10000 and (suspect_age is not None and suspect_age >= 730):
         return None
 
-    # If parasite: Keep high risk, never clear or downgrade
+    # If parasite: Keep high risk for distance-1, preserve review tier for distance >= 2
     if is_parasite:
         return {
             "action": "keep",
-            "risk_level": "high",
-            "confidence": "high",
-            "confidence_label": "high confidence",
+            "risk_level": current_risk if distance >= 2 else "high",
+            "confidence": current_confidence if distance >= 2 else "high",
+            "confidence_label": current_confidence_label if distance >= 2 else "high confidence",
             "note": f"Registry: flagged parasite ({suspect_dl:,} weekly dl vs target {target_dl:,} dl, {ratio:.3%})"
         }
 
-    # Rule 3: Moderate Adoption / Established Library (Downgrade to Review)
+    # 5. Rule: Moderate Adoption / Established Library (Downgrade to Review)
     if suspect_dl >= 1000 or (suspect_age is not None and suspect_age >= 365):
         return {
             "action": "downgrade",
@@ -210,7 +232,7 @@ def evaluate_registry_signals(
             "note": f"Registry: downgraded to review ({suspect_dl:,} weekly dl, age {suspect_age or 0}d)"
         }
 
-    # Rule 4: New (< 180 days) & Low Adoption (< 1,000 dl) -> Retain tier with high risk note
+    # 6. Rule: New (< 180 days) & Low Adoption (< 1,000 dl) -> Retain tier with high risk note
     is_new_and_low = (suspect_age is None or suspect_age < 180) and suspect_dl < 1000
     if is_new_and_low:
         return {
@@ -231,34 +253,46 @@ def evaluate_registry_signals(
 
 
 def score_dependencies(
-    dependencies: list[str],
+    dependencies: list,
     top_packages: list[str],
     max_distance: int = DEFAULT_MAX_DISTANCE,
+    ecosystem: str = "npm",
     use_registry: bool = True
 ) -> list[dict]:
     """
     Scores a list of dependencies against a list of known top packages.
     Defaults to max_distance=1 for high-confidence flags.
-    When use_registry=True (default), applies registry metadata heuristics to
-    filter out legitimate community packages and flag parasitic typosquats.
+
+    Each dependency in dependencies may be a string ('requests'), a dict
+    ({'package_name': 'requests', 'ecosystem': 'pypi'}), or a tuple ('requests', 'pypi').
+    When use_registry=True (default), lookups strictly use metadata from that same ecosystem.
     """
     findings = []
     top_set = set(top_packages)
 
     for dep in dependencies:
+        if isinstance(dep, dict):
+            pkg_name = dep.get("package_name") or dep.get("name")
+            pkg_eco = dep.get("ecosystem") or ecosystem
+        elif isinstance(dep, tuple):
+            pkg_name, pkg_eco = dep[0], dep[1]
+        else:
+            pkg_name = str(dep)
+            pkg_eco = ecosystem
+
         best_match = None
         lowest_dist = float('inf')
 
         # Exact match means it's a valid package in the top list
-        if dep in top_set:
+        if pkg_name in top_set:
             continue
 
-        len_dep = len(dep)
+        len_dep = len(pkg_name)
         for ref in top_packages:
             if abs(len_dep - len(ref)) > max_distance:
                 continue
 
-            result = analyze_typosquat(dep, ref, max_distance=max_distance)
+            result = analyze_typosquat(pkg_name, ref, max_distance=max_distance)
             if result:
                 # Prioritize lowest distance and 'high' risk
                 if result['distance_score'] < lowest_dist or (
@@ -275,12 +309,13 @@ def score_dependencies(
 
             if use_registry:
                 verdict = evaluate_registry_signals(
-                    suspect=dep,
+                    suspect=pkg_name,
                     target=best_match["suspected_target"],
                     distance=best_match["distance_score"],
                     current_risk=risk_level,
                     current_confidence=confidence,
-                    current_confidence_label=confidence_label
+                    current_confidence_label=confidence_label,
+                    ecosystem=pkg_eco
                 )
                 if verdict is None:
                     # Cleared by registry signals (temporal precedence or established adoption)
@@ -293,7 +328,8 @@ def score_dependencies(
                     reasoning = f"{reasoning} [{verdict['note']}]"
 
             findings.append({
-                "package_name": dep,
+                "package_name": pkg_name,
+                "ecosystem": pkg_eco,
                 "suspected_target": best_match["suspected_target"],
                 "distance_score": best_match["distance_score"],
                 "risk_level": risk_level,

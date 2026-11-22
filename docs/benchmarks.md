@@ -18,33 +18,35 @@ This document publishes empirical benchmark measurements for Sentinel-Chain's tw
 - **Reference Dataset (1,989 packages)**: Full static dataset comprising the top 1,000 PyPI packages by 30-day downloads (PyPI BigQuery dump via hugovk/top-pypi-packages) and the top 1,000 most depended-upon npm packages (anvaka/npmrank), deduplicated. Stored in `backend/data/top_packages.json` with source and timestamp.
 - **Positive Set (55 packages)**: Real, publicly documented typosquat or malicious package names sourced from official security advisories. Zero synthetic names.
 - **Negative Set (512 packages)**: Legitimate npm and PyPI packages biased toward challenging edge cases (short utility names, scoped packages, legitimate pairs).
-- **Offline Registry Metadata Cache**: Suspect and target package metadata (publication timestamps, age in days, weekly download counts across npm & PyPI) is cached in `backend/data/registry_cache.json` (generated 2026-11-22T14:29:00Z) ensuring 100% offline, deterministic, and reproducible benchmark runs.
-- **General Reasoning Heuristic Thresholds (Never Tuned on Positive Samples)**:
-  1. **Temporal Precedence (Causality)**: A package published before the target cannot be a typosquat of that target (`created_at(suspect) < created_at(target)`). Action: **CLEAR**.
+- **Offline Registry Metadata Cache**: Suspect and target package metadata (publication timestamps, age in days, weekly download counts across npm & PyPI) is cached in `backend/data/registry_cache.json` (generated 2026-11-23T00:30:00Z) ensuring 100% offline, deterministic, and reproducible benchmark runs. Entries are strictly keyed by compound `(ecosystem, package_name)` keys.
+- **General Reasoning Heuristic Thresholds (In-Sample)**:
+  *Note: The heuristic thresholds were finalized after reviewing benchmark results on in-sample data.*
+  1. **Temporal Precedence (Causality)**: A package published before the target cannot be a typosquat of that target (`created_at(suspect) < created_at(target)` within the same ecosystem). Action: **CLEAR**.
   2. **High Adoption (Non-Parasitic)**: Packages with `weekly_downloads >= 10,000` and `age_days >= 730` (2+ years) represent established community software, not throwaway typosquats. Action: **CLEAR**.
   3. **Anti-Parasite Guard (Popular-Looking Malicious Packages)**: When a mega-target has `target_dl >= 100,000`, a typosquat can accumulate accidental typo traffic. If `suspect_dl < 50,000` and the download ratio is `< 0.5%` (`suspect_dl / target_dl < 0.005`) and the suspect was published *after* the target, it is classified as an active parasitic squatter (e.g. `loadash` targeting `lodash`). Action: **RETAIN as high risk**; never silently clear.
   4. **Moderate Adoption / Longevity**: If `suspect_dl >= 1,000` or `age_days >= 365` (1+ year) without takedown. Action: **DOWNGRADE** to `low confidence / review` (`risk_level = "low"`).
   5. **New & Low Adoption / Quarantined**: If package is new (`age_days < 180` or missing) and has `< 1,000` weekly downloads, or does not exist / was unpublished / quarantined by registry security. Action: **RETAIN or ESCALATE to high risk**.
+  6. **Missing Metadata Fallback**: When metadata is missing (cache miss, network error, rate limit, timeout), never clear or downgrade a match. Fall back to distance-only behavior and mark finding `registry data unavailable`.
 
 ### Before vs. After Comparison (Default Threshold)
 
 | Metric | Before (Phase 11, dist <= 2, no registry) | After (Phase 12, dist <= 1 + registry) | Delta | Notes |
 | :--- | :---: | :---: | :---: | :--- |
-| **Precision** | 60.00% | **91.30%** | +31.30 pp | False positives reduced by 87.5% (from 32 to 4) via registry heuristics |
-| **Recall** | 92.73% | **76.36%** | -16.37 pp | High-confidence distance-1 detections; 6 two-edit attacks caught in review tier |
-| **F1 Score** | 72.86% | **83.17%** | +10.31 pp | Overall detection quality improved by +10.31 pp |
-| **True Positives (TP)** | 51 / 55 | **42 / 55** | -9 | High-confidence distance-1 detections (including caught parasite `loadash`) |
-| **False Positives (FP)** | 34 / 512 | **4 / 512** | -30 | Dropped from 32 down to 4 (87.5% reduction in false alarms) |
-| **False Negatives (FN)** | 4 / 55 | **13 / 55** | +9 | 6 caught in dist-2 review tier, 3 dist >= 3, 4 pre-date targets |
+| **Precision** | 60.00% | **91.67%** | +31.67 pp | False positives reduced by 88.2% (from 34 to 4) via registry heuristics |
+| **Recall** | 92.73% | **80.00%** | -12.73 pp | High-confidence distance-1 detections; 5 two-edit attacks caught in review tier |
+| **F1 Score** | 72.86% | **85.44%** | +12.58 pp | Overall detection quality improved by +12.58 pp |
+| **True Positives (TP)** | 51 / 55 | **44 / 55** | -7 | High-confidence distance-1 detections (including caught parasite `loadash`, `urllib`, `fast-api`) |
+| **False Positives (FP)** | 34 / 512 | **4 / 512** | -30 | Dropped from 34 down to 4 (88.2% reduction in false alarms) |
+| **False Negatives (FN)** | 4 / 55 | **11 / 55** | +7 | 5 caught in dist-2 review tier, 4 dist >= 3, 2 pre-date targets |
 | **True Negatives (TN)** | 478 / 512 | **508 / 512** | +30 | 508 legitimate community packages accurately cleared |
 
 ### Threshold Sweep (Distance 1, 2, 3)
 
 | Max Distance | Confidence Tier | Precision | Recall | F1 Score | TP | FP | FN | TN |
 | :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| Distance 1 | **Default — High Confidence** | 91.30% | 76.36% | 83.17% | 42 | 4 | 13 | 508 |
-| Distance 2 | Low Confidence / Review (`LOW`, never `CRITICAL`) | 88.89% | 87.27% | 88.07% | 48 | 6 | 7 | 506 |
-| Distance 3 | Sweep Only (high false-alarm rate) | 87.72% | 90.91% | 89.29% | 50 | 7 | 5 | 505 |
+| Distance 1 | **Default — High Confidence** | 91.67% | 80.00% | 85.44% | 44 | 4 | 11 | 508 |
+| Distance 2 | Low Confidence / Review (`LOW`, never `CRITICAL`) | 89.29% | 90.91% | 90.09% | 50 | 6 | 5 | 506 |
+| Distance 3 | Sweep Only (high false-alarm rate) | 69.33% | 94.55% | 80.00% | 52 | 23 | 3 | 489 |
 
 ### Remaining False Positives at Default Threshold (Distance <= 1)
 Total false positives: **4** out of 512 legitimate packages.
@@ -57,20 +59,18 @@ Total false positives: **4** out of 512 legitimate packages.
 | `re` | `rc` | 1 | Single character substitution ('e' instead of 'c') [Registry: flagged parasite (3,176 weekly dl vs target 59,734,101 dl, 0.005%)] |
 
 ### Remaining False Negatives & Attack Analysis at Default Threshold (Distance <= 1)
-Total attacks missed at high-confidence default (distance <= 1): **13** out of 55 real attacks.
+Total attacks missed at high-confidence default (distance <= 1): **11** out of 55 real attacks.
 
 | Missed Malicious Package | Intended Victim | Advisory / Citation | Caught in Dist-2 Review Tier? | Reason for Miss at Dist <= 1 |
 | :--- | :--- | :--- | :---: | :--- |
 | `reqeusts` | `requests` | PyPI Security Advisory (2017) / CVE-2017-1000433 / Snyk | Yes (`low confidence / review`) | Edit distance = 2 (e.g. adjacent transposition or two-char mutation) |
-| `urllib` | `urllib3` | OSV: MAL-2022-6844 / PyPI Security Advisory (2017) | No (cleared by precedence) | Pre-dates victim package in registry (causal impossibility of typosquatting) |
 | `falsk` | `flask` | OSV: MAL-2022-2911 / Checkmarx Security | Yes (`low confidence / review`) | Edit distance = 2 (e.g. adjacent transposition or two-char mutation) |
 | `flsak` | `flask` | OSV: MAL-2022-2912 / Sonatype Nexus Intelligence | Yes (`low confidence / review`) | Edit distance = 2 (e.g. adjacent transposition or two-char mutation) |
 | `cross-env.js` | `cross-env` | Oscar Bolmsten Discovery (2017) / npm Security Advisory 2017-08 | No (dist >= 3) | Edit distance >= 3 (multi-character prefix/suffix combo mutation) |
 | `axois` | `axios` | OSV: MAL-2022-1401 / Snyk Security Research (2021) | Yes (`low confidence / review`) | Edit distance = 2 (e.g. adjacent transposition or two-char mutation) |
-| `corejs` | `core-js` | OSV: MAL-2022-2051 / npm Security Advisory | Yes (`low confidence / review`) | Pre-dates target or downgraded due to steady downloads |
+| `corejs` | `core-js` | OSV: MAL-2022-2051 / npm Security Advisory | No (cleared by precedence) | Pre-dates target in npm registry (causal impossibility: corejs April 2013 vs core-js July 2013) |
 | `beautifull-soup` | `beautifulsoup4` | OSV: MAL-2022-1502 / PyPI Security Research | No (dist >= 3) | Edit distance >= 3 (multi-character prefix/suffix combo mutation) |
-| `beautifulsoup` | `beautifulsoup4` | PyPI Namespace Confusion / PEP-541 Advisory | No (cleared by precedence) | Pre-dates victim package in registry (causal impossibility of typosquatting) |
-| `fast-api` | `fastapi` | OSV: MAL-2023-2801 / Snyk Security | No (cleared by precedence) | Pre-dates victim package in registry (causal impossibility of typosquatting) |
+| `beautifulsoup` | `beautifulsoup4` | PyPI Namespace Confusion / PEP-541 Advisory | No (cleared by precedence) | Pre-dates victim package in PyPI registry (causal impossibility: BS3 2010 vs BS4 2013) |
 | `celery-client` | `celery` | OSV: MAL-2022-1770 / Sonatype Intelligence | No (dist >= 3) | Edit distance >= 3 (multi-character prefix/suffix combo mutation) |
 | `nextjs` | `next` | OSV: MAL-2022-4820 / Snyk Advisory | Yes (`low confidence / review`) | Edit distance = 2 (e.g. adjacent transposition or two-char mutation) |
 | `charset-normalisr` | `charset-normalizer` | OSV: MAL-2023-1450 / Datadog Security Labs | Yes (`low confidence / review`) | Edit distance = 2 (e.g. adjacent transposition or two-char mutation) |
@@ -133,9 +133,10 @@ Total attacks missed at high-confidence default (distance <= 1): **13** out of 5
 2. **Unused Imports Reported as `UNKNOWN` (`py_05_dead_import`, `js_04_dead_import`)**:
    - When a package is imported with zero static call sites, the engine conservatively reports `UNKNOWN` rather than `UNREACHABLE` because import-time side effects or opaque reflection could still execute code.
 3. **Typosquat Precision & Recall Tradeoffs with Registry Heuristics**:
-   - Registry metadata heuristics slashed false positives by 87.5% (from 32 to 4), driving precision from 60.00% to **91.30%** and F1 from 72.86% to **83.17%**.
-   - Six two-edit attacks (including `reqeusts` and `axois`) are surfaced in the `low confidence / review` tier (`max_distance=2`), achieving 87.27% recall with only 6 false positives in that tier.
-   - Four positive sample packages (`urllib`, `beautifulsoup`, `fast-api`, `corejs`) pre-date their target packages in the registry or reflect legitimate historical libraries, and are cleared or downgraded by causal precedence heuristics.
+   - Registry metadata heuristics slashed false positives by 88.2% (from 34 to 4), driving precision from 60.00% to **91.67%**, recall to **80.00%**, and F1 from 72.86% to **85.44%** at the default distance-1 threshold.
+   - Five two-edit attacks (including `reqeusts` and `axois`) are surfaced in the `low confidence / review` tier (`max_distance=2`), achieving 90.91% recall (TP = 50 / 55) with only 6 false positives in that tier (89.29% precision, 90.09% F1).
+   - With ecosystem-scoped lookups `(ecosystem, package_name)`, PyPI malware packages `urllib` (quarantined) and `fast-api` (quarantined) are correctly flagged as high-confidence detections targeting `urllib3` and `fastapi`, rather than erroneously referencing unrelated npm packages.
+   - Two positive sample packages (`beautifulsoup` on PyPI, `corejs` on npm) legitimately pre-date their target packages in their respective ecosystems (`beautifulsoup` in 2010 vs `beautifulsoup4` in 2013 on PyPI; `corejs` in April 2013 vs `core-js` in July 2013 on npm), and are correctly cleared by causal precedence heuristics.
    - Crucially, popular-looking malicious packages such as `loadash` (38,786 downloads/week) targeting `lodash` (211M downloads/week) are caught by the anti-parasite check and are **not** silently cleared.
 4. **Static Analysis Scope Boundaries**:
    - Although False UNREACHABLE reached `0 / 20` on this hand-built benchmark, static call-graph analysis is inherently incomplete for dynamic languages. Unmodeled patterns (e.g., complex OOP method dispatch via base classes/interfaces, dependency injection containers, or third-party framework routers not matching standard Express/Flask/FastAPI/signal conventions) can still cause misses in larger real-world codebases.

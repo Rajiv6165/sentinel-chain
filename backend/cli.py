@@ -85,7 +85,7 @@ async def run_cli():
             top_packages = data["packages"] if isinstance(data, dict) and "packages" in data else data
             
     # Phase 1: Typosquat
-    phase1_findings = score_dependencies(dependencies, top_packages)
+    phase1_findings = score_dependencies(dependencies, top_packages, ecosystem=ecosystem)
     
     # Phase 2: Reachability
     if phase1_findings:

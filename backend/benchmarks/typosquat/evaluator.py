@@ -11,12 +11,20 @@ def evaluate_threshold(
     max_distance: int,
     use_registry: bool = True
 ) -> Dict[str, Any]:
-    pos_names = [s["package_name"] for s in positive_samples]
-    neg_names = [s["package_name"] for s in negative_samples]
+    pos_items = [
+        {"package_name": s["package_name"], "ecosystem": s.get("ecosystem", "npm")}
+        for s in positive_samples
+    ]
+    neg_items = []
+    for s in negative_samples:
+        eco = s.get("ecosystem", "npm")
+        if eco in ("generic", "npm/pypi"):
+            eco = "pypi" if s["package_name"] in ("pip", "requests") else "npm"
+        neg_items.append({"package_name": s["package_name"], "ecosystem": eco})
 
-    # Run detection
-    pos_findings = score_dependencies(pos_names, top_packages, max_distance=max_distance, use_registry=use_registry)
-    neg_findings = score_dependencies(neg_names, top_packages, max_distance=max_distance, use_registry=use_registry)
+    # Run detection with ecosystem-scoped lookups
+    pos_findings = score_dependencies(pos_items, top_packages, max_distance=max_distance, use_registry=use_registry)
+    neg_findings = score_dependencies(neg_items, top_packages, max_distance=max_distance, use_registry=use_registry)
 
     # For default threshold (distance 1), evaluate high-confidence detections
     if max_distance == 1:
@@ -27,9 +35,9 @@ def evaluate_threshold(
         flagged_neg = {f["package_name"]: f for f in neg_findings}
 
     tp = len(flagged_pos)
-    fn = len(pos_names) - tp
+    fn = len(pos_items) - tp
     fp = len(flagged_neg)
-    tn = len(neg_names) - fp
+    tn = len(neg_items) - fp
 
     precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
     recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0

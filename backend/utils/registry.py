@@ -69,7 +69,7 @@ def fetch_live_npm(pkg: str) -> Optional[Dict[str, Any]]:
 
 
 def fetch_live_pypi(pkg: str) -> Optional[Dict[str, Any]]:
-    """Fetches package metadata from PyPI JSON API."""
+    """Fetches package metadata from PyPI JSON API and pypistats.org."""
     try:
         url = f"https://pypi.org/pypi/{pkg}/json"
         req = urllib.request.Request(url, headers={"User-Agent": "Sentinel-Chain/1.0"})
@@ -88,16 +88,27 @@ def fetch_live_pypi(pkg: str) -> Optional[Dict[str, Any]]:
                 dt = datetime.fromisoformat(earliest_upload.replace("Z", "+00:00"))
                 age_days = (datetime.now(timezone.utc) - dt).days
 
+            weekly_dl = 0
+            try:
+                purl = f"https://pypistats.org/api/packages/{pkg}/recent"
+                preq = urllib.request.Request(purl, headers={"User-Agent": "Sentinel-Chain/1.0"})
+                with urllib.request.urlopen(preq, timeout=3) as presp:
+                    pdata = json.loads(presp.read().decode('utf-8'))
+                    weekly_dl = pdata.get("data", {}).get("last_week", 0) or 0
+            except Exception:
+                pass
+
             return {
                 "exists": True,
                 "ecosystem": "pypi",
+                "package_name": pkg,
                 "created_at": earliest_upload,
                 "age_days": age_days,
-                "weekly_downloads": 0
+                "weekly_downloads": weekly_dl
             }
     except urllib.error.HTTPError as e:
         if e.code == 404:
-            return {"exists": False, "ecosystem": "pypi", "created_at": None, "age_days": None, "weekly_downloads": 0}
+            return {"exists": False, "ecosystem": "pypi", "package_name": pkg, "created_at": None, "age_days": None, "weekly_downloads": 0}
     except Exception:
         pass
     return None
@@ -105,21 +116,63 @@ def fetch_live_pypi(pkg: str) -> Optional[Dict[str, Any]]:
 
 def get_package_registry_metadata(pkg: str, ecosystem: Optional[str] = None) -> Dict[str, Any]:
     """
-    Returns registry metadata for a package:
-    - exists: bool
+    Returns registry metadata for a package scoped strictly to its ecosystem ('npm' or 'pypi'):
+    - exists: bool or None (None indicates metadata unavailable due to cache miss/network error)
+    - unavailable: bool (True when metadata could not be retrieved from registry or cache)
+    - ecosystem: 'npm' or 'pypi'
+    - package_name: str
     - weekly_downloads: int
     - age_days: Optional[int]
     - created_at: Optional[str]
-    First looks up local offline cache. If not found and network allows, queries registries.
+
+    Cache lookup uses (ecosystem, package_name) compound keys (e.g. 'npm:lodash', 'pypi:requests').
+    When metadata is missing (cache miss, network error, rate limit, timeout), returns unavailable=True
+    and exists=None so callers never clear or downgrade matches.
     """
     cache = load_registry_cache()
-    if pkg in cache:
-        return cache[pkg]
+    if ":" in pkg:
+        parts = pkg.split(":", 1)
+        eco = parts[0].lower()
+        pkg_name = parts[1]
+    else:
+        eco = (ecosystem or "npm").lower()
+        pkg_name = pkg
+    key = f"{eco}:{pkg_name}"
 
-    # Offline graceful fallback
+    # 1. Lookup by exact (ecosystem, package_name) compound key
+    if key in cache:
+        rec = dict(cache[key])
+        rec["ecosystem"] = eco
+        rec["package_name"] = pkg_name
+        return rec
+
+    # 2. Backward compatibility fallback for un-prefixed cache entries
+    if pkg_name in cache and isinstance(cache[pkg_name], dict):
+        rec_eco = cache[pkg_name].get("ecosystem")
+        if rec_eco in (eco, "both"):
+            rec = dict(cache[pkg_name])
+            rec["ecosystem"] = eco
+            rec["package_name"] = pkg_name
+            return rec
+
+    # 3. Live query if network allows and not in offline cache
+    live_meta = None
+    if os.environ.get("SENTINEL_OFFLINE") != "1":
+        if eco == "npm":
+            live_meta = fetch_live_npm(pkg_name)
+        elif eco == "pypi":
+            live_meta = fetch_live_pypi(pkg_name)
+
+    if live_meta is not None:
+        return live_meta
+
+    # 4. Graceful unavailable fallback on cache miss or network failure:
+    # Never report exists=True/False when data is missing; report unavailable=True and exists=None.
     return {
-        "exists": False,
-        "ecosystem": ecosystem or "unknown",
+        "exists": None,
+        "unavailable": True,
+        "ecosystem": eco,
+        "package_name": pkg_name,
         "created_at": None,
         "age_days": None,
         "weekly_downloads": 0
