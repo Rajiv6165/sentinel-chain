@@ -81,7 +81,8 @@ async def run_cli():
     top_packages_path = os.path.join(os.path.dirname(__file__), "data", "top_packages.json")
     if os.path.exists(top_packages_path):
         with open(top_packages_path, "r", encoding="utf-8") as f:
-            top_packages = json.load(f)
+            data = json.load(f)
+            top_packages = data["packages"] if isinstance(data, dict) and "packages" in data else data
             
     # Phase 1: Typosquat
     phase1_findings = score_dependencies(dependencies, top_packages)

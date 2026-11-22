@@ -123,7 +123,8 @@ async def startup_event():
     if os.path.exists(TOP_PACKAGES_PATH):
         try:
             with open(TOP_PACKAGES_PATH, "r", encoding="utf-8") as f:
-                TOP_PACKAGES = json.load(f)
+                data = json.load(f)
+                TOP_PACKAGES = data["packages"] if isinstance(data, dict) and "packages" in data else data
         except Exception as e:
             print(f"Failed to load top packages: {e}")
             TOP_PACKAGES = []

@@ -15,6 +15,7 @@ This document publishes empirical benchmark measurements for Sentinel-Chain's tw
 ## 1. Typosquat Detection Benchmark
 
 ### Methodology & Phase 12 Changes
+- **Reference Dataset (1,989 packages)**: Full static dataset comprising the top 1,000 PyPI packages by 30-day downloads (PyPI BigQuery dump via hugovk/top-pypi-packages) and the top 1,000 most depended-upon npm packages (anvaka/npmrank), deduplicated. Stored in `backend/data/top_packages.json` with source and timestamp.
 - **Positive Set (55 packages)**: Real, publicly documented typosquat or malicious package names sourced from official security advisories. Zero synthetic names.
 - **Negative Set (512 packages)**: Legitimate npm and PyPI packages biased toward challenging edge cases (short utility names, scoped packages, legitimate pairs).
 - **Phase 12 Change**: Default `max_distance` changed from **2 -> 1** for **high-confidence** flags. Distance-2 matches remain available for optional inspection and are classified as **`low confidence / review`** (`risk_level = "low"`, aggregated as `LOW` rather than `CRITICAL`).
@@ -23,33 +24,62 @@ This document publishes empirical benchmark measurements for Sentinel-Chain's tw
 
 | Metric | Before (Phase 11, dist <= 2) | After (Phase 12, dist <= 1) | Delta | Notes |
 | :--- | :---: | :---: | :---: | :--- |
-| **Precision** | 60.00% | **93.75%** | +33.75 pp | Major reduction in false-positive alert noise |
-| **Recall** | 92.73% | **81.82%** | -10.91 pp | Honest tradeoff: 6 two-edit attacks move to low-confidence review tier |
-| **F1 Score** | 72.86% | **87.38%** | +14.52 pp | Net improvement in overall precision/recall balance |
-| **True Positives (TP)** | 51 / 55 | **45 / 55** | -6 | High-confidence distance-1 detections |
-| **False Positives (FP)** | 34 / 512 | **3 / 512** | -31 | 91% reduction in false positives on default flags |
-| **False Negatives (FN)** | 4 / 55 | **10 / 55** | +6 | 6 of 10 caught in distance-2 review tier; 4 missed at dist <= 2 |
-| **True Negatives (TN)** | 478 / 512 | **509 / 512** | +31 | Legitimate packages cleared |
+| **Precision** | 60.00% | **58.97%** | -1.03 pp | Evaluated against expanded 1,989 reference package dataset |
+| **Recall** | 92.73% | **83.64%** | -9.09 pp | High-confidence distance-1 detections; 6 two-edit attacks caught in review tier |
+| **F1 Score** | 72.86% | **69.17%** | -3.69 pp | Harmonic mean across real-world candidate space |
+| **True Positives (TP)** | 51 / 55 | **46 / 55** | -5 | High-confidence distance-1 detections |
+| **False Positives (FP)** | 34 / 512 | **32 / 512** | -2 | Short-name & legitimate pair collisions against 1,989 reference targets |
+| **False Negatives (FN)** | 4 / 55 | **9 / 55** | +5 | 6 of 10 caught in distance-2 review tier; 4 missed at dist <= 2 |
+| **True Negatives (TN)** | 478 / 512 | **480 / 512** | +2 | Legitimate packages cleared |
 
 ### Threshold Sweep (Distance 1, 2, 3)
 
 | Max Distance | Confidence Tier | Precision | Recall | F1 Score | TP | FP | FN | TN |
 | :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| Distance 1 | **Default — High Confidence** | 93.75% | 81.82% | 87.38% | 45 | 3 | 10 | 509 |
-| Distance 2 | Low Confidence / Review (`LOW`, never `CRITICAL`) | 60.00% | 92.73% | 72.86% | 51 | 34 | 4 | 478 |
-| Distance 3 | Sweep Only (high false-alarm rate) | 32.50% | 94.55% | 48.37% | 52 | 108 | 3 | 404 |
+| Distance 1 | **Default — High Confidence** | 58.97% | 83.64% | 69.17% | 46 | 32 | 9 | 480 |
+| Distance 2 | Low Confidence / Review (`LOW`, never `CRITICAL`) | 48.60% | 94.55% | 64.20% | 52 | 55 | 3 | 457 |
+| Distance 3 | Sweep Only (high false-alarm rate) | 37.50% | 98.18% | 54.27% | 54 | 90 | 1 | 422 |
 
 ### Remaining False Positives at Default Threshold (Distance <= 1)
-Total false positives: **3** out of 512 legitimate packages (down from 34 in Phase 11).
+Total false positives: **32** out of 512 legitimate packages.
 
 | Legitimate Package | Target Matched | Distance | Explanation |
 | :--- | :--- | :---: | :--- |
+| `du` | `d3` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `cp` | `co` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `rm` | `gm` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `mv` | `uv` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `pi` | `pip` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `re` | `rc` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `io` | `ip` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `ky` | `ty` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `ava` | `av` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `tap` | `tmp` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `zip` | `pip` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `xml` | `lxml` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `vite` | `vine` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `yarn` | `yarl` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `pnpm` | `npm` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `git` | `got` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `ssh` | `ssh2` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `tls` | `tld` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
 | `net` | `next` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
-| `request` | `requests` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `vm` | `gm` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `stream` | `fstream` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `cookies` | `cookie` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `use` | `user` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `safer-buffer` | `safe-buffer` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `uri-js` | `urijs` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `flit` | `flat` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `nox` | `tox` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `orm` | `ora` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `motor` | `moto` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
 | `boto` | `boto3` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `furl` | `url` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
+| `rq` | `q` | 1 | Legitimate short/pluralized package name within edit distance 1 of popular target |
 
 ### Remaining False Negatives at Default Threshold (Distance <= 1)
-Total attacks missed at high-confidence default (distance <= 1): **10** out of 55 real attacks.
+Total attacks missed at high-confidence default (distance <= 1): **9** out of 55 real attacks.
 
 | Missed Malicious Package | Intended Victim | Advisory / Citation | Caught in Dist-2 Review Tier? | Reason for Miss at Dist <= 1 |
 | :--- | :--- | :--- | :---: | :--- |
@@ -57,7 +87,6 @@ Total attacks missed at high-confidence default (distance <= 1): **10** out of 5
 | `falsk` | `flask` | OSV: MAL-2022-2911 / Checkmarx Security | Yes (`low confidence / review`) | Edit distance = 2 (e.g. adjacent transposition or two-char mutation) |
 | `flsak` | `flask` | OSV: MAL-2022-2912 / Sonatype Nexus Intelligence | Yes (`low confidence / review`) | Edit distance = 2 (e.g. adjacent transposition or two-char mutation) |
 | `cross-env.js` | `cross-env` | Oscar Bolmsten Discovery (2017) / npm Security Advisory 2017-08 | No (dist >= 3) | Edit distance >= 3 (multi-character prefix/suffix combo mutation) |
-| `crossenv` | `cross-env` | npm Security Advisory (2017) / BleepingComputer | No (dist >= 3) | Edit distance >= 3 (multi-character prefix/suffix combo mutation) |
 | `axois` | `axios` | OSV: MAL-2022-1401 / Snyk Security Research (2021) | Yes (`low confidence / review`) | Edit distance = 2 (e.g. adjacent transposition or two-char mutation) |
 | `beautifull-soup` | `beautifulsoup4` | OSV: MAL-2022-1502 / PyPI Security Research | No (dist >= 3) | Edit distance >= 3 (multi-character prefix/suffix combo mutation) |
 | `celery-client` | `celery` | OSV: MAL-2022-1770 / Sonatype Intelligence | No (dist >= 3) | Edit distance >= 3 (multi-character prefix/suffix combo mutation) |

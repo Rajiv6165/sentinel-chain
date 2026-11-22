@@ -49,7 +49,8 @@ class TyposquatEvaluator:
         backend_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         top_pkg_path = os.path.join(backend_dir, "data", "top_packages.json")
         with open(top_pkg_path, "r", encoding="utf-8") as f:
-            self.top_packages = json.load(f)
+            data = json.load(f)
+            self.top_packages = data["packages"] if isinstance(data, dict) and "packages" in data else data
 
     def evaluate(self, max_distance: int = DEFAULT_MAX_DISTANCE) -> Dict[str, Any]:
         res = evaluate_threshold(self.positive_samples, self.negative_samples, self.top_packages, max_distance)

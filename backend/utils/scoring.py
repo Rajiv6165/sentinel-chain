@@ -119,16 +119,21 @@ def score_dependencies(dependencies: list[str], top_packages: list[str], max_dis
     Defaults to max_distance=1 for high-confidence flags.
     """
     findings = []
+    top_set = set(top_packages)
 
     for dep in dependencies:
         best_match = None
         lowest_dist = float('inf')
 
         # Exact match means it's a valid package in the top list
-        if dep in top_packages:
+        if dep in top_set:
             continue
 
+        len_dep = len(dep)
         for ref in top_packages:
+            if abs(len_dep - len(ref)) > max_distance:
+                continue
+
             result = analyze_typosquat(dep, ref, max_distance=max_distance)
             if result:
                 # Prioritize lowest distance and 'high' risk
