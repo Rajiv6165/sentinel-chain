@@ -30,6 +30,7 @@ from utils.diff import diff_scans
 from utils.safe_zip import (
     save_upload_with_size_limit,
     safe_extract_zip,
+    get_active_limits,
     MAX_UPLOAD_SIZE,
     SCAN_TIMEOUT_SECONDS,
 )
@@ -58,7 +59,17 @@ app = FastAPI(
 )
 
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+async def custom_rate_limit_handler(request: Request, exc: RateLimitExceeded):
+    return JSONResponse(
+        status_code=429,
+        content={
+            "detail": "Rate limit reached, try again in a minute.",
+            "error": f"Rate limit exceeded: {exc.detail}"
+        }
+    )
+
+app.add_exception_handler(RateLimitExceeded, custom_rate_limit_handler)
 
 app.add_middleware(
     CORSMiddleware,
@@ -75,7 +86,13 @@ async def generic_exception_handler(request: Request, exc: Exception):
     if isinstance(exc, HTTPException):
         return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
     if isinstance(exc, RateLimitExceeded):
-        return JSONResponse(status_code=429, content={"detail": "Rate limit exceeded. Please try again later."})
+        return JSONResponse(
+            status_code=429,
+            content={
+                "detail": "Rate limit reached, try again in a minute.",
+                "error": f"Rate limit exceeded: {exc.detail}"
+            }
+        )
     
     print(f"Internal error on {request.method} {request.url.path}: {exc}")
     return JSONResponse(
@@ -137,10 +154,14 @@ async def health_check():
 @app.get("/api/config")
 async def get_public_config():
     """Returns runtime public deployment configuration for the frontend."""
+    limits = get_active_limits()
     return {
         "sandbox_enabled": ENABLE_SANDBOX,
         "public_demo": True,
-        "max_upload_size_mb": MAX_UPLOAD_SIZE // (1024 * 1024),
+        "max_upload_mb": limits["max_upload_mb"],
+        "max_uncompressed_mb": limits["max_uncompressed_mb"],
+        "max_zip_files": limits["max_zip_files"],
+        "max_upload_size_mb": limits["max_upload_mb"],
         "llm_enabled": bool(os.environ.get("ANTHROPIC_API_KEY")),
         "demo_notice": "Public demo - don't upload private code."
     }
@@ -152,10 +173,16 @@ async def scan_dependencies(request: Request, file: UploadFile = File(...)):
     if not file.filename.endswith((".json", ".txt")):
         raise HTTPException(status_code=400, detail="Only .json (package.json) or .txt (requirements.txt) files are supported")
 
+    limits = get_active_limits()
+    max_upload_bytes = limits["max_upload_size"]
+
     try:
-        content = await file.read(MAX_UPLOAD_SIZE + 1024)
-        if len(content) > MAX_UPLOAD_SIZE:
-            raise HTTPException(status_code=413, detail=f"Upload exceeds maximum permitted size of {MAX_UPLOAD_SIZE // (1024 * 1024)} MB.")
+        content = await file.read(max_upload_bytes + 1024)
+        if len(content) > max_upload_bytes:
+            raise HTTPException(
+                status_code=413,
+                detail=f"Upload exceeds maximum permitted size of {limits['max_upload_mb']} MB."
+            )
         content_str = content.decode("utf-8")
     except UnicodeDecodeError:
         raise HTTPException(status_code=400, detail="Uploaded file must be a valid UTF-8 text file.")

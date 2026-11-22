@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, extractErrorMessage } from '../config';
 
 export default function SandboxScan({ onScanResult, setLoading }) {
   const [ecosystem, setEcosystem] = useState('npm');
@@ -57,7 +57,8 @@ export default function SandboxScan({ onScanResult, setLoading }) {
       });
 
       if (!res.ok) {
-        throw new Error('Failed to start scan');
+        const errorDetail = await extractErrorMessage(res, 'Failed to start scan');
+        throw new Error(errorDetail);
       }
 
       const data = await res.json();
@@ -66,7 +67,7 @@ export default function SandboxScan({ onScanResult, setLoading }) {
     } catch (error) {
       console.error(error);
       setLoading(false);
-      setStatus('Failed to start scan');
+      setStatus(error.message || 'Failed to start scan');
     }
   };
 

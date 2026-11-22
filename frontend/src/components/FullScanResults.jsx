@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import html2pdf from 'html2pdf.js';
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, extractErrorMessage } from '../config';
 
 export default function FullScanResults({ result, jobId, projectName }) {
   const reportRef = useRef();
@@ -25,7 +25,10 @@ export default function FullScanResults({ result, jobId, projectName }) {
     setSignError('');
     try {
       const res = await fetch(`${API_BASE_URL}/api/sbom/${jobId}/attestation?sign=true`);
-      if (!res.ok) throw new Error('Failed to generate signed attestation');
+      if (!res.ok) {
+        const errorDetail = await extractErrorMessage(res, 'Failed to generate signed attestation');
+        throw new Error(errorDetail);
+      }
       const data = await res.json();
       setAttestationData(data);
     } catch (err) {

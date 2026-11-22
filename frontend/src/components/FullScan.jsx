@@ -1,11 +1,25 @@
 import { useState, useEffect } from 'react';
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, extractErrorMessage } from '../config';
 
-export default function FullScan({ onScanResult, setLoading }) {
+export default function FullScan({ onScanResult, setLoading, apiConfig }) {
   const [file, setFile] = useState(null);
   const [projectName, setProjectName] = useState('');
   const [error, setError] = useState('');
   const [jobId, setJobId] = useState(null);
+  const [config, setConfig] = useState(apiConfig || null);
+
+  useEffect(() => {
+    if (apiConfig) {
+      setConfig(apiConfig);
+    } else {
+      fetch(`${API_BASE_URL}/api/config`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data) setConfig(data);
+        })
+        .catch(() => {});
+    }
+  }, [apiConfig]);
   
   const handleFileChange = (e) => {
     const selected = e.target.files[0];
@@ -36,14 +50,15 @@ export default function FullScan({ onScanResult, setLoading }) {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to start full scan');
+        const errorDetail = await extractErrorMessage(response, 'Failed to start full scan');
+        throw new Error(errorDetail);
       }
 
       const data = await response.json();
       setJobId(data.job_id);
       
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Failed to start full scan');
       setLoading(false);
     }
   };
@@ -113,7 +128,12 @@ export default function FullScan({ onScanResult, setLoading }) {
           <span className="text-lg font-medium text-gray-300">
             {file ? file.name : 'Select a .zip file'}
           </span>
-          <span className="text-sm text-gray-500 mt-2">Only .zip files are supported</span>
+          <span className="text-sm text-gray-400 mt-2 font-mono">
+            Only .zip files are supported • Max {config?.max_upload_mb ?? 15} MB upload
+          </span>
+          <span className="text-xs text-brand-400/90 mt-1 font-mono">
+            Active limits: Up to {config?.max_zip_files ?? 1000} files &amp; {config?.max_uncompressed_mb ?? 50} MB uncompressed (excluding node_modules, .git, dist, build, venv, and media)
+          </span>
         </label>
       </div>
 

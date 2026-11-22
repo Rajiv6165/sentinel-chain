@@ -46,9 +46,9 @@ This guide describes how to configure, harden, and deploy Sentinel-Chain as a pu
 | `CORS_ORIGINS` | Backend | `http://localhost:5173,...` | Comma-separated list of allowed frontend origins (e.g. `https://sentinel-chain.vercel.app`). Wildcard `*` is disallowed in production. |
 | `ANTHROPIC_API_KEY` | Backend | *(empty)* | Optional. Enables Claude 3.5 Sonnet to explain findings. If omitted or quota is exhausted, the engine falls back to standard structured findings. |
 | `LLM_DAILY_CAP` | Backend | `50` | Maximum number of Anthropic LLM calls per calendar day to prevent unexpected API costs on a public demo. |
-| `MAX_UPLOAD_SIZE_BYTES` | Backend | `15728640` (15 MB) | Maximum permitted zip/file upload size. Files exceeding this are rejected with HTTP 413. |
-| `MAX_UNCOMPRESSED_SIZE_BYTES`| Backend | `52428800` (50 MB) | Maximum cumulative uncompressed zip size to prevent zip-bomb attacks. |
-| `MAX_FILE_COUNT` | Backend | `1000` | Maximum number of files in an uploaded repository zip. |
+| `MAX_UPLOAD_MB` | Backend | `15` | Maximum permitted zip/file upload size in megabytes (legacy: `MAX_UPLOAD_SIZE_BYTES`). Uploads exceeding this are rejected with HTTP 413. |
+| `MAX_UNCOMPRESSED_MB`| Backend | `50` | Maximum cumulative uncompressed zip size in megabytes (legacy: `MAX_UNCOMPRESSED_SIZE_BYTES`) to prevent zip-bomb attacks. |
+| `MAX_ZIP_FILES` | Backend | `1000` | Maximum number of files in an uploaded repository zip (legacy: `MAX_FILE_COUNT`), excluding filtered folders/media. |
 | `SCAN_TIMEOUT_SECONDS` | Backend | `60` | Maximum duration before an AST reachability or unified scan times out. |
 | `VITE_API_URL` | Frontend | *(empty)* | Backend base URL for the frontend application (e.g. `https://sentinel-chain-api.onrender.com`). |
 

@@ -1,11 +1,25 @@
-import { useState, useRef } from 'react';
-import { API_BASE_URL } from '../config';
+import { useState, useRef, useEffect } from 'react';
+import { API_BASE_URL, extractErrorMessage } from '../config';
 
-export default function FileUpload({ onScanResult, setLoading }) {
+export default function FileUpload({ onScanResult, setLoading, apiConfig }) {
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState(null);
   const [scanMode, setScanMode] = useState('file'); // 'file' or 'zip'
+  const [config, setConfig] = useState(apiConfig || null);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (apiConfig) {
+      setConfig(apiConfig);
+    } else {
+      fetch(`${API_BASE_URL}/api/config`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data) setConfig(data);
+        })
+        .catch(() => {});
+    }
+  }, [apiConfig]);
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -55,7 +69,8 @@ export default function FileUpload({ onScanResult, setLoading }) {
       });
       
       if (!res.ok) {
-        throw new Error('Failed to scan file');
+        const errorDetail = await extractErrorMessage(res, 'Failed to scan file');
+        throw new Error(errorDetail);
       }
 
       const data = await res.json();
@@ -97,9 +112,19 @@ export default function FileUpload({ onScanResult, setLoading }) {
         <h3 className="text-xl font-medium text-gray-200 mb-2">Upload {scanMode === 'file' ? 'Dependency File' : 'Repository Archive'}</h3>
         <p className="text-gray-400 mb-6">
           {scanMode === 'file' ? (
-            <>Drag and drop your <span className="text-brand-400 font-mono">package.json</span> or <span className="text-brand-400 font-mono">requirements.txt</span></>
+            <>
+              Drag and drop your <span className="text-brand-400 font-mono">package.json</span> or <span className="text-brand-400 font-mono">requirements.txt</span>
+              <span className="block text-xs text-gray-500 mt-2 font-mono">
+                Limit: Max {config?.max_upload_mb ?? 15} MB upload
+              </span>
+            </>
           ) : (
-            <>Drag and drop your project <span className="text-brand-400 font-mono">.zip</span> archive</>
+            <>
+              Drag and drop your project <span className="text-brand-400 font-mono">.zip</span> archive
+              <span className="block text-xs text-brand-400/90 mt-2 font-mono bg-dark-800/80 px-3 py-1.5 rounded-lg border border-dark-600 inline-block">
+                Active limits: Max {config?.max_upload_mb ?? 15} MB upload • Up to {config?.max_zip_files ?? 1000} files &amp; {config?.max_uncompressed_mb ?? 50} MB uncompressed (excluding node_modules, .git, dist, build, venv, and media)
+              </span>
+            </>
           )}
         </p>
         

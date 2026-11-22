@@ -131,7 +131,7 @@ function App() {
 
           {activeTab === 'static' && (
             <>
-              <FileUpload onScanResult={setScanResult} setLoading={setLoading} />
+              <FileUpload onScanResult={setScanResult} setLoading={setLoading} apiConfig={apiConfig} />
               
               {loading && (
                 <div className="mt-12 text-center">
@@ -165,7 +165,7 @@ function App() {
 
           {activeTab === 'full' && (
             <>
-              <FullScan onScanResult={setFullScanResult} setLoading={setFullScanLoading} />
+              <FullScan onScanResult={setFullScanResult} setLoading={setFullScanLoading} apiConfig={apiConfig} />
               
               {fullScanLoading && (
                 <div className="mt-12 text-center">

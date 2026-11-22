@@ -27,6 +27,9 @@ services:
       - DATABASE_URL=postgresql://sentinel:sentinel_password@postgres:5432/sentinel_chain
       - CORS_ORIGINS=http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173
       - LLM_DAILY_CAP=50
+      - MAX_UPLOAD_MB=15
+      - MAX_UNCOMPRESSED_MB=50
+      - MAX_ZIP_FILES=1000
     depends_on:
       postgres:
         condition: service_healthy
