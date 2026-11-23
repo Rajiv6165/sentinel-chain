@@ -1,6 +1,11 @@
 import Levenshtein
 from typing import Optional, Dict, Any, List
-from utils.registry import get_package_registry_metadata
+from utils.registry import (
+    get_package_registry_metadata,
+    is_valid_package_name,
+    LookupCounter,
+    DEFAULT_MAX_LIVE_LOOKUPS
+)
 
 DEFAULT_MAX_DISTANCE = 1
 
@@ -122,7 +127,8 @@ def evaluate_registry_signals(
     current_risk: str,
     current_confidence: str,
     current_confidence_label: str,
-    ecosystem: Optional[str] = None
+    ecosystem: Optional[str] = None,
+    lookup_counter: Optional[LookupCounter] = None
 ) -> Optional[Dict[str, Any]]:
     """
     Evaluates registry metadata (npm & PyPI weekly downloads, publication dates)
@@ -130,28 +136,40 @@ def evaluate_registry_signals(
     positives without tuning thresholds to positive benchmark samples.
 
     General Reasoning Rules:
-    1. Missing Data Fallback: When metadata is missing (cache miss, network error,
-       rate limit, timeout), never clear or downgrade a match. Fall back to distance-only
-       behavior and mark the finding 'registry data unavailable'.
-    2. Quarantined / Unpublished: If suspect does not exist on the target registry (404),
+    1. Validation: Reject invalid package names without making outbound requests.
+    2. Missing Data / Budget Cap Fallback: When metadata is missing (cache miss, network error,
+       rate limit, timeout, or lookup cap exceeded), never clear or downgrade a match.
+       Fall back to distance-only behavior and mark the finding 'registry data unavailable'.
+    3. Quarantined / Unpublished: If suspect does not exist on the target registry (404),
        retain the match with full threat severity.
-    3. Precedence (Temporal Causality): If suspect was published before target in the
+    4. Precedence (Temporal Causality): If suspect was published before target in the
        same ecosystem, it cannot mathematically be a typosquat of that target -> CLEAR.
-    4. High Adoption Community Package: If suspect has >= 10,000 weekly downloads
+    5. High Adoption Community Package: If suspect has >= 10,000 weekly downloads
        and is >= 730 days old (2 years) in that ecosystem:
        - Anti-Parasite Check: If target has >= 100,000 weekly downloads and suspect
          has < 50,000 downloads and suspect download ratio is < 0.5% (0.005) of target
          and suspect was published AFTER target, suspect is a parasitic squatter
          riding on target's typo traffic (e.g. 'loadash' vs 'lodash') -> RETAIN.
        - Otherwise: -> CLEAR (legitimate independent package).
-    5. Moderate Adoption / Longevity: If suspect has >= 1,000 weekly downloads or
+    6. Moderate Adoption / Longevity: If suspect has >= 1,000 weekly downloads or
        is >= 365 days old (and not a parasite) -> DOWNGRADE to low confidence / review.
-    6. New & Low Adoption: If suspect is new (< 180 days or unrecorded) and has < 1,000
+    7. New & Low Adoption: If suspect is new (< 180 days or unrecorded) and has < 1,000
        weekly downloads -> retain tier with high-risk warning.
     """
     eco = (ecosystem or "npm").lower()
-    suspect_meta = get_package_registry_metadata(suspect, ecosystem=eco)
-    target_meta = get_package_registry_metadata(target, ecosystem=eco)
+
+    # Pre-check: validate suspect and target package names before any outbound lookup
+    if not is_valid_package_name(suspect, eco) or not is_valid_package_name(target, eco):
+        return {
+            "action": "keep",
+            "risk_level": current_risk,
+            "confidence": current_confidence,
+            "confidence_label": current_confidence_label,
+            "note": "invalid package name"
+        }
+
+    suspect_meta = get_package_registry_metadata(suspect, ecosystem=eco, lookup_counter=lookup_counter)
+    target_meta = get_package_registry_metadata(target, ecosystem=eco, lookup_counter=lookup_counter)
 
     # 1. Missing metadata check (cache miss, network error, rate limit, timeout):
     # Never clear or downgrade a match when data is missing; fall back to distance-only behavior.
@@ -257,7 +275,8 @@ def score_dependencies(
     top_packages: list[str],
     max_distance: int = DEFAULT_MAX_DISTANCE,
     ecosystem: str = "npm",
-    use_registry: bool = True
+    use_registry: bool = True,
+    max_live_lookups: Optional[int] = None
 ) -> list[dict]:
     """
     Scores a list of dependencies against a list of known top packages.
@@ -266,9 +285,12 @@ def score_dependencies(
     Each dependency in dependencies may be a string ('requests'), a dict
     ({'package_name': 'requests', 'ecosystem': 'pypi'}), or a tuple ('requests', 'pypi').
     When use_registry=True (default), lookups strictly use metadata from that same ecosystem.
+    Caps live lookups per scan via max_live_lookups (default: 40).
     """
     findings = []
     top_set = set(top_packages)
+    lookup_limit = max_live_lookups if max_live_lookups is not None else DEFAULT_MAX_LIVE_LOOKUPS
+    lookup_counter = LookupCounter(limit=lookup_limit)
 
     for dep in dependencies:
         if isinstance(dep, dict):
@@ -279,6 +301,21 @@ def score_dependencies(
         else:
             pkg_name = str(dep)
             pkg_eco = ecosystem
+
+        # Pre-check: reject invalid / hostile package names before any lookup or comparison
+        if not is_valid_package_name(pkg_name, pkg_eco):
+            findings.append({
+                "package_name": pkg_name,
+                "ecosystem": pkg_eco,
+                "suspected_target": None,
+                "distance_score": None,
+                "risk_level": "high",
+                "confidence": "high",
+                "confidence_label": "high confidence",
+                "reasoning": "Invalid package name [invalid package name]",
+                "note": "invalid package name"
+            })
+            continue
 
         best_match = None
         lowest_dist = float('inf')
@@ -315,7 +352,8 @@ def score_dependencies(
                     current_risk=risk_level,
                     current_confidence=confidence,
                     current_confidence_label=confidence_label,
-                    ecosystem=pkg_eco
+                    ecosystem=pkg_eco,
+                    lookup_counter=lookup_counter
                 )
                 if verdict is None:
                     # Cleared by registry signals (temporal precedence or established adoption)

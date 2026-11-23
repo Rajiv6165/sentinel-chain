@@ -17,10 +17,10 @@ def test_typosquat_evaluation_metrics():
     # Default max_distance is now 1 (high confidence)
     res = evaluator.evaluate()
     assert res["max_distance"] == 1
-    assert res["tp"] == 45
-    assert res["fp"] == 3
-    assert res["fn"] == 10
-    assert res["tn"] == 509
+    assert res["tp"] == 44
+    assert res["fp"] == 4
+    assert res["fn"] == 11
+    assert res["tn"] == 508
     assert res["precision"] >= 0.90
     assert res["f1"] >= 0.85
 

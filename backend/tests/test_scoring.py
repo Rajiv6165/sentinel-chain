@@ -163,6 +163,7 @@ def test_registry_metadata_network_failure_fallback(monkeypatch):
         raise urllib.error.URLError("Network unreachable")
 
     monkeypatch.setattr(urllib.request, "urlopen", mock_urlopen)
+    monkeypatch.setattr(urllib.request.OpenerDirector, "open", mock_urlopen)
 
     # Force a package not present in cache
     pkg_meta = reg_module.fetch_live_npm("definitely-not-in-cache-xyz-123")
