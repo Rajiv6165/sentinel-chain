@@ -2,7 +2,18 @@
 
 A modern supply-chain security platform that proves exploitability rather than just flagging on package presence. Sentinel-Chain combines call-graph reachability analysis, sandboxed behavioral detection for malicious packages, typosquat detection, AI-generated attack narratives, SBOM generation, and cryptographic attestation using Sigstore into a single unified risk score per dependency.
 
-## Architecture & Phases
+---
+
+## Key Highlights
+
+- **The Chain Interface**: Responsive, coordinate-scaled full-viewport hero identity with live SVG dependency graph, real-time sweep beam, threat calibration gauge, and AST execution traces.
+- **Empirically Measured Engine Benchmarks**: 91.67% precision and 85.44% F1 on typosquat detection; **0 False UNREACHABLE** classifications across verified benchmark suites. Full methodology and numbers documented in [docs/benchmarks.md](docs/benchmarks.md).
+- **Hardened Deployment & Free-Tier Ready**: Containerized non-root architecture, anti-zip-bomb streaming extraction, IP rate limiting via SlowAPI, daily LLM quotas, and safe registry lookups. Full guide in [docs/deployment.md](docs/deployment.md).
+- **Self-Hosted Typography**: Fully bundled `@fontsource` fonts (`Instrument Serif`, `Inter variable`, `JetBrains Mono`) with real fallbacks and zero third-party font tracking.
+
+---
+
+## Architecture & Analytical Phases
 
 Sentinel-Chain is built in eight distinct analytical phases, culminating in a single unified dashboard and cryptographically verified reports.
 
@@ -61,8 +72,8 @@ Survives restarts and tracks security posture improvements over time:
 Without cryptographic signing, anyone could forge a report claiming "Sentinel-Chain scanned this and found no issues." By using Sigstore, Sentinel-Chain binds the scan results to an identity (like a GitHub Actions OIDC token in CI, or a developer's identity locally) and records it to a public, immutable transparency log (Rekor). Anyone can independently verify the artifact using our `sentinel-chain verify <report> <signature>` command or Sigstore's public tooling. This provides tamper-evident proof that the security claims are authentic.
 
 ## Tech Stack
-- **Backend:** Python, FastAPI, Uvicorn, SQLAlchemy, Alembic, PostgreSQL, Tree-sitter, NetworkX, Docker API, Anthropic SDK
-- **Frontend:** React, Vite, Tailwind CSS, html2pdf.js
+- **Backend:** Python 3.11+, FastAPI, Uvicorn, SlowAPI, SQLAlchemy, Alembic, PostgreSQL, Tree-sitter, NetworkX, Sigstore, Anthropic SDK
+- **Frontend:** React 19, Vite, Tailwind CSS v4, @fontsource (Instrument Serif, Inter, JetBrains Mono), html2pdf.js
 
 ## Running the Application
 

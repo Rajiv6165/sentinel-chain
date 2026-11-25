@@ -23,15 +23,19 @@ export default function FileUpload({ onScanResult, setLoading, apiConfig }) {
 
   const handleDragOver = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(true);
   };
 
-  const handleDragLeave = () => {
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     setIsDragging(false);
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(false);
     const files = e.dataTransfer.files;
     if (files.length > 0) {
@@ -83,46 +87,80 @@ export default function FileUpload({ onScanResult, setLoading, apiConfig }) {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto mt-8">
-      <div className="flex justify-center mb-6 space-x-4">
+    <div className="w-full max-w-2xl mx-auto mt-6">
+      {/* Mode switcher tabs */}
+      <div className="flex justify-center mb-6 gap-2">
         <button 
-          className={`px-4 py-2 rounded-full font-medium transition-colors ${scanMode === 'file' ? 'bg-brand-500 text-white' : 'bg-dark-800 text-gray-400 hover:text-gray-200'}`}
+          type="button"
+          className={`px-4 py-2 rounded-xl font-mono text-xs font-semibold transition-all cursor-pointer ${
+            scanMode === 'file'
+              ? 'bg-[#FFB547] text-[#1A1206] shadow-[0_0_12px_rgba(255,181,71,0.25)]'
+              : 'bg-[#0B1220] text-[#9AA7BD] hover:text-[#EAF0FA] border border-[rgba(148,170,210,0.16)]'
+          }`}
           onClick={() => setScanMode('file')}
         >
-          Dependency Scan
+          Dependency File
         </button>
         <button 
-          className={`px-4 py-2 rounded-full font-medium transition-colors ${scanMode === 'zip' ? 'bg-brand-500 text-white' : 'bg-dark-800 text-gray-400 hover:text-gray-200'}`}
+          type="button"
+          className={`px-4 py-2 rounded-xl font-mono text-xs font-semibold transition-all cursor-pointer ${
+            scanMode === 'zip'
+              ? 'bg-[#FFB547] text-[#1A1206] shadow-[0_0_12px_rgba(255,181,71,0.25)]'
+              : 'bg-[#0B1220] text-[#9AA7BD] hover:text-[#EAF0FA] border border-[rgba(148,170,210,0.16)]'
+          }`}
           onClick={() => setScanMode('zip')}
         >
-          Reachability Scan (ZIP)
+          Reachability ZIP
         </button>
       </div>
 
+      {/* Drop Zone */}
       <div 
-        className={`glass-panel border-2 border-dashed p-10 text-center transition-all duration-300 cursor-pointer flex flex-col items-center justify-center ${isDragging ? 'border-brand-500 bg-brand-500/10' : 'border-dark-700 hover:border-brand-500/50 hover:bg-dark-700/50'}`}
+        className={`rounded-2xl border-2 border-dashed p-10 text-center transition-all cursor-pointer flex flex-col items-center justify-center bg-[rgba(14,22,38,0.78)] focus:outline-none focus:ring-2 focus:ring-[#FFB547] ${
+          isDragging
+            ? 'border-[#FFB547] bg-[#FFB547]/10'
+            : 'border-[rgba(148,170,210,0.28)] hover:border-[#FFB547]/60 hover:bg-[#0B1220]/60'
+        }`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            fileInputRef.current?.click();
+          }
+        }}
       >
-        <svg className="w-16 h-16 text-brand-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-        </svg>
-        <h3 className="text-xl font-medium text-gray-200 mb-2">Upload {scanMode === 'file' ? 'Dependency File' : 'Repository Archive'}</h3>
-        <p className="text-gray-400 mb-6">
+        <div className="w-12 h-12 rounded-xl bg-[#0B1220] border border-[rgba(148,170,210,0.2)] flex items-center justify-center text-[#FFB547] mb-4">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+        </div>
+
+        <h3
+          className="text-2xl font-normal text-[#EAF0FA] mb-2"
+          style={{ fontFamily: '"Instrument Serif", Georgia, serif' }}
+        >
+          Upload {scanMode === 'file' ? 'Dependency Manifest' : 'Repository Archive'}
+        </h3>
+
+        <p className="text-sm text-[#9AA7BD] mb-4 max-w-md">
           {scanMode === 'file' ? (
             <>
-              Drag and drop your <span className="text-brand-400 font-mono">package.json</span> or <span className="text-brand-400 font-mono">requirements.txt</span>
-              <span className="block text-xs text-gray-500 mt-2 font-mono">
-                Limit: Max {config?.max_upload_mb ?? 15} MB upload
+              Drop your <span className="text-[#FFB547] font-mono">package.json</span> or <span className="text-[#FFB547] font-mono">requirements.txt</span>
+              <span className="block text-xs text-[#7A89A3] mt-2 font-mono">
+                Active limit: Max {config?.max_upload_mb ?? 15} MB upload
               </span>
             </>
           ) : (
             <>
-              Drag and drop your project <span className="text-brand-400 font-mono">.zip</span> archive
-              <span className="block text-xs text-brand-400/90 mt-2 font-mono bg-dark-800/80 px-3 py-1.5 rounded-lg border border-dark-600 inline-block">
-                Active limits: Max {config?.max_upload_mb ?? 15} MB upload • Up to {config?.max_zip_files ?? 1000} files &amp; {config?.max_uncompressed_mb ?? 50} MB uncompressed (excluding node_modules, .git, dist, build, venv, and media)
+              Drop your project <span className="text-[#FFB547] font-mono">.zip</span> archive
+              <span className="block text-xs text-[#9AA7BD] mt-2 font-mono bg-[#0B1220] p-2 rounded-lg border border-[rgba(148,170,210,0.16)]">
+                Limits: Max {config?.max_upload_mb ?? 15} MB upload • Up to {config?.max_zip_files ?? 1000} files &amp; {config?.max_uncompressed_mb ?? 50} MB uncompressed (excluding node_modules, .git, dist, build, venv, media)
               </span>
             </>
           )}
@@ -136,13 +174,18 @@ export default function FileUpload({ onScanResult, setLoading, apiConfig }) {
           accept={scanMode === 'file' ? ".json,.txt" : ".zip"}
         />
         
-        <button className="btn-primary" onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}>
+        <button
+          type="button"
+          className="px-5 py-2.5 rounded-xl font-sans font-semibold text-xs text-[#1A1206] shadow-md transition-all hover:brightness-105 cursor-pointer"
+          style={{ background: 'linear-gradient(180deg, #FFC766 0%, #FF9F2E 100%)' }}
+          onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
+        >
           Select File
         </button>
       </div>
       
       {error && (
-        <div className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-center">
+        <div className="mt-4 p-4 bg-[#FF5A5F]/15 border border-[#FF5A5F]/40 rounded-xl text-[#FF5A5F] text-xs font-mono text-center">
           {error}
         </div>
       )}

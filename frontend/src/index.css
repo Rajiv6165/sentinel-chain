@@ -1,18 +1,615 @@
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
-@layer base {
-  body {
-    @apply bg-dark-900 text-gray-100 font-sans antialiased;
+:root {
+  /* Design Tokens */
+  --bg: #070B14;
+  --bg2: #0B1220;
+  --surface: rgba(14, 22, 38, 0.78);
+  --line: rgba(148, 170, 210, 0.16);
+  --line-strong: rgba(148, 170, 210, 0.28);
+  --text: #EAF0FA;
+  --muted: #9AA7BD;
+  --faint: #7A89A3;
+  --safe: #4FE3C1;
+  --accent: #FFB547;
+  --danger: #FF5A5F;
+  --info: #7AA2FF;
+
+  /* Primary Button Gradient */
+  --btn-primary: linear-gradient(180deg, #FFC766 0%, #FF9F2E 100%);
+  --btn-primary-text: #1A1206;
+
+  /* Reference Coordinate System: Frame 1440 x 900. 1u = 1 reference px */
+  --u: min(0.0694444vw, 0.1111111vh);
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --u: min(0.0694444vw, 0.1111111dvh);
   }
 }
 
-@layer components {
-  .glass-panel {
-    @apply bg-dark-800/80 backdrop-blur-lg border border-dark-700 shadow-xl rounded-xl;
+html {
+  scroll-behavior: smooth;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* Background ambient glows and masked 28px dot grid */
+.hero-ambient-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse 960px 480px at 50% 0%, rgba(80, 120, 255, 0.16) 0%, transparent 70%),
+    radial-gradient(ellipse 800px 320px at 50% 100%, rgba(255, 181, 71, 0.05) 0%, transparent 70%);
+  z-index: 0;
+}
+
+.hero-dot-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(148, 170, 210, 0.14) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 25%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 25%, transparent 80%);
+  z-index: 1;
+}
+
+/* 1. Desktop Stage & Frame (Default) */
+.stage {
+  height: 100dvh;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg);
+}
+
+.frame {
+  width: calc(1440 * var(--u));
+  height: calc(900 * var(--u));
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+/* Coordinate positioning utility classes for Desktop */
+.coord-nav {
+  position: absolute;
+  top: calc(36 * var(--u));
+  left: 0;
+  width: 100%;
+  height: calc(40 * var(--u));
+  padding-left: calc(96 * var(--u));
+  padding-right: calc(96 * var(--u));
+}
+
+.coord-chain {
+  position: absolute;
+  top: calc(96 * var(--u));
+  left: 0;
+  width: 100%;
+  height: calc(200 * var(--u));
+}
+
+.coord-chain-caption {
+  position: absolute;
+  top: calc(304 * var(--u));
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.coord-headline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.coord-eyebrow {
+  position: absolute;
+  top: calc(340 * var(--u));
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.coord-h1 {
+  position: absolute;
+  top: calc(366 * var(--u));
+  left: calc(270 * var(--u));
+  width: calc(900 * var(--u));
+  font-size: calc(70 * var(--u));
+  text-align: center;
+}
+
+.coord-subcopy {
+  position: absolute;
+  top: calc(528 * var(--u));
+  left: calc(430 * var(--u));
+  width: calc(580 * var(--u));
+  font-size: calc(17 * var(--u));
+  text-align: center;
+}
+
+.coord-console {
+  position: absolute;
+  left: calc(360 * var(--u));
+  top: calc(624 * var(--u));
+  width: calc(720 * var(--u));
+  height: calc(150 * var(--u));
+}
+
+.coord-proof {
+  position: absolute;
+  left: calc(96 * var(--u));
+  top: calc(808 * var(--u));
+  width: calc(1248 * var(--u));
+}
+
+/* Entrance Animations */
+@keyframes navSettle {
+  from {
+    opacity: 0;
+    transform: translateY(calc(-10 * var(--u)));
   }
-  
-  .btn-primary {
-    @apply px-4 py-2 bg-brand-500 hover:bg-brand-400 text-white rounded-lg transition-all shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_20px_rgba(59,130,246,0.5)];
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes h1Reveal {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(calc(12 * var(--u)));
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(calc(18 * var(--u))) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes chainLineDraw {
+  from {
+    stroke-dashoffset: 1248;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes nodePop {
+  0% {
+    opacity: 0;
+    transform: scale(0.65);
+  }
+  70% {
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes beamSweep {
+  0% {
+    transform: translateX(0px);
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(1440px);
+    opacity: 0;
+  }
+}
+
+@keyframes chipSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(calc(6 * var(--u)));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dangerPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 90, 95, 0.45);
+    stroke: #FF5A5F;
+  }
+  50% {
+    box-shadow: 0 0 0 calc(6 * var(--u)) rgba(255, 90, 95, 0);
+    stroke: #ff7f83;
+  }
+}
+
+@keyframes callPathDraw {
+  from {
+    stroke-dashoffset: 30;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Animation trigger classes */
+.anim-nav {
+  animation: navSettle 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0s both;
+}
+
+.anim-eyebrow {
+  animation: fadeIn 0.4s ease 0.4s both;
+}
+
+.anim-h1 {
+  animation: h1Reveal 1.0s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
+
+.anim-subcopy {
+  animation: fadeIn 0.8s ease 0.7s both;
+}
+
+.anim-console {
+  animation: cardEnter 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.0s both;
+}
+
+.anim-proof {
+  animation: fadeIn 0.8s ease 1.3s both;
+}
+
+.anim-chain-line {
+  stroke-dasharray: 1248;
+  stroke-dashoffset: 1248;
+  animation: chainLineDraw 0.9s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
+}
+
+.anim-scan-beam {
+  animation: beamSweep 2.2s linear 0.9s forwards;
+}
+
+/* Utility to hide scrollbars */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* 2. TABLET ARCHITECTURE (@media min-width:600px and max-width:1180px and min-height:600px) */
+@media (min-width: 600px) and (max-width: 1180px) and (min-height: 600px) {
+  :root {
+    --u: 1px;
+  }
+  .stage {
+    height: auto !important;
+    min-height: 100dvh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    overflow-y: visible !important;
+    padding-top: 28px;
+    padding-bottom: 40px;
+  }
+  .frame {
+    width: 100% !important;
+    max-width: 768px !important;
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    position: relative !important;
+    padding: 0 20px;
+    box-sizing: border-box;
+  }
+  .coord-nav {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin-bottom: 20px;
+  }
+  .coord-chain {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    height: 180px !important;
+  }
+  .coord-chain-caption {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    margin-top: 4px;
+    margin-bottom: 20px;
+  }
+  .coord-headline {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .coord-eyebrow {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    margin-bottom: 12px;
+  }
+  .coord-h1 {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 720px !important;
+    font-size: clamp(40px, 6.2vw, 62px) !important;
+    line-height: 1.05 !important;
+  }
+  .coord-subcopy {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 580px !important;
+    font-size: 16px !important;
+    line-height: 1.55 !important;
+    margin-top: 14px;
+  }
+  .coord-console {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    width: min(100%, 720px) !important;
+    height: auto !important;
+    min-height: 154px !important;
+    margin-top: 28px;
+    padding-bottom: 56px !important;
+  }
+  .console-toolbar {
+    position: relative !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    margin-top: 86px;
+    padding: 0 14px 14px;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    height: auto !important;
+    justify-content: space-between !important;
+  }
+  .coord-proof {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    width: min(100%, 720px) !important;
+    margin-top: 36px;
+    flex-direction: column !important;
+    gap: 20px !important;
+    align-items: flex-start !important;
+  }
+  .proof-stats-container {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px 24px !important;
+    width: 100% !important;
+  }
+  .proof-stat-item {
+    border-left: none !important;
+    padding-left: 0 !important;
+  }
+}
+
+/* 3. COMPACT ARCHITECTURE (@media max-width:599px, or short height) */
+@media (max-width: 599px), ((max-height: 599px) and (max-width: 1180px)) {
+  :root {
+    --u: 1px;
+  }
+  .stage {
+    height: auto !important;
+    min-height: 100dvh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    overflow-y: visible !important;
+    padding: calc(env(safe-area-inset-top, 0px) + 12px) calc(env(safe-area-inset-right, 0px) + 12px) calc(env(safe-area-inset-bottom, 0px) + 24px) calc(env(safe-area-inset-left, 0px) + 12px);
+  }
+  .frame {
+    width: 100% !important;
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    position: relative !important;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  .coord-nav {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin-bottom: 12px;
+  }
+  .coord-chain {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    height: 120px !important;
+  }
+  .coord-chain-caption {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    margin-top: 0px;
+    margin-bottom: 14px;
+  }
+  .coord-headline {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .coord-eyebrow {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    margin-bottom: 6px;
+    font-size: 10px !important;
+  }
+  .coord-h1 {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    font-size: clamp(28px, 8.5vw, 38px) !important;
+    line-height: 1.05 !important;
+  }
+  .coord-subcopy {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 340px !important;
+    font-size: 13.5px !important;
+    line-height: 1.45 !important;
+    margin-top: 10px;
+  }
+  .coord-console {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    margin-top: 18px;
+    padding-bottom: 10px;
+  }
+  .console-drop-zone {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    margin: 10px 10px 8px !important;
+    height: 68px !important;
+  }
+  .console-toolbar {
+    position: relative !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    padding: 0 10px 6px;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    height: auto !important;
+  }
+  .console-actions-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .console-actions-row button[type="button"]:last-child {
+    min-height: 44px !important;
+    min-width: 120px !important;
+  }
+  .coord-proof {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    margin-top: 20px;
+    flex-direction: column !important;
+    gap: 12px !important;
+    align-items: flex-start !important;
+  }
+  .proof-stats-container {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px 14px !important;
+    width: 100% !important;
+  }
+  .proof-stat-item {
+    border-left: none !important;
+    padding-left: 0 !important;
+  }
+}
+
+/* Reduced Motion Override */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-delay: 0s !important;
+    animation-duration: 0.001s !important;
+    animation-iteration-count: 1 !important;
+  }
+  .anim-scan-beam {
+    display: none !important;
+  }
+  .anim-chain-line {
+    stroke-dashoffset: 0 !important;
   }
 }

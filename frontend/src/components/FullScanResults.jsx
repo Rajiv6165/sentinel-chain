@@ -1,6 +1,8 @@
 import { useRef, useState, useEffect } from 'react';
 import html2pdf from 'html2pdf.js';
 import { API_BASE_URL, extractErrorMessage } from '../config';
+import CallChainDiagram from './CallChainDiagram';
+import RiskGauge from './RiskGauge';
 
 export default function FullScanResults({ result, jobId, projectName }) {
   const reportRef = useRef();
@@ -41,24 +43,28 @@ export default function FullScanResults({ result, jobId, projectName }) {
   const handleExportPDF = () => {
     const element = reportRef.current;
     const opt = {
-      margin:       1,
-      filename:     'sentinel-chain-report.pdf',
+      margin:       0.5,
+      filename:     `sentinel-chain-${projectName || 'report'}.pdf`,
       image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2 },
+      html2canvas:  { scale: 2, backgroundColor: '#070B14' },
       jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
     
     html2pdf().set(opt).from(element).save();
   };
 
-  const getRiskColor = (risk) => {
+  const getRiskBadge = (risk) => {
     switch (risk?.toUpperCase()) {
-      case 'CRITICAL': return 'bg-red-500 text-white';
-      case 'HIGH': return 'bg-orange-500 text-white';
-      case 'MEDIUM': return 'bg-yellow-500 text-gray-900';
-      case 'LOW': return 'bg-green-500 text-white';
-      case 'SAFE': return 'bg-blue-500 text-white';
-      default: return 'bg-gray-500 text-white';
+      case 'CRITICAL':
+      case 'HIGH':
+        return 'bg-[#FF5A5F]/15 text-[#FF5A5F] border border-[#FF5A5F]/30';
+      case 'MEDIUM':
+        return 'bg-[#FFB547]/15 text-[#FFB547] border border-[#FFB547]/30';
+      case 'LOW':
+      case 'SAFE':
+        return 'bg-[#4FE3C1]/15 text-[#4FE3C1] border border-[#4FE3C1]/30';
+      default:
+        return 'bg-[rgba(148,170,210,0.1)] text-[#9AA7BD] border border-[rgba(148,170,210,0.2)]';
     }
   };
 
@@ -70,67 +76,74 @@ export default function FullScanResults({ result, jobId, projectName }) {
   const hasLicenseData = result.some(p => p.license);
 
   return (
-    <div className="mt-8">
-      <div className="flex justify-between items-center mb-6">
+    <div className="mt-8 space-y-6">
+      {/* Top Action Bar */}
+      <div className="flex flex-wrap justify-between items-center gap-4 bg-[rgba(14,22,38,0.78)] border border-[rgba(148,170,210,0.16)] rounded-2xl p-4 shadow-lg">
         <div>
-          <h2 className="text-2xl font-bold">Full Scan Report</h2>
+          <h2 className="text-xl font-sans font-semibold text-[#EAF0FA]">Full Scan Results</h2>
           {projectName && (
-            <p className="text-sm text-brand-400 font-mono mt-1">Project: {projectName}</p>
+            <p className="text-xs text-[#FFB547] font-mono mt-0.5">Project: {projectName}</p>
           )}
         </div>
-        <div className="flex gap-2">
+
+        <div className="flex flex-wrap items-center gap-2">
           {jobId && (
             <>
               <a 
                 href={`${API_BASE_URL}/api/sbom/${jobId}?format=cyclonedx`}
                 target="_blank" rel="noopener noreferrer"
-                className="px-3 py-2 bg-dark-700 hover:bg-dark-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2 border border-dark-600"
+                className="px-3 py-1.5 bg-[#0B1220] hover:border-[#7AA2FF] text-[#EAF0FA] text-xs font-mono rounded-lg transition-colors border border-[rgba(148,170,210,0.2)] flex items-center gap-1.5"
               >
-                CycloneDX SBOM
+                <span>CycloneDX</span>
               </a>
               <a 
                 href={`${API_BASE_URL}/api/sbom/${jobId}?format=spdx`}
                 target="_blank" rel="noopener noreferrer"
-                className="px-3 py-2 bg-dark-700 hover:bg-dark-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2 border border-dark-600"
+                className="px-3 py-1.5 bg-[#0B1220] hover:border-[#7AA2FF] text-[#EAF0FA] text-xs font-mono rounded-lg transition-colors border border-[rgba(148,170,210,0.2)] flex items-center gap-1.5"
               >
-                SPDX SBOM
+                <span>SPDX</span>
               </a>
               <a 
                 href={`${API_BASE_URL}/api/sbom/${jobId}?format=vex`}
                 target="_blank" rel="noopener noreferrer"
-                className="px-3 py-2 bg-dark-700 hover:bg-dark-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2 border border-dark-600"
+                className="px-3 py-1.5 bg-[#0B1220] hover:border-[#7AA2FF] text-[#EAF0FA] text-xs font-mono rounded-lg transition-colors border border-[rgba(148,170,210,0.2)] flex items-center gap-1.5"
               >
-                VEX Document
+                <span>VEX</span>
               </a>
+
               {!attestationData ? (
                 <div className="flex flex-col items-end">
                   <button 
                     onClick={handleSignProvenance}
                     disabled={isSigning}
-                    className="px-3 py-2 bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
+                    className="px-3 py-1.5 bg-[#0B1220] hover:border-[#4FE3C1] disabled:opacity-40 text-[#4FE3C1] text-xs font-mono rounded-lg transition-colors border border-[#4FE3C1]/40 flex items-center gap-1.5 cursor-pointer"
                   >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
                     {isSigning ? 'Signing...' : 'Sign Provenance'}
                   </button>
-                  {signError && <p className="text-red-400 text-xs mt-1">{signError}</p>}
+                  {signError && <p className="text-[#FF5A5F] text-[10px] font-mono mt-1">{signError}</p>}
                 </div>
               ) : (
                 <div className="relative group flex items-center">
-                  <div className="px-3 py-2 bg-green-500/20 border border-green-500/50 text-green-400 text-sm font-medium rounded-lg flex items-center gap-2 cursor-pointer">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    Verified
+                  <div className="px-3 py-1.5 bg-[#4FE3C1]/15 border border-[#4FE3C1]/40 text-[#4FE3C1] text-xs font-mono rounded-lg flex items-center gap-1.5 cursor-pointer">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Verified in Rekor
                   </div>
                   {attestationData.signature?.hashedrekord && (
-                    <div className="absolute right-0 top-full mt-2 w-72 bg-dark-800 border border-dark-700 rounded-lg p-4 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none group-hover:pointer-events-auto">
-                      <p className="text-xs text-gray-400 mb-2 font-mono break-all">
+                    <div className="absolute right-0 top-full mt-2 w-72 bg-[#0B1220] border border-[rgba(148,170,210,0.25)] rounded-xl p-3 shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none group-hover:pointer-events-auto">
+                      <p className="text-[11px] text-[#9AA7BD] mb-2 font-mono break-all">
                         Log Index: {attestationData.signature.hashedrekord.logIndex}
                       </p>
                       <a 
                         href={`https://search.sigstore.dev/?logIndex=${attestationData.signature.hashedrekord.logIndex}`}
                         target="_blank" rel="noopener noreferrer"
-                        className="text-brand-400 hover:text-brand-300 text-xs flex items-center gap-1"
+                        className="text-[#7AA2FF] hover:underline text-xs font-mono flex items-center gap-1"
                       >
-                        View in Rekor Log
-                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        Open Rekor Log →
                       </a>
                     </div>
                   )}
@@ -138,69 +151,83 @@ export default function FullScanResults({ result, jobId, projectName }) {
               )}
             </>
           )}
+
           <button 
             onClick={handleExportPDF}
-            className="px-4 py-2 bg-dark-700 hover:bg-dark-600 text-white font-medium rounded-lg transition-colors flex items-center gap-2 ml-2"
+            className="px-3.5 py-1.5 bg-[#0B1220] hover:border-[#FFB547] text-[#EAF0FA] text-xs font-mono rounded-lg transition-colors border border-[rgba(148,170,210,0.2)] flex items-center gap-1.5 cursor-pointer"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            <svg className="w-3.5 h-3.5 text-[#9AA7BD]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
             Export PDF
           </button>
         </div>
       </div>
 
-      <div ref={reportRef} className="bg-dark-800 p-8 rounded-2xl border border-dark-700 shadow-xl space-y-8 text-gray-200">
-        <div className="text-center mb-8 border-b border-dark-700 pb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Sentinel-Chain Risk Report</h1>
-          <p className="text-gray-400">Automated Supply Chain Security Analysis</p>
+      {/* Printable Report Container */}
+      <div ref={reportRef} className="bg-[rgba(14,22,38,0.78)] p-8 rounded-[22px] border border-[rgba(148,170,210,0.16)] shadow-xl space-y-8 text-[#EAF0FA]">
+        {/* Header Block */}
+        <div className="text-center border-b border-[rgba(148,170,210,0.16)] pb-8">
+          <h1
+            className="text-4xl font-normal text-[#EAF0FA] mb-2 tracking-tight"
+            style={{ fontFamily: '"Instrument Serif", Georgia, serif' }}
+          >
+            Sentinel-Chain Risk Report
+          </h1>
+          <p className="text-sm font-sans text-[#9AA7BD]">
+            Multi-engine AST reachability, typosquat heuristic analysis, and license governance
+          </p>
         </div>
 
-        {/* Phase 10: "New Since Last Scan" History & Diff Banner */}
+        {/* Scan History & Regression Diff Banner */}
         {diffData && (
-          <div className="bg-dark-900/90 rounded-xl p-6 border border-dark-700 shadow-lg space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-dark-800 pb-4">
+          <div className="bg-[#0B1220] rounded-xl p-5 border border-[rgba(148,170,210,0.16)] space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[rgba(148,170,210,0.1)] pb-3">
               <div>
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <span className="text-xl">📈</span> Scan History & Regression Diff
+                <h3 className="text-base font-sans font-semibold text-[#EAF0FA] flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#7AA2FF]" />
+                  Scan History &amp; Regression Diff
                 </h3>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-[#9AA7BD] font-mono mt-0.5">
                   {diffData.against_scan_id
                     ? `Compared against previous scan (${diffData.against_scan_id.slice(0, 8)})`
                     : 'Baseline scan recorded for this project.'}
                 </p>
               </div>
-              <div className="flex gap-3">
-                <div className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 ${diffData.summary.new_count > 0 ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-green-500/20 text-green-400 border border-green-500/30'}`}>
-                  <span>{diffData.summary.new_count > 0 ? '🚨' : '✅'}</span>
+              <div className="flex gap-2.5">
+                <div className={`px-2.5 py-1 rounded-lg text-xs font-mono font-medium flex items-center gap-1.5 ${diffData.summary.new_count > 0 ? 'bg-[#FF5A5F]/15 text-[#FF5A5F] border border-[#FF5A5F]/30' : 'bg-[#4FE3C1]/15 text-[#4FE3C1] border border-[#4FE3C1]/30'}`}>
+                  <span>{diffData.summary.new_count > 0 ? '●' : '✓'}</span>
                   <span>{diffData.summary.new_count} New Findings</span>
                 </div>
                 {diffData.summary.resolved_count > 0 && (
-                  <div className="px-3 py-1.5 bg-green-500/20 text-green-400 border border-green-500/30 rounded-lg text-xs font-bold flex items-center gap-1.5">
-                    <span>🎉</span>
+                  <div className="px-2.5 py-1 bg-[#4FE3C1]/15 text-[#4FE3C1] border border-[#4FE3C1]/30 rounded-lg text-xs font-mono font-medium flex items-center gap-1.5">
+                    <span>✓</span>
                     <span>{diffData.summary.resolved_count} Resolved</span>
                   </div>
                 )}
-                <div className="px-3 py-1.5 bg-dark-800 text-gray-400 border border-dark-700 rounded-lg text-xs font-medium">
+                <div className="px-2.5 py-1 bg-[#070B14] text-[#9AA7BD] border border-[rgba(148,170,210,0.16)] rounded-lg text-xs font-mono">
                   {diffData.summary.unchanged_count} Unchanged
                 </div>
               </div>
             </div>
 
-            {/* "New Since Last Scan" List */}
+            {/* New Findings List */}
             {diffData.new && diffData.new.length > 0 && (
-              <div className="mt-2 bg-red-950/20 border border-red-500/30 rounded-lg p-4">
-                <h4 className="text-sm font-semibold text-red-400 mb-2 flex items-center gap-2">
-                  <span>⚠️</span> New Findings Introduced in this Scan ({diffData.new.length})
+              <div className="mt-2 bg-[#FF5A5F]/5 border border-[#FF5A5F]/20 rounded-xl p-4">
+                <h4 className="text-xs font-mono uppercase tracking-wider text-[#FF5A5F] mb-2 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF5A5F]" />
+                  New Findings Introduced in this Scan ({diffData.new.length})
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   {diffData.new.map((nf, nidx) => (
-                    <div key={nidx} className="flex items-center justify-between p-2.5 bg-dark-900 rounded border border-red-500/20">
+                    <div key={nidx} className="flex items-center justify-between p-2.5 bg-[#0B1220] rounded-lg border border-[#FF5A5F]/20">
                       <div className="flex items-center gap-2 truncate">
-                        <span className="font-mono text-sm font-bold text-white truncate">{nf.package_name}</span>
-                        <span className="text-xs text-gray-400">
+                        <span className="font-mono text-xs font-semibold text-[#EAF0FA] truncate">{nf.package_name}</span>
+                        <span className="text-[11px] text-[#7A89A3] font-mono">
                           {nf.typosquat ? 'Typosquat' : nf.cves?.length ? `${nf.cves.length} CVE(s)` : nf.sandbox ? 'Sandbox' : nf.license ? 'License' : ''}
                         </span>
                       </div>
-                      <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${getRiskColor(nf.overall_risk)}`}>
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold uppercase ${getRiskBadge(nf.overall_risk)}`}>
                         {nf.overall_risk}
                       </span>
                     </div>
@@ -211,13 +238,13 @@ export default function FullScanResults({ result, jobId, projectName }) {
 
             {/* Resolved Findings List */}
             {diffData.resolved && diffData.resolved.length > 0 && (
-              <div className="mt-2 bg-green-950/20 border border-green-500/30 rounded-lg p-3">
-                <h4 className="text-xs font-semibold text-green-400 mb-1 flex items-center gap-1.5">
-                  <span>✅</span> Findings Resolved Since Last Scan:
+              <div className="mt-2 bg-[#4FE3C1]/5 border border-[#4FE3C1]/20 rounded-xl p-3">
+                <h4 className="text-xs font-mono uppercase tracking-wider text-[#4FE3C1] mb-1.5 flex items-center gap-1.5">
+                  <span>✓</span> Findings Resolved Since Last Scan:
                 </h4>
                 <div className="flex flex-wrap gap-2 text-xs">
                   {diffData.resolved.map((rf, ridx) => (
-                    <span key={ridx} className="px-2 py-1 bg-dark-900 text-gray-300 font-mono rounded border border-green-500/20">
+                    <span key={ridx} className="px-2 py-1 bg-[#0B1220] text-[#9AA7BD] font-mono text-[11px] rounded border border-[#4FE3C1]/20">
                       {rf.package_name} ({rf.overall_risk})
                     </span>
                   ))}
@@ -227,135 +254,177 @@ export default function FullScanResults({ result, jobId, projectName }) {
           </div>
         )}
 
+        {/* License Metrics Overview */}
         {hasLicenseData && (
-          <div className="bg-dark-900 rounded-xl p-6 border border-dark-700 mb-8 flex justify-around">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-400">{permissiveCount}</div>
-              <div className="text-sm text-gray-400 uppercase tracking-wide">Permissive</div>
+          <div className="bg-[#0B1220] rounded-xl p-6 border border-[rgba(148,170,210,0.16)] grid grid-cols-3 gap-4 text-center">
+            <div>
+              <div className="text-3xl font-mono font-semibold text-[#4FE3C1]">{permissiveCount}</div>
+              <div className="text-xs font-mono text-[#9AA7BD] uppercase tracking-wider mt-1">Permissive</div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-orange-400">{copyleftCount}</div>
-              <div className="text-sm text-gray-400 uppercase tracking-wide">Copyleft</div>
+            <div>
+              <div className="text-3xl font-mono font-semibold text-[#FFB547]">{copyleftCount}</div>
+              <div className="text-xs font-mono text-[#9AA7BD] uppercase tracking-wider mt-1">Copyleft</div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-yellow-400">{unknownLicenseCount}</div>
-              <div className="text-sm text-gray-400 uppercase tracking-wide">Unknown</div>
+            <div>
+              <div className="text-3xl font-mono font-semibold text-[#7A89A3]">{unknownLicenseCount}</div>
+              <div className="text-xs font-mono text-[#9AA7BD] uppercase tracking-wider mt-1">Unknown</div>
             </div>
           </div>
         )}
 
+        {/* Packages List */}
         {result.length === 0 ? (
-          <div className="text-center p-8 bg-dark-900 rounded-xl">
-            <p className="text-xl text-gray-400">No risks detected across any scanned dependencies.</p>
+          <div className="text-center p-12 bg-[#0B1220] rounded-xl border border-[rgba(148,170,210,0.16)]">
+            <p className="text-base font-sans text-[#9AA7BD]">No supply chain risks detected across any scanned dependencies.</p>
           </div>
         ) : (
-          result.map((pkg, idx) => {
-            const isNew = newPackageNames.has(pkg.package_name);
-            return (
-              <div key={idx} className={`bg-dark-900 rounded-xl p-6 border ${isNew ? 'border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.15)]' : 'border-dark-700'}`}>
-                <div className="flex justify-between items-center border-b border-dark-800 pb-4 mb-4">
-                  <div className="flex items-center gap-3">
-                    <h3 className="text-xl font-bold font-mono text-brand-400">{pkg.package_name}</h3>
-                    {isNew && (
-                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase bg-red-500 text-white animate-pulse">
-                        New Finding
+          <div className="space-y-6">
+            {result.map((pkg, idx) => {
+              const isNew = newPackageNames.has(pkg.package_name);
+              return (
+                <div
+                  key={idx}
+                  className={`bg-[#0B1220] rounded-xl p-6 border transition-all ${
+                    isNew ? 'border-[#FF5A5F]/60 shadow-[0_0_20px_rgba(255,90,95,0.15)]' : 'border-[rgba(148,170,210,0.16)]'
+                  }`}
+                >
+                  {/* Package Header with RiskGauge */}
+                  <div className="flex flex-wrap justify-between items-center border-b border-[rgba(148,170,210,0.12)] pb-4 mb-5 gap-4">
+                    <div className="flex items-center gap-3">
+                      <h3 className="text-xl font-mono font-bold text-[#EAF0FA]">
+                        {pkg.package_name}
+                      </h3>
+                      {pkg.version && (
+                        <span className="text-xs font-mono text-[#7A89A3]">v{pkg.version}</span>
+                      )}
+                      {isNew && (
+                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-[#FF5A5F] text-[#070B14] animate-pulse">
+                          New
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                      <span className={`px-3 py-1 rounded-full font-mono text-xs font-semibold uppercase tracking-wider ${getRiskBadge(pkg.overall_risk)}`}>
+                        {pkg.overall_risk} RISK
                       </span>
+                      <RiskGauge score={pkg.risk_score} level={pkg.overall_risk} size={64} />
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    {/* Typosquat Section */}
+                    {pkg.typosquat && (
+                      <div className="bg-[#070B14] p-4 rounded-xl border border-[#FFB547]/20">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-mono text-xs uppercase tracking-wider text-[#FFB547] flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#FFB547]" />
+                            Typosquat Analysis
+                          </h4>
+                          <span className="font-mono text-xs text-[#9AA7BD]">
+                            Distance: {pkg.typosquat.distance_score}
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#9AA7BD] font-mono">
+                          Suspected target: <span className="text-[#EAF0FA] font-semibold">{pkg.typosquat.suspected_target}</span> ({pkg.typosquat.risk_level} risk)
+                        </p>
+                        {pkg.typosquat.narrative && (
+                          <div className="mt-2.5 p-3 bg-[#FFB547]/5 border border-[#FFB547]/15 rounded-lg text-xs text-[#EAF0FA] font-sans leading-relaxed">
+                            {pkg.typosquat.narrative}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* License Section */}
+                    {pkg.license && (
+                      <div className="bg-[#070B14] p-4 rounded-xl border border-[rgba(148,170,210,0.12)]">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-mono text-xs uppercase tracking-wider text-[#9AA7BD] flex items-center gap-2">
+                            <span className={`w-1.5 h-1.5 rounded-full ${pkg.license.status === 'fail' ? 'bg-[#FF5A5F]' : pkg.license.status === 'warn' ? 'bg-[#FFB547]' : 'bg-[#4FE3C1]'}`} />
+                            License Policy ({pkg.license.category})
+                          </h4>
+                          <span className={`font-mono text-xs font-semibold uppercase ${pkg.license.status === 'fail' ? 'text-[#FF5A5F]' : pkg.license.status === 'warn' ? 'text-[#FFB547]' : 'text-[#4FE3C1]'}`}>
+                            {pkg.license.status}
+                          </span>
+                        </div>
+                        <p className="text-xs text-[#9AA7BD] font-mono">
+                          SPDX Identifier: <span className="text-[#EAF0FA]">{pkg.license.spdx_id}</span>
+                        </p>
+                        {pkg.license.reason && (
+                          <p className="text-xs text-[#7A89A3] font-mono mt-1">{pkg.license.reason}</p>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Reachability Section */}
+                    {pkg.cves && pkg.cves.length > 0 && (
+                      <div className="bg-[#070B14] p-4 rounded-xl border border-[rgba(148,170,210,0.12)] space-y-3">
+                        <h4 className="font-mono text-xs uppercase tracking-wider text-[#EAF0FA] flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF5A5F]" />
+                          CVE &amp; AST Reachability ({pkg.cves.length})
+                        </h4>
+
+                        {pkg.cves.map((cve, cidx) => (
+                          <div key={cidx} className="p-3 bg-[#0B1220] rounded-lg border border-[rgba(148,170,210,0.1)] space-y-2">
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <span className="font-mono text-xs font-semibold text-[#EAF0FA]">{cve.cve_id || cve.id}</span>
+                              <div className="flex items-center gap-2">
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${cve.reachability === 'REACHABLE' ? 'bg-[#FF5A5F]/15 text-[#FF5A5F] border border-[#FF5A5F]/30' : 'bg-[#4FE3C1]/15 text-[#4FE3C1] border border-[#4FE3C1]/30'}`}>
+                                  {cve.reachability}
+                                </span>
+                                {cve.epss_score !== undefined && (
+                                  <span className="font-mono text-[10px] text-[#9AA7BD]">
+                                    EPSS: {(cve.epss_score * 100).toFixed(1)}%
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Call Chain Diagram if reachable and chain exists */}
+                            {cve.reachability === 'REACHABLE' && cve.call_chain && cve.call_chain.length > 0 && (
+                              <div className="my-2">
+                                <CallChainDiagram
+                                  callChain={cve.call_chain}
+                                  packageName={pkg.package_name}
+                                  entrypoint={cve.call_chain[0]}
+                                  vulnerableFunction={cve.call_chain[cve.call_chain.length - 1]}
+                                />
+                              </div>
+                            )}
+
+                            {cve.narrative && (
+                              <p className="text-xs text-[#9AA7BD] font-sans leading-relaxed pt-1">
+                                {cve.narrative}
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Sandbox Section */}
+                    {pkg.sandbox && pkg.sandbox.evidence && pkg.sandbox.evidence.length > 0 && (
+                      <div className="bg-[#070B14] p-4 rounded-xl border border-[#7AA2FF]/20 space-y-2">
+                        <h4 className="font-mono text-xs uppercase tracking-wider text-[#7AA2FF] flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#7AA2FF]" />
+                          Sandbox Telemetry Evidence
+                        </h4>
+                        <ul className="text-xs font-mono space-y-1 text-[#9AA7BD]">
+                          {pkg.sandbox.evidence.map((ev, eidx) => (
+                            <li key={eidx} className="flex items-start gap-2">
+                              <span className="text-[#FF5A5F] select-none">•</span>
+                              <span>{ev.message} <span className="text-[#7A89A3] uppercase">[{ev.level}]</span></span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     )}
                   </div>
-                  <span className={`px-4 py-1 rounded-full font-bold text-sm tracking-wider ${getRiskColor(pkg.overall_risk)}`}>
-                    {pkg.overall_risk} RISK
-                  </span>
                 </div>
-
-                <div className="space-y-6">
-                  {/* Typosquat Section */}
-                  {pkg.typosquat && (
-                    <div className="bg-dark-800/50 p-4 rounded-lg border border-dark-700">
-                      <h4 className="font-semibold text-lg mb-2 text-white flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-orange-500"></span> Typosquat Analysis
-                      </h4>
-                      <p className="text-sm text-gray-400 mb-2">
-                        Suspected target: <span className="font-mono text-gray-300">{pkg.typosquat.suspected_target}</span>
-                        <br/>
-                        Distance score: {pkg.typosquat.distance_score} ({pkg.typosquat.risk_level} risk)
-                      </p>
-                      {pkg.typosquat.narrative && (
-                        <div className="mt-3 p-3 bg-brand-900/20 border border-brand-500/30 rounded text-brand-200 text-sm italic">
-                          <strong>AI Analysis:</strong> {pkg.typosquat.narrative}
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* License Section */}
-                  {pkg.license && (
-                    <div className="bg-dark-800/50 p-4 rounded-lg border border-dark-700">
-                      <h4 className="font-semibold text-lg mb-2 text-white flex items-center gap-2">
-                        <span className={`w-2 h-2 rounded-full ${pkg.license.status === 'fail' ? 'bg-red-500' : pkg.license.status === 'warn' ? 'bg-yellow-500' : 'bg-green-500'}`}></span> License Compliance
-                      </h4>
-                      <p className="text-sm text-gray-400 mb-2">
-                        SPDX ID: <span className="font-mono text-gray-300">{pkg.license.spdx_id}</span> ({pkg.license.category})
-                        <br/>
-                        Policy Status: <span className={`font-bold ${pkg.license.status === 'fail' ? 'text-red-400' : pkg.license.status === 'warn' ? 'text-yellow-400' : 'text-green-400'}`}>{pkg.license.status.toUpperCase()}</span>
-                      </p>
-                      {pkg.license.status !== 'pass' && (
-                        <div className="mt-2 p-2 bg-dark-900 rounded font-mono text-xs text-gray-400">
-                          {pkg.license.reason}
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Reachability Section */}
-                  {pkg.cves && pkg.cves.length > 0 && (
-                    <div className="bg-dark-800/50 p-4 rounded-lg border border-dark-700">
-                      <h4 className="font-semibold text-lg mb-2 text-white flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-red-500"></span> CVE & Reachability
-                      </h4>
-                      {pkg.cves.map((cve, cidx) => (
-                        <div key={cidx} className="mb-4 last:mb-0">
-                          <p className="text-sm text-gray-400 mb-2">
-                            Status: <span className={`font-bold ${cve.reachability === 'REACHABLE' ? 'text-red-400' : 'text-green-400'}`}>{cve.reachability}</span>
-                            <br/>
-                            EPSS Probability: {(cve.epss_score * 100).toFixed(2)}%
-                          </p>
-                          {cve.reachability === 'REACHABLE' && cve.call_chain && (
-                            <div className="mb-2 p-2 bg-dark-900 rounded font-mono text-xs overflow-x-auto text-gray-400">
-                              {cve.call_chain.join(' → ')}
-                            </div>
-                          )}
-                          {cve.narrative && (
-                            <div className="mt-2 p-3 bg-brand-900/20 border border-brand-500/30 rounded text-brand-200 text-sm italic">
-                              <strong>AI Analysis:</strong> {cve.narrative}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Sandbox Section */}
-                  {pkg.sandbox && pkg.sandbox.evidence && pkg.sandbox.evidence.length > 0 && (
-                    <div className="bg-dark-800/50 p-4 rounded-lg border border-dark-700">
-                      <h4 className="font-semibold text-lg mb-2 text-white flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-purple-500"></span> Sandbox Behavior
-                      </h4>
-                      <ul className="list-disc pl-5 mb-3 text-sm text-gray-400 space-y-1">
-                        {pkg.sandbox.evidence.map((ev, eidx) => (
-                          <li key={eidx}>{ev.message} <span className="text-xs uppercase text-gray-500">({ev.level})</span></li>
-                        ))}
-                      </ul>
-                      {pkg.sandbox.narrative && (
-                        <div className="mt-3 p-3 bg-brand-900/20 border border-brand-500/30 rounded text-brand-200 text-sm italic">
-                          <strong>AI Analysis:</strong> {pkg.sandbox.narrative}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })
+              );
+            })}
+          </div>
         )}
       </div>
     </div>
