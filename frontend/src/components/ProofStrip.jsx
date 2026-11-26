@@ -46,8 +46,8 @@ export default function ProofStrip() {
               {stat.value}
             </span>
 
-            {/* Caption mono 10u --muted, max 24 chars */}
-            <span className="font-mono text-[calc(10*var(--u))] text-[#9AA7BD] leading-tight max-w-[24ch]">
+            {/* Caption mono 10u --muted, clean non-wrapping */}
+            <span className="font-mono text-[calc(10*var(--u))] text-[#9AA7BD] leading-tight whitespace-nowrap">
               {stat.caption}
             </span>
           </div>

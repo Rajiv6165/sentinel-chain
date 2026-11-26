@@ -4,9 +4,9 @@ import Headline from './Headline';
 import ConsoleCard from './ConsoleCard';
 import ProofStrip from './ProofStrip';
 
-export default function HeroStage({ apiConfig, onFileSelected, onTrySample }) {
+export default function HeroStage({ apiConfig, onFileSelected, onTrySample, onClearError }) {
   return (
-    <section className="stage relative overflow-hidden select-none" aria-label="Sentinel-Chain Hero">
+    <section id="stage" className="stage relative overflow-hidden select-none scroll-mt-28" aria-label="Sentinel-Chain Hero">
       {/* Background ambient lighting */}
       <div className="hero-ambient-bg" />
       <div className="hero-dot-grid" />
@@ -27,6 +27,7 @@ export default function HeroStage({ apiConfig, onFileSelected, onTrySample }) {
           apiConfig={apiConfig}
           onFileSelected={onFileSelected}
           onTrySample={onTrySample}
+          onClearError={onClearError}
         />
 
         {/* Proof Strip */}

@@ -1,9 +1,12 @@
-import { useState, Fragment } from 'react';
+import { useState, Fragment, lazy, Suspense } from 'react';
 import CallChainDiagram from './CallChainDiagram';
 import RiskGauge from './RiskGauge';
 
+const PRCommentPreview = lazy(() => import('./PRCommentPreview'));
+
 export default function ScanResults({ result }) {
   const [expandedRow, setExpandedRow] = useState(null);
+  const [activeView, setActiveView] = useState('findings'); // 'findings' or 'pr-comment'
 
   if (!result) return null;
 
@@ -80,7 +83,11 @@ export default function ScanResults({ result }) {
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-[#FFB547]/10 border border-[#FFB547]/30 flex items-center justify-center text-[#FFB547]">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+              />
             </svg>
           </div>
           <div>
@@ -96,10 +103,39 @@ export default function ScanResults({ result }) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[rgba(148,170,210,0.16)] bg-[#0B1220] text-xs font-mono">
-          <span className="text-[#9AA7BD]">Scanned:</span>
-          <span className="font-bold text-[#EAF0FA]">{scanned_count}</span>
-          <span className="text-[#7A89A3]">dependencies</span>
+        <div className="flex items-center gap-3">
+          {/* View Mode Toggle: Report vs PR Comment */}
+          <div className="inline-flex items-center p-1 bg-[#0B1220] border border-[rgba(148,170,210,0.18)] rounded-xl">
+            <button
+              type="button"
+              onClick={() => setActiveView('findings')}
+              className={`px-3 py-1.5 rounded-lg font-mono text-xs font-semibold transition-all cursor-pointer ${
+                activeView === 'findings'
+                  ? 'bg-[#FFB547] text-[#1A1206] shadow-sm'
+                  : 'text-[#9AA7BD] hover:text-[#EAF0FA]'
+              }`}
+            >
+              Report View
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveView('pr-comment')}
+              className={`px-3 py-1.5 rounded-lg font-mono text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                activeView === 'pr-comment'
+                  ? 'bg-[#4FE3C1] text-[#070B14] shadow-sm'
+                  : 'text-[#9AA7BD] hover:text-[#EAF0FA]'
+              }`}
+            >
+              <span>💬</span>
+              <span>See it in a pull request</span>
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[rgba(148,170,210,0.16)] bg-[#0B1220] text-xs font-mono">
+            <span className="text-[#9AA7BD]">Scanned:</span>
+            <span className="font-bold text-[#EAF0FA]">{scanned_count}</span>
+            <span className="text-[#7A89A3]">dependencies</span>
+          </div>
         </div>
       </div>
 
@@ -109,7 +145,19 @@ export default function ScanResults({ result }) {
         </div>
       )}
 
-      {findings && findings.length > 0 ? (
+      {/* View 1: PR Comment Preview */}
+      {activeView === 'pr-comment' ? (
+        <Suspense
+          fallback={
+            <div className="p-12 text-center font-mono text-xs text-[#9AA7BD] bg-[#0B1220] rounded-xl border border-[rgba(148,170,210,0.16)]">
+              Loading PR Comment Preview...
+            </div>
+          }
+        >
+          <PRCommentPreview />
+        </Suspense>
+      ) : findings && findings.length > 0 ? (
+        /* View 2: Findings Table */
         <div className="rounded-2xl border border-[rgba(148,170,210,0.16)] bg-[rgba(14,22,38,0.78)] overflow-hidden shadow-xl">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse font-sans text-sm">
@@ -125,8 +173,14 @@ export default function ScanResults({ result }) {
               <tbody className="divide-y divide-[rgba(148,170,210,0.1)]">
                 {findings.map((finding, idx) => {
                   const isExpanded = expandedRow === idx;
-                  const reachabilityVal = finding.reachability || finding.typosquat?.reachability || (finding.cves && finding.cves[0]?.reachability);
-                  const callPath = finding.call_path || finding.call_chain || (finding.cves && finding.cves[0]?.call_chain);
+                  const reachabilityVal =
+                    finding.reachability ||
+                    finding.typosquat?.reachability ||
+                    (finding.cves && finding.cves[0]?.reachability);
+                  const callPath =
+                    finding.call_path ||
+                    finding.call_chain ||
+                    (finding.cves && finding.cves[0]?.call_chain);
 
                   return (
                     <Fragment key={idx}>
@@ -158,9 +212,7 @@ export default function ScanResults({ result }) {
                         <td className="p-4">
                           {renderRiskBadge(finding.risk_level || finding.overall_risk)}
                         </td>
-                        <td className="p-4">
-                          {renderReachabilityBadge(reachabilityVal)}
-                        </td>
+                        <td className="p-4">{renderReachabilityBadge(reachabilityVal)}</td>
                         <td className="p-4 text-right">
                           <button
                             type="button"
@@ -194,7 +246,9 @@ export default function ScanResults({ result }) {
                                     Analysis Reasoning
                                   </h4>
                                   <p className="text-sm text-[#EAF0FA] leading-relaxed">
-                                    {finding.reasoning || finding.typosquat?.reasoning || 'Flagged by heuristic matching against high-adoption community packages.'}
+                                    {finding.reasoning ||
+                                      finding.typosquat?.reasoning ||
+                                      'Flagged by heuristic matching against high-adoption community packages.'}
                                   </p>
                                 </div>
 
@@ -214,7 +268,9 @@ export default function ScanResults({ result }) {
                                       Reachability Assessment
                                     </h4>
                                     <p className="text-xs text-[#9AA7BD] leading-normal font-mono bg-[#0B1220] p-3 rounded-lg border border-[rgba(148,170,210,0.1)]">
-                                      {finding.reachability_reason || finding.typosquat?.reachability_reason || 'AST tracer mapped entry points and imported identifiers.'}
+                                      {finding.reachability_reason ||
+                                        finding.typosquat?.reachability_reason ||
+                                        'AST tracer mapped entry points and imported identifiers.'}
                                     </p>
                                   </div>
                                 )}
@@ -227,17 +283,25 @@ export default function ScanResults({ result }) {
                                 </span>
                                 <RiskGauge
                                   score={
-                                    finding.overall_risk === 'CRITICAL' ? 95 :
-                                    finding.overall_risk === 'HIGH' || finding.risk_level === 'high' ? 80 :
-                                    finding.overall_risk === 'MEDIUM' || finding.risk_level === 'medium' ? 50 : 20
+                                    finding.overall_risk === 'CRITICAL'
+                                      ? 95
+                                      : finding.overall_risk === 'HIGH' || finding.risk_level === 'high'
+                                      ? 80
+                                      : finding.overall_risk === 'MEDIUM' || finding.risk_level === 'medium'
+                                      ? 50
+                                      : 20
                                   }
                                   level={finding.overall_risk || finding.risk_level}
                                   size={110}
                                 />
                                 {finding.distance_score !== undefined && (
                                   <div className="mt-3 text-center">
-                                    <span className="text-[10px] font-mono text-[#7A89A3] uppercase">Levenshtein Edit:</span>
-                                    <span className="font-mono text-sm font-bold text-[#EAF0FA] ml-1.5">{finding.distance_score}</span>
+                                    <span className="text-[10px] font-mono text-[#7A89A3] uppercase">
+                                      Levenshtein Edit:
+                                    </span>
+                                    <span className="font-mono text-sm font-bold text-[#EAF0FA] ml-1.5">
+                                      {finding.distance_score}
+                                    </span>
                                   </div>
                                 )}
                               </div>

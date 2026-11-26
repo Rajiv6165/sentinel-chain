@@ -1,0 +1,144 @@
+{
+  "notice": "SAMPLE EVIDENCE · NOT A REAL SCAN",
+  "disclaimer": "This demonstration data illustrates how Sentinel-Chain analyzes call graphs, typosquats, and registry signals. It is not an active scan of your codebase.",
+  "nodes": [
+    {
+      "id": 1,
+      "name": "express",
+      "ecosystem": "npm",
+      "verdict": "SAFE",
+      "type": "safe",
+      "summary": "Verified benign HTTP server framework matching npm registry release hash with zero known CVE paths.",
+      "evidence": "Integrity hash corresponds to the official npm registry index. Call graph analysis confirms all imported endpoints follow secure usage patterns.",
+      "registry": {
+        "weeklyDownloads": "28,450,110",
+        "age": "14 years",
+        "license": "MIT",
+        "status": "Verified Benign"
+      }
+    },
+    {
+      "id": 2,
+      "name": "lodash",
+      "ecosystem": "npm",
+      "verdict": "NO PATH",
+      "type": "safe-dim",
+      "summary": "Vulnerable function never called from any entry point.",
+      "evidence": "Advisory CVE-2021-23337 (command injection in _.template) exists in this package version. Sentinel-Chain traversed the complete Abstract Syntax Tree across all entry points and proved no code path calls the vulnerable template engine.",
+      "details": {
+        "cve": "CVE-2021-23337",
+        "vulnerableMethod": "_.template()",
+        "callGraphVerdict": "Zero call edges detected from application routes",
+        "action": "Suppressed from critical alerts (no exploitable path)"
+      }
+    },
+    {
+      "id": 3,
+      "name": "react",
+      "ecosystem": "npm",
+      "verdict": "SAFE",
+      "type": "safe",
+      "summary": "Official UI library matching cryptographic package signatures and clean license attribution.",
+      "evidence": "Full static AST audit validates clean React runtime bindings. Signed origin hashes match the official React maintainer keys.",
+      "registry": {
+        "weeklyDownloads": "22,140,890",
+        "age": "11 years",
+        "license": "MIT",
+        "status": "Verified Benign"
+      }
+    },
+    {
+      "id": 4,
+      "name": "axios",
+      "ecosystem": "npm",
+      "verdict": "NO PATH",
+      "type": "safe-dim",
+      "summary": "Vulnerable function never called from any entry point.",
+      "evidence": "SSRF advisory GHSA-42xw-2xvc-cx46 is flagged in the dependency database, but static reachability traces prove the vulnerable URL redirection handler is never reached by any active service callers.",
+      "details": {
+        "cve": "GHSA-42xw-2xvc-cx46",
+        "vulnerableMethod": "followRedirects()",
+        "callGraphVerdict": "Unreachable — internal redirect follower disabled in config",
+        "action": "Exploitability: NOT_REACHABLE (VEX annotated)"
+      }
+    },
+    {
+      "id": 5,
+      "name": "jsonwebtoken",
+      "ecosystem": "npm",
+      "verdict": "REACHABLE",
+      "type": "danger",
+      "summary": "Static analysis found an active execution path from an exposed route to the vulnerable routine.",
+      "evidence": "CVE-2022-23529 (insecure key retrieval) is actively reachable. Static AST traversal detected a live execution path connecting an unauthenticated HTTP route directly to the vulnerable verification function.",
+      "callChain": [
+        { "step": 1, "code": "app.get('/login')", "type": "route", "desc": "Public HTTP endpoint" },
+        { "step": 2, "code": "authMiddleware()", "type": "handler", "desc": "Express route middleware" },
+        { "step": 3, "code": "jwt.verify(token, secret)", "type": "target", "desc": "Vulnerable routine (CVE-2022-23529)" }
+      ],
+      "staticAnalysisNote": "Static analysis found an active path from entry point: app.get('/login') -> authMiddleware() -> verify(). Attacker can control the secretOrPublicKey parameter via forged tokens."
+    },
+    {
+      "id": 6,
+      "name": "lodsh",
+      "ecosystem": "npm",
+      "verdict": "TYPOSQUAT ≈ lodash",
+      "type": "accent",
+      "summary": "Levenshtein edit distance 1 to legitimate package 'lodash' with parasitic registry signals.",
+      "evidence": "Flagged as a high-confidence typosquat targeting 'lodash'. Single character omission ('a' omitted). Registry heuristics confirm parasitic traffic spoofing.",
+      "registryFacts": {
+        "targetPackage": "lodash",
+        "editDistance": 1,
+        "mutationType": "Single character omission ('a')",
+        "suspectDownloads": "38,786 / week",
+        "targetDownloads": "211,793,899 / week",
+        "downloadRatio": "0.018% of target volume",
+        "publishPrecedence": "Published after target (parasitic squatter)",
+        "tier": "High Confidence Typosquat"
+      }
+    },
+    {
+      "id": 7,
+      "name": "moment",
+      "ecosystem": "npm",
+      "verdict": "SAFE",
+      "type": "safe",
+      "summary": "Verified date utility with clean package signatures and no active exploitable paths.",
+      "evidence": "Package is in maintenance mode but pinned release has no unpatched vulnerabilities. Verified SPDX license MIT with valid Rekor transparency log proof.",
+      "registry": {
+        "weeklyDownloads": "16,800,000",
+        "age": "13 years",
+        "license": "MIT",
+        "status": "Verified Benign"
+      }
+    },
+    {
+      "id": 8,
+      "name": "flask",
+      "ecosystem": "pypi",
+      "verdict": "SAFE",
+      "type": "safe",
+      "summary": "Standard Python WSGI framework matching clean PyPI index metadata.",
+      "evidence": "PyPI release integrity verified. Complete AST call graph confirms standard routing patterns with zero known vulnerable dependencies.",
+      "registry": {
+        "weeklyDownloads": "18,400,000",
+        "age": "14 years",
+        "license": "BSD-3-Clause",
+        "status": "Verified Benign"
+      }
+    },
+    {
+      "id": 9,
+      "name": "pyyaml",
+      "ecosystem": "pypi",
+      "verdict": "UNKNOWN",
+      "type": "unknown",
+      "summary": "Dynamic constructs prevent a verdict; treated as unverified.",
+      "evidence": "Static AST parser encountered dynamic C-extensions and getattr/eval patterns that prevent static call graph closure. Treated as unverified under zero-trust policy.",
+      "details": {
+        "reason": "Dynamic loader constructs (getattr / C-bindings) obstruct AST path resolution",
+        "policy": "Unverified constructs are flagged for manual review or sandbox monitoring",
+        "status": "UNVERIFIED (Requires runtime behavioral verification)"
+      }
+    }
+  ]
+}

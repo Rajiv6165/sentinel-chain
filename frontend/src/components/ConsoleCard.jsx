@@ -1,11 +1,14 @@
 import { useState, useRef } from 'react';
 
-export default function ConsoleCard({ apiConfig, onFileSelected, onTrySample }) {
+export default function ConsoleCard({ apiConfig, onFileSelected, onTrySample, onClearError }) {
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [sizeError, setSizeError] = useState(null);
+  const [showZipHelp, setShowZipHelp] = useState(false);
   const fileInputRef = useRef(null);
 
   const maxUploadMb = apiConfig?.max_upload_mb ?? 15;
+  const maxBytes = maxUploadMb * 1024 * 1024;
   const isSandboxEnabled = Boolean(apiConfig?.sandbox_enabled);
 
   const handleDragOver = (e) => {
@@ -20,6 +23,27 @@ export default function ConsoleCard({ apiConfig, onFileSelected, onTrySample }) 
     setIsDragging(false);
   };
 
+  const processSelectedFile = (file) => {
+    setSelectedFile(file);
+    if (onClearError) onClearError();
+
+    // Client-side file size check
+    if (file.size > maxBytes) {
+      const selectedMb = (file.size / (1024 * 1024)).toFixed(1);
+      const err = `${selectedMb} MB selected, limit is ${maxUploadMb} MB`;
+      setSizeError(err);
+      if (onFileSelected) {
+        onFileSelected(file);
+      }
+      return;
+    }
+
+    setSizeError(null);
+    if (onFileSelected) {
+      onFileSelected(file);
+    }
+  };
+
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -27,29 +51,33 @@ export default function ConsoleCard({ apiConfig, onFileSelected, onTrySample }) 
 
     const files = e.dataTransfer.files;
     if (files && files.length > 0) {
-      const file = files[0];
-      setSelectedFile(file);
-      if (onFileSelected) {
-        onFileSelected(file);
-      }
+      processSelectedFile(files[0]);
     }
   };
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      setSelectedFile(file);
-      if (onFileSelected) {
-        onFileSelected(file);
-      }
+      processSelectedFile(e.target.files[0]);
     }
   };
+
+  const handleRemoveFile = (e) => {
+    e.stopPropagation();
+    setSelectedFile(null);
+    setSizeError(null);
+    setShowZipHelp(false);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (onClearError) onClearError();
+  };
+
+  const isOverSize = Boolean(selectedFile && selectedFile.size > maxBytes);
 
   const handleButtonClick = (e) => {
     e.stopPropagation();
     if (!selectedFile) {
       fileInputRef.current?.click();
     } else {
+      if (isOverSize) return; // Do NOT send request if file is too big!
       if (onFileSelected) {
         onFileSelected(selectedFile);
       }
@@ -118,15 +146,31 @@ export default function ConsoleCard({ apiConfig, onFileSelected, onTrySample }) 
 
           <span className="font-sans font-medium text-[calc(14*var(--u))] text-[#EAF0FA] tracking-tight">
             {selectedFile ? (
-              <span className="text-[#FFB547]">Selected: {selectedFile.name}</span>
+              <span className="flex items-center gap-[calc(6*var(--u))]">
+                <span className={isOverSize ? 'text-[#FF5A5F]' : 'text-[#FFB547]'}>
+                  Selected: {selectedFile.name} ({(selectedFile.size / (1024 * 1024)).toFixed(1)} MB)
+                </span>
+                <button
+                  type="button"
+                  onClick={handleRemoveFile}
+                  className="px-1.5 py-0.5 rounded text-[calc(10*var(--u))] font-mono bg-[#FF5A5F]/20 text-[#FF5A5F] hover:bg-[#FF5A5F]/35 transition-colors cursor-pointer"
+                  title="Remove file"
+                >
+                  ✕
+                </button>
+              </span>
             ) : (
               'Drop package.json, requirements.txt, or a repo .zip'
             )}
           </span>
         </div>
 
-        <span className="font-mono text-[calc(11*var(--u))] text-[#7A89A3] mt-[calc(4*var(--u))] select-none">
-          max {maxUploadMb} MB · limits from /api/config
+        <span
+          className={`font-mono text-[calc(11*var(--u))] ${
+            sizeError ? 'text-[#FF5A5F] font-semibold' : 'text-[#7A89A3]'
+          } mt-[calc(4*var(--u))] select-none`}
+        >
+          {sizeError || `max ${maxUploadMb} MB · limits from /api/config`}
         </span>
       </div>
 
@@ -194,13 +238,14 @@ export default function ConsoleCard({ apiConfig, onFileSelected, onTrySample }) 
 
           <button
             type="button"
+            disabled={isOverSize}
             onClick={handleButtonClick}
-            className="w-[calc(104*var(--u))] h-[calc(34*var(--u))] rounded-[calc(10*var(--u))] font-sans font-semibold text-[calc(13*var(--u))] text-[#1A1206] flex items-center justify-center gap-[calc(6*var(--u))] transition-all cursor-pointer shadow-md hover:brightness-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#FFB547] focus:ring-offset-2 focus:ring-offset-[#070B14]"
+            className="w-[calc(104*var(--u))] h-[calc(34*var(--u))] rounded-[calc(10*var(--u))] font-sans font-semibold text-[calc(13*var(--u))] text-[#1A1206] flex items-center justify-center gap-[calc(6*var(--u))] transition-all cursor-pointer shadow-md hover:brightness-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#FFB547] focus:ring-offset-2 focus:ring-offset-[#070B14]"
             style={{
               background: 'linear-gradient(180deg, #FFC766 0%, #FF9F2E 100%)'
             }}
           >
-            <span>{selectedFile ? 'Run scan' : 'Choose file'}</span>
+            <span>{selectedFile ? (isOverSize ? 'Too large' : 'Run scan') : 'Choose file'}</span>
             <svg
               width="calc(12*var(--u))"
               height="calc(12*var(--u))"

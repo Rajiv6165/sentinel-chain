@@ -1,6 +1,7 @@
 {
   "source": "docs/benchmarks.md",
   "generated_at": "2026-11-23T12:14:05Z",
+  "in_sample_note": "thresholds were set after viewing the benchmark data (in-sample)",
   "stats": {
     "real_malicious_names_tested": 55,
     "legit_packages_as_negatives": 512,
@@ -26,18 +27,204 @@
       "caption": "false-unreachable (was 4)"
     }
   ],
-  "typosquat": {
-    "positive_samples": 55,
-    "negative_samples": 512,
-    "reference_dataset_size": 1989,
-    "precision": "91.67%",
-    "recall": "80.00%",
-    "f1": "85.44%",
-    "tp": 44,
-    "fp": 4,
-    "fn": 11,
-    "tn": 508
+  "typosquat_configurations": {
+    "dist1_reg_on": {
+      "distance": 1,
+      "registry_enabled": true,
+      "available": true,
+      "label": "Distance 1 + Registry",
+      "tier": "Default — High Confidence",
+      "precision": "91.67%",
+      "precision_num": 91.67,
+      "recall": "80.00%",
+      "recall_num": 80.00,
+      "f1": "85.44%",
+      "f1_num": 85.44,
+      "tp": 44,
+      "fp": 4,
+      "fn": 11,
+      "tn": 508,
+      "total_positives": 55,
+      "total_negatives": 512,
+      "total_dataset": 1989
+    },
+    "dist2_reg_on": {
+      "distance": 2,
+      "registry_enabled": true,
+      "available": true,
+      "label": "Distance 2 + Registry",
+      "tier": "Low Confidence / Review Tier (LOW, never CRITICAL)",
+      "precision": "89.29%",
+      "precision_num": 89.29,
+      "recall": "90.91%",
+      "recall_num": 90.91,
+      "f1": "90.09%",
+      "f1_num": 90.09,
+      "tp": 50,
+      "fp": 6,
+      "fn": 5,
+      "tn": 506,
+      "total_positives": 55,
+      "total_negatives": 512,
+      "total_dataset": 1989
+    },
+    "dist3_reg_on": {
+      "distance": 3,
+      "registry_enabled": true,
+      "available": true,
+      "label": "Distance 3 + Registry",
+      "tier": "Sweep Only (High False Alarms)",
+      "precision": "69.33%",
+      "precision_num": 69.33,
+      "recall": "94.55%",
+      "recall_num": 94.55,
+      "f1": "80.00%",
+      "f1_num": 80.00,
+      "tp": 52,
+      "fp": 23,
+      "fn": 3,
+      "tn": 489,
+      "total_positives": 55,
+      "total_negatives": 512,
+      "total_dataset": 1989
+    },
+    "dist2_reg_off": {
+      "distance": 2,
+      "registry_enabled": false,
+      "available": true,
+      "label": "Distance 2 (Phase 11 Baseline - No Registry)",
+      "tier": "Baseline (Distance Only)",
+      "precision": "60.00%",
+      "precision_num": 60.00,
+      "recall": "92.73%",
+      "recall_num": 92.73,
+      "f1": "72.86%",
+      "f1_num": 72.86,
+      "tp": 51,
+      "fp": 34,
+      "fn": 4,
+      "tn": 478,
+      "total_positives": 55,
+      "total_negatives": 512,
+      "total_dataset": 1989
+    }
   },
+  "false_positives": [
+    {
+      "package": "du",
+      "target": "d3",
+      "distance": 1,
+      "reason": "Single character substitution ('u' instead of '3') [Registry: flagged parasite (26,906 weekly dl vs target 36,103,086 dl, 0.075%)]"
+    },
+    {
+      "package": "cp",
+      "target": "co",
+      "distance": 1,
+      "reason": "Keyboard-adjacent substitution ('p' instead of 'o') [Registry: flagged parasite (23,720 weekly dl vs target 60,367,798 dl, 0.039%)]"
+    },
+    {
+      "package": "pi",
+      "target": "pip",
+      "distance": 1,
+      "reason": "Single character omission [Registry: flagged parasite (4,434 weekly dl vs target 129,270,529 dl, 0.003%)]"
+    },
+    {
+      "package": "re",
+      "target": "rc",
+      "distance": 1,
+      "reason": "Single character substitution ('e' instead of 'c') [Registry: flagged parasite (3,176 weekly dl vs target 59,734,101 dl, 0.005%)]"
+    }
+  ],
+  "missed_attacks": [
+    {
+      "package": "reqeusts",
+      "target": "requests",
+      "distance": 2,
+      "advisory": "PyPI Security Advisory (2017) / CVE-2017-1000433",
+      "caught_in_review": true,
+      "note": "Caught in Dist-2 review tier (adjacent transposition)"
+    },
+    {
+      "package": "falsk",
+      "target": "flask",
+      "distance": 2,
+      "advisory": "OSV: MAL-2022-2911 (Checkmarx)",
+      "caught_in_review": true,
+      "note": "Caught in Dist-2 review tier (two-character mutation)"
+    },
+    {
+      "package": "flsak",
+      "target": "flask",
+      "distance": 2,
+      "advisory": "OSV: MAL-2022-2912 (Sonatype)",
+      "caught_in_review": true,
+      "note": "Caught in Dist-2 review tier (two-character mutation)"
+    },
+    {
+      "package": "axois",
+      "target": "axios",
+      "distance": 2,
+      "advisory": "OSV: MAL-2022-1401 (Snyk)",
+      "caught_in_review": true,
+      "note": "Caught in Dist-2 review tier (adjacent transposition)"
+    },
+    {
+      "package": "nextjs",
+      "target": "next",
+      "distance": 2,
+      "advisory": "OSV: MAL-2022-4820 (Snyk)",
+      "caught_in_review": true,
+      "note": "Caught in Dist-2 review tier (suffix addition)"
+    },
+    {
+      "package": "charset-normalisr",
+      "target": "charset-normalizer",
+      "distance": 2,
+      "advisory": "OSV: MAL-2023-1450 (Datadog)",
+      "caught_in_review": true,
+      "note": "Caught in Dist-2 review tier (spelling variant)"
+    },
+    {
+      "package": "cross-env.js",
+      "target": "cross-env",
+      "distance": 3,
+      "advisory": "npm Security Advisory 2017-08",
+      "caught_in_review": false,
+      "note": "Edit distance >= 3 (extension prefix/suffix mutation)"
+    },
+    {
+      "package": "beautifull-soup",
+      "target": "beautifulsoup4",
+      "distance": 3,
+      "advisory": "OSV: MAL-2022-1502",
+      "caught_in_review": false,
+      "note": "Edit distance >= 3 (combo mutation + version suffix)"
+    },
+    {
+      "package": "celery-client",
+      "target": "celery",
+      "distance": 7,
+      "advisory": "OSV: MAL-2022-1770",
+      "caught_in_review": false,
+      "note": "Edit distance >= 3 (compound descriptive suffix)"
+    },
+    {
+      "package": "corejs",
+      "target": "core-js",
+      "distance": 1,
+      "advisory": "OSV: MAL-2022-2051",
+      "caught_in_review": false,
+      "note": "Cleared by temporal causality: published April 2013, before core-js in July 2013"
+    },
+    {
+      "package": "beautifulsoup",
+      "target": "beautifulsoup4",
+      "distance": 1,
+      "advisory": "PEP-541 Advisory",
+      "caught_in_review": false,
+      "note": "Cleared by temporal causality: published 2010, before BS4 in 2013"
+    }
+  ],
   "reachability": {
     "total_samples": 20,
     "correct_reachable": 12,

@@ -1,12 +1,19 @@
 import { useEffect, useState } from 'react';
+import chainEvidenceData from '../data/chainEvidence.json';
+import ChainEvidencePanel from './ChainEvidencePanel';
 
 export default function HeroChain() {
   const [viewBox, setViewBox] = useState('0 0 1440 200');
+  const [activeNodeId, setActiveNodeId] = useState(null);
+  const [hoveredNodeId, setHoveredNodeId] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
+      setIsMobile(w < 768);
+
       if (w <= 599 || (h <= 599 && w <= 1180)) {
         // Compact: 5 nodes (3 to 7)
         setViewBox('390 0 660 200');
@@ -23,6 +30,43 @@ export default function HeroChain() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  const handleNodeKeyDown = (e, nodeId) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setActiveNodeId(activeNodeId === nodeId ? null : nodeId);
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      const nextId = (nodeId % 9) + 1;
+      setActiveNodeId(nextId);
+      const nextEl = document.getElementById(`hero-node-${nextId}`);
+      if (nextEl) nextEl.focus();
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      const prevId = nodeId === 1 ? 9 : nodeId - 1;
+      setActiveNodeId(prevId);
+      const prevEl = document.getElementById(`hero-node-${prevId}`);
+      if (prevEl) prevEl.focus();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      setActiveNodeId(null);
+    }
+  };
+
+  const handleNavigate = (direction) => {
+    if (!activeNodeId) return;
+    if (direction === 'next') {
+      const nextId = (activeNodeId % 9) + 1;
+      setActiveNodeId(nextId);
+      const nextEl = document.getElementById(`hero-node-${nextId}`);
+      if (nextEl) nextEl.focus();
+    } else {
+      const prevId = activeNodeId === 1 ? 9 : activeNodeId - 1;
+      setActiveNodeId(prevId);
+      const prevEl = document.getElementById(`hero-node-${prevId}`);
+      if (prevEl) prevEl.focus();
+    }
+  };
 
   const nodes = [
     {
@@ -235,8 +279,28 @@ export default function HeroChain() {
             const chipWidth = node.verdict.length > 10 ? 144 : 76;
             const isDanger = node.id === 5;
 
+            const isSelected = activeNodeId === node.id;
+            const isHovered = hoveredNodeId === node.id;
+
             return (
-              <g key={node.id} className="pointer-events-auto">
+              <g
+                key={node.id}
+                id={`hero-node-${node.id}`}
+                role="button"
+                tabIndex={0}
+                aria-label={`Inspect evidence for ${node.name}, verdict ${node.verdict}. Press Enter or click to view sample evidence.`}
+                aria-expanded={isSelected}
+                aria-haspopup="dialog"
+                aria-controls="chain-evidence-panel"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveNodeId(isSelected ? null : node.id);
+                }}
+                onKeyDown={(e) => handleNodeKeyDown(e, node.id)}
+                onMouseEnter={() => setHoveredNodeId(node.id)}
+                onMouseLeave={() => setHoveredNodeId(null)}
+                className="pointer-events-auto cursor-pointer focus:outline-none group select-none"
+              >
                 {/* A. Verdict Chip (y=44 centered, height=22, radius=6) */}
                 <g
                   style={{
@@ -250,9 +314,9 @@ export default function HeroChain() {
                     height={22}
                     rx="6"
                     fill={node.chipBg}
-                    stroke={node.strokeColor}
-                    strokeWidth="1"
-                    strokeOpacity="0.4"
+                    stroke={isSelected ? '#FFB547' : node.strokeColor}
+                    strokeWidth={isSelected ? '1.5' : '1'}
+                    strokeOpacity={isSelected ? '0.9' : '0.4'}
                   />
                   <text
                     x={node.x}
@@ -277,7 +341,7 @@ export default function HeroChain() {
                   }}
                 >
                   {/* Danger pulse ring on jsonwebtoken */}
-                  {isDanger && (
+                  {isDanger && !isSelected && (
                     <rect
                       x={node.x - 26}
                       y={74}
@@ -292,6 +356,25 @@ export default function HeroChain() {
                     />
                   )}
 
+                  {/* Active Selection / Hover Ring */}
+                  {(isSelected || isHovered) && (
+                    <rect
+                      x={node.x - 27}
+                      y={73}
+                      width="54"
+                      height="54"
+                      rx="16"
+                      fill="none"
+                      stroke={isSelected ? '#FFB547' : node.strokeColor}
+                      strokeWidth={isSelected ? '2' : '1.5'}
+                      strokeDasharray={node.type === 'unknown' ? '3 3' : 'none'}
+                      className={isSelected ? 'animate-pulse' : ''}
+                      style={{
+                        filter: `drop-shadow(0 0 8px ${isSelected ? '#FFB547' : node.strokeColor})`
+                      }}
+                    />
+                  )}
+
                   {/* Main Node Background */}
                   <rect
                     x={node.x - 22}
@@ -300,11 +383,11 @@ export default function HeroChain() {
                     height="44"
                     rx="12"
                     fill="#0B1220"
-                    stroke={node.type === 'unknown' ? 'rgba(148, 170, 210, 0.28)' : node.strokeColor}
-                    strokeWidth="1.5"
+                    stroke={isSelected ? '#FFB547' : node.type === 'unknown' ? 'rgba(148, 170, 210, 0.28)' : node.strokeColor}
+                    strokeWidth={isSelected ? '2' : '1.5'}
                     strokeDasharray={node.type === 'unknown' ? '4 3' : 'none'}
                     style={{
-                      transition: 'stroke 0.4s ease',
+                      transition: 'stroke 0.2s ease, filter 0.2s ease',
                       filter: isDanger ? 'drop-shadow(0 0 10px rgba(255, 90, 95, 0.35))' : 'none'
                     }}
                   />
@@ -318,11 +401,11 @@ export default function HeroChain() {
                   x={node.x}
                   y={148}
                   textAnchor="middle"
-                  fill="#9AA7BD"
+                  fill={isSelected ? '#FFB547' : '#9AA7BD'}
                   fontFamily="'JetBrains Mono', monospace"
                   fontSize="11"
-                  fontWeight="500"
-                  className="select-none tracking-tight"
+                  fontWeight={isSelected ? '700' : '500'}
+                  className="select-none tracking-tight transition-colors"
                   style={{
                     animation: `fadeIn 0.5s ease ${popDelay}s both`
                   }}
@@ -366,6 +449,19 @@ export default function HeroChain() {
           ILLUSTRATION · SAMPLE DEPENDENCY CHAIN, NOT A REAL SCAN
         </span>
       </div>
+
+      {/* Interactive Evidence Panel below chain */}
+      {activeNodeId && (
+        <div id="chain-evidence-panel">
+          <ChainEvidencePanel
+            node={nodes.find((n) => n.id === activeNodeId)}
+            evidence={chainEvidenceData.nodes.find((n) => n.id === activeNodeId)}
+            onClose={() => setActiveNodeId(null)}
+            onNavigate={handleNavigate}
+            isMobile={isMobile}
+          />
+        </div>
+      )}
     </>
   );
 }
